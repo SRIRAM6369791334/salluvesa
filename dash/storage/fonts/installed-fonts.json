@@ -1,0 +1,17 @@
+{
+    "outfit": {
+        "300": "C:\\xampp\\htdocs\\Saaluvesa Enterprises Private Limited\\saaluvesa dash\\storage\\fonts\/outfit_300_47ba8fe0bbab47a21920dc0296d5eb2a",
+        "normal": "C:\\xampp\\htdocs\\Saaluvesa Enterprises Private Limited\\saaluvesa dash\\storage\\fonts\/outfit_normal_b427b5567815855f2c1aedcbca5c426a",
+        "500": "C:\\xampp\\htdocs\\Saaluvesa Enterprises Private Limited\\saaluvesa dash\\storage\\fonts\/outfit_500_3f90519d2f87fc22d57704517ab896a0",
+        "600": "C:\\xampp\\htdocs\\Saaluvesa Enterprises Private Limited\\saaluvesa dash\\storage\\fonts\/outfit_600_94b9c4eadc31b24bcee5f116f62bfe31",
+        "bold": "outfit_bold_bacd5e3d0f06fee90429a0a4c0bbcab7"
+    },
+    "notosanstamil": {
+        "normal": "C:\\xampp\\htdocs\\Saaluvesa Enterprises Private Limited\\New folder\\dash\\storage\\fonts\/notosanstamil_normal_0b4ceae10e1ece4fdd0bb53ec84f649b",
+        "bold": "notosanstamil_bold_28bfbf6c49039f01dc070a6a1d9279b1"
+    },
+    "notosans": {
+        "normal": "C:\\xampp\\htdocs\\Saaluvesa Enterprises Private Limited\\New folder\\dash\\storage\\fonts\/notosans_normal_48dbf10f50c14f89c2c2da4f17741093",
+        "bold": "notosans_bold_60591f4ecfd98be85689692a0a37b44c"
+    }
+}

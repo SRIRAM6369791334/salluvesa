@@ -1,0 +1,24 @@
+# Dependencies
+**/node_modules/
+**/vendor/
+
+# Environment files
+**/.env
+**/.env.backup
+**/.env.*
+
+# Large archive files
+*.zip
+**/*.zip
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Build and storage
+*.log
+**/public/storage
+**/public/hot
+**/public/build
