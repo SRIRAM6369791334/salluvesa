@@ -276,11 +276,15 @@ class ExportEngine extends DesignLab.BaseEngine {
             headers: this._headers(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error(`Save design HTTP ${res.status}`);
-        const result = await res.json();
+        const result = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            const msg = result?.message || (result?.errors ? Object.values(result.errors).flat().join(', ') : `Save design failed (HTTP ${res.status})`);
+            throw new Error(msg);
+        }
         if (result.design_id) {
             this.designId = result.design_id;
-            document.getElementById('design_id').value = result.design_id;
+            const designIdEl = document.getElementById('design_id');
+            if (designIdEl) designIdEl.value = result.design_id;
         }
         return result;
     }
@@ -310,12 +314,10 @@ class ExportEngine extends DesignLab.BaseEngine {
                 roster_data: roster,
             }),
         });
-        const json = await res.json();
+        const json = await res.json().catch(() => ({}));
         if (!res.ok) {
             // Surface exact validation message if available
-            const msg = json?.message || json?.errors
-                ? Object.values(json.errors || {}).flat().join(', ')
-                : `Add to cart HTTP ${res.status}`;
+            const msg = json?.message || (json?.errors ? Object.values(json.errors).flat().join(', ') : `Add to cart failed (HTTP ${res.status})`);
             throw new Error(msg);
         }
         return json;

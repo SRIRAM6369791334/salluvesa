@@ -47,18 +47,11 @@ class CartController extends Controller
             'quantity'  => 'nullable|integer|min:1',
             'size'      => 'nullable|string',
             'color'     => 'nullable|string',
-            'design_id' => 'required_if:type,custom|integer|exists:customproduct_designs,id',
+            'design_id' => 'nullable|integer|exists:customproduct_designs,id',
         ]);
 
-        if (!Auth::check()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please login to add items to your cart.'
-            ], 401);
-        }
-
         $user = Auth::user();
-        $userId = $user->user_id;
+        $userId = $user ? $user->user_id : null;
         $sessionId = session()->getId();
 
         $productId = $request->id;
@@ -66,33 +59,55 @@ class CartController extends Controller
         $quantity = $request->quantity ?? 1;
 
         if ($type === 'custom') {
-            // Custom design product
-            $design = \App\Models\CustomproductDesign::findOrFail($request->design_id);
-            
-            // Verify ownership (user or session)
-            if ($design->user_id) {
-                if (!$user || $design->user_id != $user->user_id) {
-                    return response()->json(['success' => false, 'message' => 'Unauthorized access to this design.'], 403);
+            if ($request->design_id) {
+                // Custom design product from Studio
+                $design = \App\Models\CustomproductDesign::findOrFail($request->design_id);
+                
+                // Verify ownership (user or session)
+                if ($design->user_id) {
+                    if ($user && $design->user_id != $user->user_id) {
+                        return response()->json(['success' => false, 'message' => 'Unauthorized access to this design.'], 403);
+                    }
+                } else {
+                    // Design is a guest design — claim or match session
+                    if ($user) {
+                        $design->user_id = $user->user_id;
+                        $design->session_id = null;
+                        $design->save();
+                    } else {
+                        $design->session_id = $sessionId;
+                        $design->save();
+                    }
                 }
-            } else {
-                // Design is a guest design — if user is logged in, claim it
-                if ($user) {
-                    $design->user_id = $user->user_id;
-                    $design->session_id = null;
-                    $design->save();
-                } elseif ($design->session_id !== $sessionId) {
-                    return response()->json(['success' => false, 'message' => 'Unauthorized access to this design.'], 403);
-                }
-            }
 
-            $customProduct = $design->customproduct;
-            $productId = $customProduct->id;
-            $productName = $customProduct->name . ' (Custom Design)';
-            $productImage = $design->preview_image_front;
-            
-            // Use the comprehensive price natively calculated by the frontend Design Engine
-            $extraPrice = $request->input('extra_price', 0);
-            $price = $customProduct->base_price + $extraPrice; 
+                $customProduct = $design->customproduct;
+                $productId = $customProduct->id;
+                $productName = $customProduct->name . ' (Custom Design)';
+                $productImage = $design->preview_image_front ?: $customProduct->front_mockup;
+                
+                $extraPrice = $request->input('extra_price', 0);
+                $price = $customProduct->base_price + $extraPrice;
+            } else {
+                // Quick Custom product modal
+                $customProduct = \App\Models\Customproduct::findOrFail($productId);
+                $productName = $customProduct->name . ' (Quick Custom)';
+                
+                $rawPreview = $request->input('preview_screenshot_url');
+                $previewFront = null;
+                if (!empty($rawPreview)) {
+                    $decodedPreview = json_decode($rawPreview, true);
+                    if (is_array($decodedPreview)) {
+                        $previewFront = $decodedPreview['front'] ?? reset($decodedPreview);
+                    } else {
+                        $previewFront = $rawPreview;
+                    }
+                }
+                
+                $productImage = $customProduct->front_mockup ?: ($previewFront ?: $customProduct->left_shoulder_mockup);
+                
+                $extraPrice = $request->input('customization_price', 0);
+                $price = $customProduct->base_price + $extraPrice;
+            } 
             
         } elseif ($type === 'sample') {
             $product = \App\Models\Sample::findOrFail($productId);
@@ -178,6 +193,14 @@ class CartController extends Controller
                 'product_size' => $request->size,
                 'product_color' => $request->color,
                 'design_id' => $type === 'custom' ? $request->design_id : null,
+                'customization_type' => $request->input('customization_type') ?: 'none',
+                'customization_method' => $request->input('customization_method') ?: 'none',
+                'customization_position' => $request->input('customization_position') ?: 'Left Chest',
+                'custom_text' => $request->input('custom_text'),
+                'custom_text_color' => $request->input('custom_text_color'),
+                'custom_logo_url' => $request->input('custom_logo_url'),
+                'customization_price' => $request->input('customization_price', 0.00),
+                'preview_screenshot_url' => $request->input('preview_screenshot_url'),
                 'roster_data' => $type === 'custom' ? $request->roster_data : null,
             ]);
         }

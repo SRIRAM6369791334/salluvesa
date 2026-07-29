@@ -16,6 +16,19 @@ class CustomProductController extends Controller
         return view("pages.custom_products", compact("customProducts"));
     }
 
+    public function savePlacement(Request $request, $id)
+    {
+        $product = CustomProduct::findOrFail($id);
+        $product->printable_rect = is_array($request->input('placement_config')) ? json_encode($request->input('placement_config')) : $request->input('placement_config');
+        $product->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Placement settings saved successfully!',
+            'products' => CustomProduct::all()
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

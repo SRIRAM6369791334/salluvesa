@@ -161,58 +161,180 @@
                                         @foreach ($products as $product)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    @if(!empty($product->design_id))
-                                                        <img src="/uploads/{{ $product->product_image ?? '' }}" alt="" style="width: 60px;">
-                                                    @else
-                                                        <img src="/images/{{ $product->product_image ?? '' }}" alt="" style="width: 60px;">
-                                                    @endif
-                                                </td>
-                                                <td>{{$product->order_id ?? ''}}</td>
-                                                <td>{{ $product->product_name ?? 'N/A' }}</td>
-                                                <td>{{ $product->size_value ?? '' }}
-                                                    {{ $product->productVarient ? ($variantDescriptions[$product->productVarient->varient] ?? '') : '' }}
-                                                </td>
-                                                <td>
-                                                    @if(!empty($product->color_value))
-                                                        @foreach(explode(',', $product->color_value) as $color)
-                                                            @php $colorName = \App\Models\ProductColor::getColorName($color); @endphp
-                                                            <span
-                                                                style="display:inline-block; width:16px; height:16px; background-color:{{ trim($color) }}; border:1px solid #ccc; vertical-align:middle; margin-right:5px;"
-                                                                title="{{ $colorName }}"></span>
-                                                            {{ $colorName }}
-                                                        @endforeach
-                                                    @else
-                                                        N/A
-                                                    @endif
-                                                </td>
+                                                 <td>
+                                                     @php
+                                                         $previewList = [];
 
-                                                <td>
-                                                    @php
-                                                        $status = $product->productOrder->payment_status ?? null;
-                                                    @endphp
+                                                         // Helper function for full asset URL
+                                                         $formatUrl = function($path) {
+                                                             if (empty($path)) return 'http://127.0.0.1:8000/img/tshirt-front.png';
+                                                             if (\Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])) return $path;
+                                                             $trimmed = ltrim($path, '/');
+                                                             
+                                                             if (\Illuminate\Support\Str::startsWith($trimmed, 'img/')) {
+                                                                 return 'http://127.0.0.1:8000/' . $trimmed;
+                                                             }
+                                                             
+                                                             // Check local Dash public directory
+                                                             if (file_exists(public_path($trimmed))) {
+                                                                 return asset($trimmed);
+                                                             }
+                                                             if (file_exists(public_path('uploads/' . $trimmed))) {
+                                                                 return asset('uploads/' . $trimmed);
+                                                             }
+                                                             
+                                                             // Check Web public directory fallback
+                                                             if (\Illuminate\Support\Str::startsWith($trimmed, 'uploads/')) {
+                                                                 return 'http://127.0.0.1:8000/' . $trimmed;
+                                                             }
+                                                             return 'http://127.0.0.1:8000/uploads/' . $trimmed;
+                                                         };
 
-                                                    @if($status === 1)
-                                                        Paid
-                                                    @elseif($status === 0)
-                                                        Pending
-                                                    @elseif($status === 3)
-                                                        Bank Transfer
-                                                    @else
-                                                        N/A
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    @if(($product->productOrder->payment_method ?? '') == 'cod') Cash on Delivery
-                                                    @elseif(($product->productOrder->payment_method ?? '') == 'paypal') PayPal
-                                                    @elseif(($product->productOrder->payment_method ?? '') == 'mp') Bank Transfer
-                                                    @else {{ $product->productOrder->payment_method ?? '' }} @endif
-                                                </td>
-                                                <td>${{ $product->product_rate ?? 0 }}</td>
-                                                <td>{{ $product->quantity }}</td>
-                                                <td>{{ $order->printing_method ?? 'N/A' }}</td>
-                                                <td>
-                                                    @if(!empty($product->design_id))
+                                                         // 1. Check preview_screenshot_url (Quick Custom)
+                                                         if (!empty($product->preview_screenshot_url)) {
+                                                             $decoded = json_decode($product->preview_screenshot_url, true);
+                                                             if (is_array($decoded)) {
+                                                                 $previewList = $decoded;
+                                                             } else {
+                                                                 $previewList = ['front' => $product->preview_screenshot_url];
+                                                             }
+                                                         }
+
+                                                         // 2. Check design_id (Design Studio)
+                                                         if (empty($previewList) && !empty($product->design_id)) {
+                                                             $cDesign = \Illuminate\Support\Facades\DB::table('customproduct_designs')->where('id', $product->design_id)->first();
+                                                             if ($cDesign) {
+                                                                 if (!empty($cDesign->preview_image_front)) $previewList['front'] = $cDesign->preview_image_front;
+                                                                 if (!empty($cDesign->preview_image_back)) $previewList['back'] = $cDesign->preview_image_back;
+                                                                 if (!empty($cDesign->preview_image_right_shoulder)) $previewList['right'] = $cDesign->preview_image_right_shoulder;
+                                                                 if (!empty($cDesign->preview_image_left_shoulder)) $previewList['left'] = $cDesign->preview_image_left_shoulder;
+                                                             }
+                                                         }
+
+                                                         // 3. Fallback to product_image or product mockup images
+                                                         if (empty($previewList)) {
+                                                             if (!empty($product->product_image)) {
+                                                                 $previewList['product'] = $product->product_image;
+                                                             } elseif ($product->product) {
+                                                                 if (!empty($product->product->front_mockup)) $previewList['front'] = $product->product->front_mockup;
+                                                                 if (!empty($product->product->back_mockup)) $previewList['back'] = $product->product->back_mockup;
+                                                             }
+                                                         }
+                                                     @endphp
+
+                                                     @if(count($previewList) > 0)
+                                                         <div style="display:flex; flex-wrap:wrap; gap:4px; max-width:160px;">
+                                                             @foreach($previewList as $vKey => $vUrl)
+                                                                 @php
+                                                                     $fullVUrl = $formatUrl($vUrl);
+                                                                 @endphp
+                                                                 <div style="text-align:center;">
+                                                                     <a href="{{ $fullVUrl }}" target="_blank" title="{{ strtoupper($vKey) }}">
+                                                                         <img src="{{ $fullVUrl }}" alt="{{ $vKey }}" style="width: 55px; height: 55px; object-fit: contain; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; padding: 2px;" onerror="this.onerror=null; this.src='http://127.0.0.1:8000/img/logo.png';">
+                                                                     </a>
+                                                                     <div style="font-size:9px; font-weight:bold; color:#64748b; text-transform:uppercase;">{{ $vKey }}</div>
+                                                                 </div>
+                                                             @endforeach
+                                                         </div>
+                                                     @elseif(!empty($product->custom_logo_url))
+                                                         @php $logoUrl = $formatUrl($product->custom_logo_url); @endphp
+                                                         <a href="{{ $logoUrl }}" target="_blank">
+                                                             <img src="{{ $logoUrl }}" alt="Logo" style="width: 60px; height: 60px; object-fit: contain; border-radius: 6px; border: 1px solid #ddd; background: #ffffff; padding: 2px;">
+                                                         </a>
+                                                     @else
+                                                         <span class="text-muted" style="font-size: 11px;">No Image</span>
+                                                     @endif
+                                                 </td>
+                                                 <td>{{$product->order_id ?? ''}}</td>
+                                                 <td>{{ $product->product_name ?? 'N/A' }}</td>
+                                                 <td>{{ $product->size_value ?? '' }}
+                                                     {{ $product->productVarient ? ($variantDescriptions[$product->productVarient->varient] ?? '') : '' }}
+                                                 </td>
+                                                 <td>
+                                                     @if(!empty($product->color_value))
+                                                         @if(str_starts_with(trim($product->color_value), '#'))
+                                                             @foreach(explode(',', $product->color_value) as $color)
+                                                                 @php $colorName = \App\Models\ProductColor::getColorName($color); @endphp
+                                                                 <span style="display:inline-block; width:16px; height:16px; background-color:{{ trim($color) }}; border:1px solid #ccc; vertical-align:middle; margin-right:5px;" title="{{ $colorName }}"></span>
+                                                                 {{ $colorName }}
+                                                             @endforeach
+                                                         @else
+                                                             <span style="font-weight: 600; color: #334155;">{{ $product->color_value }}</span>
+                                                         @endif
+                                                     @else
+                                                         Standard
+                                                     @endif
+                                                 </td>
+
+                                                 <td>
+                                                     @php
+                                                         $status = $product->productOrder->payment_status ?? null;
+                                                     @endphp
+
+                                                     @if($status === 1)
+                                                         Paid
+                                                     @elseif($status === 0)
+                                                         Pending
+                                                     @elseif($status === 3)
+                                                         Bank Transfer
+                                                     @else
+                                                         N/A
+                                                     @endif
+                                                 </td>
+                                                 <td>
+                                                     @if(($product->productOrder->payment_method ?? '') == 'cod') Cash on Delivery
+                                                     @elseif(($product->productOrder->payment_method ?? '') == 'paypal') PayPal
+                                                     @elseif(($product->productOrder->payment_method ?? '') == 'mp') Bank Transfer
+                                                     @else {{ $product->productOrder->payment_method ?? '' }} @endif
+                                                 </td>
+                                                 <td>${{ $product->product_rate ?? 0 }}</td>
+                                                 <td>{{ $product->quantity }}</td>
+                                                 <td>{{ $order->printing_method ?? 'N/A' }}</td>
+                                                 <td>
+                                                     @if(!empty($product->preview_screenshot_url) || !empty($product->custom_logo_url) || !empty($product->custom_text))
+                                                         <div class="d-flex flex-column" style="gap: 6px; text-align: left;">
+                                                             @if(!empty($product->customization_position))
+                                                                 <div><span class="badge" style="background:#038edc; color:#fff; font-size:10px; padding:3px 7px; border-radius:4px; font-weight:bold;">Position: {{ $product->customization_position }}</span></div>
+                                                             @endif
+                                                             @if(!empty($product->custom_text))
+                                                                 <div style="font-size:11px; margin-top:2px;">
+                                                                     <strong>Details:</strong> 
+                                                                     <span style="color: {{ $product->custom_text_color ?? '#1e293b' }}; font-weight:bold; background:#f1f5f9; padding:2px 6px; border-radius:3px; border:1px solid #cbd5e1;">
+                                                                         {{ $product->custom_text }}
+                                                                     </span>
+                                                                 </div>
+                                                             @endif
+
+                                                             <!-- Download Buttons for Multi-View Previews & Logo -->
+                                                             <div style="display:flex; flex-wrap:wrap; gap:5px; margin-top:6px;">
+                                                                 @php
+                                                                     $proofMap = [];
+                                                                     if (!empty($product->preview_screenshot_url)) {
+                                                                         $decodedMap = json_decode($product->preview_screenshot_url, true);
+                                                                         if (is_array($decodedMap)) {
+                                                                             $proofMap = $decodedMap;
+                                                                         } else {
+                                                                             $proofMap = ['front' => $product->preview_screenshot_url];
+                                                                         }
+                                                                     }
+                                                                 @endphp
+
+                                                                 @foreach($proofMap as $vKey => $vUrl)
+                                                                     @php $proofUrl = Str::startsWith($vUrl, 'http') ? $vUrl : asset($vUrl); @endphp
+                                                                     <a href="{{ $proofUrl }}" download="{{ ucfirst($vKey) }}_Proof_{{ $product->order_id }}.png" target="_blank" class="design-asset-link btn-front" style="background:#28a745; color:#fff; text-decoration:none; padding:4px 8px; font-weight:bold; border-radius:4px; font-size:11px; display:inline-flex; align-items:center; gap:3px;">
+                                                                         📥 {{ strtoupper($vKey) }} PROOF
+                                                                     </a>
+                                                                 @endforeach
+
+                                                                 @if(!empty($product->custom_logo_url))
+                                                                     @php $logoUrl = Str::startsWith($product->custom_logo_url, 'http') ? $product->custom_logo_url : asset($product->custom_logo_url); @endphp
+                                                                     <a href="{{ $logoUrl }}" download="Uploaded_Logo_{{ $product->order_id }}.png" target="_blank" class="design-asset-link btn-back" style="background:#007bff; color:#fff; text-decoration:none; padding:4px 8px; font-weight:bold; border-radius:4px; font-size:11px; display:inline-flex; align-items:center; gap:3px;">
+                                                                         📥 LOGO FILE
+                                                                     </a>
+                                                                 @endif
+                                                             </div>
+                                                         </div>
+                                                    @elseif(!empty($product->design_id))
                                                         @php
                                                             $customDesign = \Illuminate\Support\Facades\DB::table('customproduct_designs')
                                                                 ->where('id', $product->design_id)
@@ -228,26 +350,30 @@
                                                                 <!-- Merged Previews -->
                                                                 <div style="border-bottom: 1px solid #eee; padding-bottom: 5px;">
                                                                     <small style="display:block; color: #666; font-weight: bold; margin-bottom: 3px;">Merged Proofs:</small>
-                                                                    @if(!empty($customDesign->preview_image_front) && @filesize(public_path('uploads/' . $customDesign->preview_image_front)) > 0)
-                                                                        <a href="{{ asset('uploads/' . $customDesign->preview_image_front) }}" download="Front_Proof_{{ $product->order_id }}.png" class="design-asset-link btn-front">
-                                                                            Front Proof
-                                                                        </a>
-                                                                    @endif
-                                                                    @if(!empty($customDesign->preview_image_back) && @filesize(public_path('uploads/' . $customDesign->preview_image_back)) > 0)
-                                                                        <a href="{{ asset('uploads/' . $customDesign->preview_image_back) }}" download="Back_Proof_{{ $product->order_id }}.png" class="design-asset-link btn-back">
-                                                                            Back Proof
-                                                                        </a>
-                                                                    @endif
-                                                                    @if(!empty($customDesign->preview_image_right_shoulder) && @filesize(public_path('uploads/' . $customDesign->preview_image_right_shoulder)) > 0)
-                                                                        <a href="{{ asset('uploads/' . $customDesign->preview_image_right_shoulder) }}" download="Right_Shoulder_Proof_{{ $product->order_id }}.png" class="design-asset-link btn-front" style="background-color: #20c997; color: white;">
-                                                                            R. Shoulder
-                                                                        </a>
-                                                                    @endif
-                                                                    @if(!empty($customDesign->preview_image_left_shoulder) && @filesize(public_path('uploads/' . $customDesign->preview_image_left_shoulder)) > 0)
-                                                                        <a href="{{ asset('uploads/' . $customDesign->preview_image_left_shoulder) }}" download="Left_Shoulder_Proof_{{ $product->order_id }}.png" class="design-asset-link btn-back" style="background-color: #17a2b8; color: white;">
-                                                                            L. Shoulder
-                                                                        </a>
-                                                                    @endif
+                                                                     @if(!empty($customDesign->preview_image_front))
+                                                                         @php $fUrl = $formatUrl($customDesign->preview_image_front); @endphp
+                                                                         <a href="{{ $fUrl }}" download="Front_Proof_{{ $product->order_id }}.png" target="_blank" class="design-asset-link btn-front">
+                                                                             Front Proof
+                                                                         </a>
+                                                                     @endif
+                                                                     @if(!empty($customDesign->preview_image_back))
+                                                                         @php $bUrl = $formatUrl($customDesign->preview_image_back); @endphp
+                                                                         <a href="{{ $bUrl }}" download="Back_Proof_{{ $product->order_id }}.png" target="_blank" class="design-asset-link btn-back">
+                                                                             Back Proof
+                                                                         </a>
+                                                                     @endif
+                                                                     @if(!empty($customDesign->preview_image_right_shoulder))
+                                                                         @php $rUrl = $formatUrl($customDesign->preview_image_right_shoulder); @endphp
+                                                                         <a href="{{ $rUrl }}" download="Right_Shoulder_Proof_{{ $product->order_id }}.png" target="_blank" class="design-asset-link btn-front" style="background-color: #20c997; color: white;">
+                                                                             R. Shoulder
+                                                                         </a>
+                                                                     @endif
+                                                                     @if(!empty($customDesign->preview_image_left_shoulder))
+                                                                         @php $lUrl = $formatUrl($customDesign->preview_image_left_shoulder); @endphp
+                                                                         <a href="{{ $lUrl }}" download="Left_Shoulder_Proof_{{ $product->order_id }}.png" target="_blank" class="design-asset-link btn-back" style="background-color: #17a2b8; color: white;">
+                                                                             L. Shoulder
+                                                                         </a>
+                                                                     @endif
                                                                 </div>
 
                                                                 <!-- Original Assets & Elements -->
@@ -370,8 +496,26 @@
                 </a>
                 <button id="tm_download_btn" class="tm_invoice_btn tm_color2">
                     <span class="tm_btn_icon">⬇️</span>
-                    <span class="tm_btn_text">Download</span>
+                    <span class="tm_btn_text">Download PDF</span>
                 </button>
+                @if(!empty($products[0]->order_id))
+                <a href="{{ route('admin.orders.download-order-zip', $products[0]->order_id) }}" class="tm_invoice_btn" style="background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; text-decoration: none;">
+                    <span class="tm_btn_icon">📦</span>
+                    <span class="tm_btn_text">Download All (ZIP)</span>
+                </a>
+                @endif
+                @foreach($products as $pSlot)
+                    @if(!empty($pSlot->preview_screenshot_url) || !empty($pSlot->custom_logo_url) || !empty($pSlot->design_id))
+                        <a href="{{ route('admin.orders.specsheet-pdf', $pSlot->id) }}" target="_blank" class="tm_invoice_btn" style="background-color: rgba(25, 135, 84, 0.1); color: #198754; text-decoration: none;">
+                            <span class="tm_btn_icon">📑</span>
+                            <span class="tm_btn_text">Item #{{ $loop->iteration }} Spec Sheet</span>
+                        </a>
+                        <a href="{{ route('admin.orders.download-zip', $pSlot->id) }}" class="tm_invoice_btn" style="background-color: rgba(108, 117, 125, 0.1); color: #6c757d; text-decoration: none;">
+                            <span class="tm_btn_icon">📁</span>
+                            <span class="tm_btn_text">Item #{{ $loop->iteration }} Slot ZIP</span>
+                        </a>
+                    @endif
+                @endforeach
             </div>
         </div>
     </div>

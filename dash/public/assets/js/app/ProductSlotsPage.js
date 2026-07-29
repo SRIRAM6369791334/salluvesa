@@ -1,8 +1,7 @@
-const gridNew = new gridjs.Grid({
     columns: [
         "S.No",
-
         "Product",
+        "Artwork Preview",
         "Price",
         "Product Qut",
         "Amount",
@@ -38,7 +37,24 @@ const gridNew = new gridjs.Grid({
                 } else if (productSlot.design_variant) {
                     return `<p>${productSlot.design.design_name} (${productSlot.design_variant.size_value} / ${productSlot.design_variant.color_value})</p>`;
                 }
-                return "<p>N/A</p>";
+                return `<p>${productSlot.product_name || 'N/A'}</p>`;
+            }),
+
+            gridjs.html(() => {
+                let html = '';
+                if (productSlot.preview_screenshot_url) {
+                    html += `<a href="${productSlot.preview_screenshot_url}" target="_blank"><img src="${productSlot.preview_screenshot_url}" style="width:50px; height:50px; object-fit:contain; border:1px solid #ddd; border-radius:6px; background:#fff;" title="View Preview Screenshot"></a>`;
+                }
+                if (productSlot.custom_logo_url) {
+                    html += `<div class="mt-1"><a href="${productSlot.custom_logo_url}" target="_blank" class="badge bg-primary text-white" download><i class="bx bx-download"></i> Download Logo</a></div>`;
+                }
+                if (productSlot.custom_text) {
+                    html += `<div class="small text-muted mt-1">Text: <b>${productSlot.custom_text}</b></div>`;
+                }
+                if (productSlot.customization_position && productSlot.customization_position !== 'none') {
+                    html += `<div class="badge bg-info text-white mt-1">${productSlot.customization_position}</div>`;
+                }
+                return html || '<span class="text-muted">Standard Item</span>';
             }),
 
             // productSlot.product.product_name,

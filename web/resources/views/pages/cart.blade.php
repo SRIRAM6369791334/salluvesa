@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
   <section class="premium-hero-section position-relative overflow-hidden">
@@ -35,22 +35,34 @@
                 <tr id="cart-row-{{ $item->id }}">
                   <td>
                     <div class="cs_cart_table_media">
-                      @if($item->design_id && $item->design)
+                      @if($item->preview_screenshot_url)
+                        <a href="{{ $item->preview_screenshot_url }}" target="_blank">
+                          <img src="{{ $item->preview_screenshot_url }}" alt="Customization Preview" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 1px dashed #cbd5e1; background: #fff;">
+                        </a>
+                      @elseif($item->design_id && $item->design)
                         {{-- Custom design preview with accurate overlay --}}
                         <x-design-preview :design="$item->design" width="80" />
                       @else
                         {{-- Regular product image --}}
-                        <img src="{{ env('MAIN_URL') . 'images/' . $item->product_image }}" alt="{{ $item->product_name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                        <img src="{{ Str::startsWith($item->product_image, 'http') ? $item->product_image : (env('MAIN_URL') ? env('MAIN_URL') . 'images/' . $item->product_image : asset($item->product_image)) }}" alt="{{ $item->product_name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
                       @endif
                       <h3>{{ $item->product_name }}</h3>
                       <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                        @if($item->design_id)
-                          <span class="badge bg-primary">{{ gt('Custom Design') }}</span><br>
+                        @if($item->design_id || $item->preview_screenshot_url)
+                          <span class="badge bg-primary">{{ gt('Customized') }}</span>
                         @endif
                         @if($item->product_type === 'own')
                           {{ gt('Cloth Type') }}: {{ $item->product_color }} | {{ gt('Size') }}: {{ $item->product_size }}
                         @else
                           {{ gt('Color') }}: <span class="cs_cart_color_swatch" style="background-color: {{ $item->product_color }};" title="{{ $item->product_color }}"></span> | {{ gt('Size') }}: {{ $item->product_size }}
+                        @endif
+                        @if($item->customization_position && $item->customization_position !== 'none')
+                          <div class="mt-1 text-dark" style="font-size: 11px;">
+                            <i class="fa-solid fa-layer-group text-primary me-1"></i> {{ $item->customization_type ?: 'Customized' }} ({{ $item->customization_position }})
+                            @if($item->custom_text)
+                              <br><i class="fa-solid fa-font text-secondary me-1"></i> Text: <b>"{{ $item->custom_text }}"</b>
+                            @endif
+                          </div>
                         @endif
                         @if($item->roster_data && count($item->roster_data) > 0)
                           <div class="mt-1">

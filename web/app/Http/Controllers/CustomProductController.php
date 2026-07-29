@@ -175,9 +175,9 @@ class CustomProductController extends Controller
             'extra_element_price' => (float)($product->extra_element_price ?? 50),
             'sizes' => $sizes,
             'colors' => $colors,
-            'printable_rect' => $product->printable_rect ?? [
-                'x' => 100, 'y' => 100, 'width' => 200, 'height' => 300 // Fallback
-            ],
+            'printable_rect' => is_string($product->printable_rect) ? json_decode($product->printable_rect, true) : ($product->printable_rect ?? [
+                'front' => ['enabled' => true, 'top' => 25, 'left' => 28, 'width' => 44, 'height' => 55, 'label' => 'LEFT CHEST']
+            ]),
             'is_two_sided' => !empty($product->back_mockup),
             'canvas' => $canvasConfig
         ]);

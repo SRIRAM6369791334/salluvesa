@@ -208,6 +208,14 @@ class OrderController extends Controller
                     'design_id' => $item['design_id'] ?? null,
                     'snapshot_path' => $designSnapshot['path'] ?? null,
                     'snapshot_json' => isset($designSnapshot['json']) ? json_encode($designSnapshot['json']) : null,
+                    'customization_type' => $item['customization_type'] ?? 'none',
+                    'customization_method' => $item['customization_method'] ?? 'none',
+                    'customization_position' => $item['customization_position'] ?? 'none',
+                    'custom_text' => $item['custom_text'] ?? null,
+                    'custom_text_color' => $item['custom_text_color'] ?? null,
+                    'custom_logo_url' => $item['custom_logo_url'] ?? null,
+                    'customization_price' => $item['customization_price'] ?? 0.00,
+                    'preview_screenshot_url' => $item['preview_screenshot_url'] ?? null,
                 ]);
 
                 // Update Stock
@@ -407,6 +415,14 @@ class OrderController extends Controller
                     'design_id' => $item['design_id'] ?? null,
                     'snapshot_path' => $designSnapshot['path'] ?? null,
                     'snapshot_json' => isset($designSnapshot['json']) ? json_encode($designSnapshot['json']) : null,
+                    'customization_type' => $item['customization_type'] ?? 'none',
+                    'customization_method' => $item['customization_method'] ?? 'none',
+                    'customization_position' => $item['customization_position'] ?? 'none',
+                    'custom_text' => $item['custom_text'] ?? null,
+                    'custom_text_color' => $item['custom_text_color'] ?? null,
+                    'custom_logo_url' => $item['custom_logo_url'] ?? null,
+                    'customization_price' => $item['customization_price'] ?? 0.00,
+                    'preview_screenshot_url' => $item['preview_screenshot_url'] ?? null,
                 ]);
 
                 $this->decrementStock($item['product_id'], $item['product_type'], $item['product_quantity']);
@@ -546,6 +562,14 @@ class OrderController extends Controller
                     'design_id' => $item->design_id,
                     'snapshot_path' => $designSnapshot['path'] ?? null,
                     'snapshot_json' => isset($designSnapshot['json']) ? json_encode($designSnapshot['json']) : null,
+                    'customization_type' => $item->customization_type ?? 'none',
+                    'customization_method' => $item->customization_method ?? 'none',
+                    'customization_position' => $item->customization_position ?? 'none',
+                    'custom_text' => $item->custom_text ?? null,
+                    'custom_text_color' => $item->custom_text_color ?? null,
+                    'custom_logo_url' => $item->custom_logo_url ?? null,
+                    'customization_price' => $item->customization_price ?? 0.00,
+                    'preview_screenshot_url' => $item->preview_screenshot_url ?? null,
                 ]);
 
                 $this->decrementStock($item->product_id, $item->product_type, $item->product_quantity);

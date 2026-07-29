@@ -20,6 +20,14 @@ class Cart extends Model
         'session_id',
         'roster_data',
         'extra_price',
+        'customization_type',
+        'customization_method',
+        'customization_position',
+        'custom_text',
+        'custom_text_color',
+        'custom_logo_url',
+        'customization_price',
+        'preview_screenshot_url',
     ];
 
     protected $casts = [

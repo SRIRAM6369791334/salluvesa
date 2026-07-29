@@ -357,6 +357,9 @@ Route::middleware(['auth'])->group(function () {
     // Design Assets Download
     Route::get('/order-assets/zip/{orderId}', [OrderAssetsController::class, 'downloadZip'])->name('order-assets.zip');
     Route::get('/order-assets/file', [OrderAssetsController::class, 'downloadFile'])->name('order-assets.file');
+    Route::get('/admin/orders/slot/{slotId}/download-customization-zip', [ProductOrdersController::class, 'downloadCustomizationZip'])->name('admin.orders.download-zip');
+    Route::get('/admin/orders/slot/{slotId}/specsheet-pdf', [ProductOrdersController::class, 'downloadSpecSheetPdf'])->name('admin.orders.specsheet-pdf');
+    Route::get('/admin/orders/{orderId}/download-order-zip', [ProductOrdersController::class, 'downloadOrderCustomizationZip'])->name('admin.orders.download-order-zip');
 
     // Language Translation
     Route::get('lang/{locale}', [HomeController::class, 'lang'])->name('lang.switch');
@@ -382,6 +385,7 @@ Route::post('/custom-products/duplicate/{id}', [App\Http\Controllers\CustomProdu
 Route::post('/custom-products/store', [App\Http\Controllers\CustomProductController::class, 'store'])->name('custom-products.store');
 Route::get('/custom-products/edit/{id}', [App\Http\Controllers\CustomProductController::class, 'edit'])->name('custom-products.edit');
 Route::post('/custom-products/update/{id}', [App\Http\Controllers\CustomProductController::class, 'update'])->name('custom-products.update');
+Route::post('/custom-products/{id}/save-placement', [App\Http\Controllers\CustomProductController::class, 'savePlacement'])->name('custom-products.save-placement');
 
 
 //TODAY DEALS

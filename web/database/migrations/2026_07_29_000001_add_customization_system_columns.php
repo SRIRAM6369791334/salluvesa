@@ -13,7 +13,25 @@ return new class extends Migration
      */
     public function up()
     {
-        // 1. Add columns to product_varient table if exists
+        // 1. Add columns to customproducts table if exists
+        if (Schema::hasTable('customproducts')) {
+            Schema::table('customproducts', function (Blueprint $table) {
+                if (!Schema::hasColumn('customproducts', 'is_customizable')) {
+                    $table->tinyInteger('is_customizable')->default(1);
+                }
+                if (!Schema::hasColumn('customproducts', 'embroidery_price')) {
+                    $table->decimal('embroidery_price', 10, 2)->default(150.00);
+                }
+                if (!Schema::hasColumn('customproducts', 'printing_price')) {
+                    $table->decimal('printing_price', 10, 2)->default(100.00);
+                }
+                if (!Schema::hasColumn('customproducts', 'text_only_price')) {
+                    $table->decimal('text_only_price', 10, 2)->default(75.00);
+                }
+            });
+        }
+
+        // 1b. Add columns to product_varient table if exists
         $variantTable = Schema::hasTable('product_varient') ? 'product_varient' : (Schema::hasTable('product_variants') ? 'product_variants' : null);
         if ($variantTable) {
             Schema::table($variantTable, function (Blueprint $table) use ($variantTable) {

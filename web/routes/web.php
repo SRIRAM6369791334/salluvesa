@@ -119,6 +119,10 @@ Route::prefix('api')->group(function () {
     });
 });
 
+// Customization Upload Routes
+Route::post('/customization/upload', [App\Http\Controllers\CustomizationUploadController::class, 'uploadLogo'])->name('customization.upload');
+Route::post('/upload-customization-preview', [App\Http\Controllers\CustomizationUploadController::class, 'uploadPreview'])->name('customization.upload_preview');
+
 Route::get('/own-design', [DesignController::class, 'index']);
 Route::get('/customize-products', [App\Http\Controllers\CustomProductController::class, 'picker'])->name('customize-products.index');
 Route::get('/design', function () {

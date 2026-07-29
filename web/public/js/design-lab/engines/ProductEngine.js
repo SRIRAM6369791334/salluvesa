@@ -51,27 +51,35 @@ class ProductEngine extends DesignLab.BaseEngine {
             if (mockupImg && firstView) mockupImg.src = firstView;
 
 
-            // ══════════════════════════════════════════════════════════════
-            // STATIC PRINT-AREA CONFIG — edit numbers here, then refresh.
-            // x/y  = px from top-left corner of the mockup image.
-            // All values are independent per view.
-            // ══════════════════════════════════════════════════════════════
+            // Dynamically build print-area rects from API printable_rect if available
             this._printAreaRects = {
-                'front': {
-                    x: 195, y: 120, width: 210, height: 350,
-                    // Second box on front view (e.g. left-chest pocket area)
-                    second: { x: 290, y: 120, width: 115, height: 115 },
-                },
-                'back': {
-                    x: 195, y: 130, width: 210, height: 330,
-                },
-                'right-shoulder': {
-                    x: 180, y: 100, width: 190, height: 280,
-                },
-                'left-shoulder': {
-                    x: 250, y: 110, width: 150, height: 200,
-                },
+                'front': { x: 195, y: 120, width: 210, height: 350 },
+                'back': { x: 195, y: 130, width: 210, height: 330 },
+                'right-shoulder': { x: 180, y: 100, width: 190, height: 280 },
+                'left-shoulder': { x: 250, y: 110, width: 150, height: 200 }
             };
+
+            if (data.printable_rect) {
+                try {
+                    const parsed = typeof data.printable_rect === 'string' ? JSON.parse(data.printable_rect) : data.printable_rect;
+                    if (parsed && typeof parsed === 'object') {
+                        const containerWidth = 600;
+                        const containerHeight = 600;
+
+                        ['front', 'back', 'left', 'right'].forEach(viewKey => {
+                            const conf = parsed[viewKey];
+                            if (conf && conf.enabled !== false) {
+                                const targetKey = viewKey === 'left' ? 'left-shoulder' : (viewKey === 'right' ? 'right-shoulder' : viewKey);
+                                const x = Math.round(((conf.left || 25) / 100) * containerWidth);
+                                const y = Math.round(((conf.top || 25) / 100) * containerHeight);
+                                const w = Math.round(((conf.width || 40) / 100) * containerWidth);
+                                const h = Math.round(((conf.height || 40) / 100) * containerHeight);
+                                this._printAreaRects[targetKey] = { x, y, width: w, height: h, label: conf.label };
+                            }
+                        });
+                    }
+                } catch(e) { console.error('[ProductEngine] Error parsing printable_rect:', e); }
+            }
 
             // Apply initial front rect
             this._applyPrintAreaRect('front');

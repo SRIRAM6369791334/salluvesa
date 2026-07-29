@@ -13,7 +13,25 @@ return new class extends Migration
      */
     public function up()
     {
-        // 1. Add columns to product_varient table if exists
+        // 1. Add columns to customproducts table if exists
+        if (Schema::hasTable('customproducts')) {
+            Schema::table('customproducts', function (Blueprint $table) {
+                if (!Schema::hasColumn('customproducts', 'is_customizable')) {
+                    $table->tinyInteger('is_customizable')->default(1);
+                }
+                if (!Schema::hasColumn('customproducts', 'embroidery_price')) {
+                    $table->decimal('embroidery_price', 10, 2)->default(150.00);
+                }
+                if (!Schema::hasColumn('customproducts', 'printing_price')) {
+                    $table->decimal('printing_price', 10, 2)->default(100.00);
+                }
+                if (!Schema::hasColumn('customproducts', 'text_only_price')) {
+                    $table->decimal('text_only_price', 10, 2)->default(75.00);
+                }
+            });
+        }
+
+        // 1b. Add columns to product_varient table if exists
         $variantTable = Schema::hasTable('product_varient') ? 'product_varient' : (Schema::hasTable('product_variants') ? 'product_variants' : null);
         if ($variantTable) {
             Schema::table($variantTable, function (Blueprint $table) use ($variantTable) {
@@ -130,5 +148,38 @@ return new class extends Migration
      */
     public function down()
     {
+        $variantTable = Schema::hasTable('product_varient') ? 'product_varient' : (Schema::hasTable('product_variants') ? 'product_variants' : null);
+        if ($variantTable) {
+            Schema::table($variantTable, function (Blueprint $table) use ($variantTable) {
+                $cols = ['is_customizable', 'front_view_img', 'back_view_img', 'left_view_img', 'right_view_img', 'placement_config', 'embroidery_price', 'printing_price', 'text_only_price'];
+                foreach ($cols as $col) {
+                    if (Schema::hasColumn($variantTable, $col)) {
+                        $table->dropColumn($col);
+                    }
+                }
+            });
+        }
+
+        if (Schema::hasTable('carts')) {
+            Schema::table('carts', function (Blueprint $table) {
+                $cols = ['customization_type', 'customization_method', 'customization_position', 'custom_text', 'custom_text_color', 'custom_logo_url', 'embroidery_icon_id', 'custom_instructions', 'customization_price', 'preview_screenshot_url'];
+                foreach ($cols as $col) {
+                    if (Schema::hasColumn('carts', $col)) {
+                        $table->dropColumn($col);
+                    }
+                }
+            });
+        }
+
+        if (Schema::hasTable('product_slots')) {
+            Schema::table('product_slots', function (Blueprint $table) {
+                $cols = ['customization_type', 'customization_method', 'customization_position', 'custom_text', 'custom_text_color', 'custom_logo_url', 'embroidery_icon_id', 'custom_instructions', 'customization_price', 'preview_screenshot_url', 'mockup_url'];
+                foreach ($cols as $col) {
+                    if (Schema::hasColumn('product_slots', $col)) {
+                        $table->dropColumn($col);
+                    }
+                }
+            });
+        }
     }
 };

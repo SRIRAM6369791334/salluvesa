@@ -33,8 +33,9 @@ const gridNew = new gridjs.Grid({
             ),
             product.status,
             gridjs.html(
-                `<div style="display: flex; gap: 5px;">
+                `<div style="display: flex; gap: 4px; justify-content: center;">
                     <button class="btn btn-secondary btn-sm edit_btn" data-id="${product.id}">Edit</button>
+                    <button class="btn btn-info btn-sm placement_btn" data-id="${product.id}" style="background-color: #038edc; border-color: #038edc; color: #fff;">🎯 Placement</button>
                     <button class="btn btn-danger btn-sm delete_btn" data-id="${product.id}">Delete</button>
                 </div>`
             ),
@@ -62,6 +63,7 @@ const gridNew = new gridjs.Grid({
 gridNew.render(document.getElementById("table-gridjs"));
 
 function gridjsReRender(products) {
+    window.customProducts = products;
     gridNew.updateConfig({
         data: products.map((product) => {
             return [
@@ -79,9 +81,10 @@ function gridjsReRender(products) {
                 ),
                 product.status,
                 gridjs.html(
-                    `<div style="display: flex; gap: 5px;">
+                    `<div style="display: flex; gap: 4px; justify-content: center;">
                         <button class="btn btn-secondary btn-sm edit_btn" data-id="${product.id}">Edit</button>
-                        <button class="btn btn-anger btn-sm delete_btn" data-id="${product.id}">Delete</button>
+                        <button class="btn btn-info btn-sm placement_btn" onclick="openPlacementStudio(${product.id})" data-id="${product.id}" style="background-color: #038edc; border-color: #038edc; color: #fff;">🎯 Placement</button>
+                        <button class="btn btn-danger btn-sm delete_btn" data-id="${product.id}">Delete</button>
                     </div>`
                 ),
             ];
@@ -380,11 +383,323 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire("Error!", data.message || "Failed to update product.", "error");
                     }
                 })
-                .catch(error => {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Save Product';
-                    console.error('Error:', error);
-                });
         });
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // Interactive Embroidery & Logo Placement Studio JS Engine
+    // ─────────────────────────────────────────────────────────────
+    let currentPlacementProductId = null;
+    let currentPlacementProduct = null;
+    let currentPlacementView = 'front';
+    let placementConfigData = {
+        front: { enabled: true, top: 25, left: 28, width: 44, height: 55, radius: 4, rotation: 0, label: 'LEFT CHEST' },
+        back: { enabled: true, top: 20, left: 20, width: 60, height: 60, radius: 4, rotation: 0, label: 'UPPER BACK' },
+        left: { enabled: true, top: 30, left: 30, width: 40, height: 40, radius: 4, rotation: 0, label: 'LEFT SLEEVE' },
+        right: { enabled: true, top: 30, left: 30, width: 40, height: 40, radius: 4, rotation: 0, label: 'RIGHT SLEEVE' }
+    };
+
+    window.openPlacementStudio = function(id) {
+        currentPlacementProductId = id;
+        const productsList = window.customProducts || (typeof customProducts !== 'undefined' ? customProducts : []);
+        currentPlacementProduct = productsList.find(p => p.id == id);
+        
+        if (!currentPlacementProduct) {
+            console.error('Custom product not found for ID:', id);
+            return;
+        }
+        
+        // Parse existing printable_rect if available
+        if (currentPlacementProduct.printable_rect) {
+            try {
+                const parsed = typeof currentPlacementProduct.printable_rect === 'string' ? JSON.parse(currentPlacementProduct.printable_rect) : currentPlacementProduct.printable_rect;
+                if (parsed && typeof parsed === 'object') {
+                    placementConfigData = Object.assign(placementConfigData, parsed);
+                }
+            } catch(err) { console.error('Error parsing placement_config:', err); }
+        }
+
+        currentPlacementView = 'front';
+        loadPlacementView('front');
+        
+        const modalEl = document.getElementById('placementModal');
+        if (modalEl) {
+            let modal = bootstrap.Modal.getInstance(modalEl);
+            if (!modal) {
+                modal = new bootstrap.Modal(modalEl);
+            }
+            modal.show();
+        } else {
+            console.error('placementModal element not found');
+        }
+    };
+
+    document.addEventListener('click', function(e) {
+        const btn = e.target ? e.target.closest('.placement_btn') : null;
+        if (btn) {
+            e.preventDefault();
+            const id = btn.getAttribute('data-id');
+            window.openPlacementStudio(id);
+        }
+    });
+
+    function loadPlacementView(view) {
+        currentPlacementView = view;
+        document.querySelectorAll('.placement-view-tab').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === view);
+        });
+
+        // Set mockup image
+        const imgEl = document.getElementById('placement-garment-img');
+        let imgSrc = currentPlacementProduct.front_mockup;
+        if (view === 'back' && currentPlacementProduct.back_mockup) imgSrc = currentPlacementProduct.back_mockup;
+        if (view === 'left' && currentPlacementProduct.left_shoulder_mockup) imgSrc = currentPlacementProduct.left_shoulder_mockup;
+        if (view === 'right' && currentPlacementProduct.right_shoulder_mockup) imgSrc = currentPlacementProduct.right_shoulder_mockup;
+
+        imgEl.src = imgSrc ? '/' + imgSrc.replace(/^\//, '') : 'https://placehold.co/600x600?text=No+Mockup';
+
+        // Load config values for view
+        const conf = placementConfigData[view] || { enabled: true, top: 25, left: 28, width: 44, height: 55, radius: 4, rotation: 0, label: 'ZONE' };
+        document.getElementById('ps_enable_view').checked = conf.enabled !== false;
+        document.getElementById('range_top_y').value = conf.top || 25;
+        document.getElementById('range_left_x').value = conf.left || 28;
+        document.getElementById('range_width').value = conf.width || 44;
+        document.getElementById('range_height').value = conf.height || 55;
+        document.getElementById('range_radius').value = conf.radius || 4;
+        document.getElementById('range_rotation').value = conf.rotation || 0;
+        document.getElementById('placement_zone_label').value = conf.label || (view === 'front' ? 'LEFT CHEST' : (view === 'back' ? 'UPPER BACK' : view.toUpperCase() + ' SLEEVE'));
+
+        updatePlacementBoxUI();
+    }
+
+    function updatePlacementBoxUI() {
+        const enabled = document.getElementById('ps_enable_view').checked;
+        const top = document.getElementById('range_top_y').value;
+        const left = document.getElementById('range_left_x').value;
+        const width = document.getElementById('range_width').value;
+        const height = document.getElementById('range_height').value;
+        const radius = document.getElementById('range_radius').value;
+        const rotation = document.getElementById('range_rotation').value;
+        const label = document.getElementById('placement_zone_label').value;
+
+        document.getElementById('val_top_y').innerText = top + '%';
+        document.getElementById('val_left_x').innerText = left + '%';
+        document.getElementById('val_width').innerText = width + '%';
+        document.getElementById('val_height').innerText = height + '%';
+        document.getElementById('val_radius').innerText = radius + 'px';
+        document.getElementById('val_rotation').innerText = rotation + '°';
+        document.getElementById('placement-box-label').innerText = label || 'ZONE';
+
+        const box = document.getElementById('draggable-placement-box');
+        if (box) {
+            if (enabled) {
+                box.style.display = 'flex';
+                box.style.top = top + '%';
+                box.style.left = left + '%';
+                box.style.width = width + '%';
+                box.style.height = height + '%';
+                box.style.borderRadius = radius + 'px';
+                box.style.transform = `rotate(${rotation}deg)`;
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+        // Save to local object
+        placementConfigData[currentPlacementView] = {
+            enabled: enabled,
+            top: parseInt(top),
+            left: parseInt(left),
+            width: parseInt(width),
+            height: parseInt(height),
+            radius: parseInt(radius),
+            rotation: parseInt(rotation),
+            label: label
+        };
+    }
+
+    // Attach Slider listeners & toggle switch
+    ['range_top_y', 'range_left_x', 'range_width', 'range_height', 'range_radius', 'range_rotation', 'placement_zone_label', 'ps_enable_view'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updatePlacementBoxUI);
+            el.addEventListener('change', updatePlacementBoxUI);
+        }
+    });
+
+    // Nudge +/- Buttons Handler
+    document.addEventListener('click', function(e) {
+        const nudgeBtn = e.target.closest('.nudge-btn');
+        if (nudgeBtn) {
+            const fieldId = nudgeBtn.dataset.field;
+            const step = parseInt(nudgeBtn.dataset.step || 1);
+            const el = document.getElementById(fieldId);
+            if (el) {
+                let val = parseInt(el.value || 0) + step;
+                val = Math.max(parseInt(el.min || 0), Math.min(parseInt(el.max || 100), val));
+                el.value = val;
+                updatePlacementBoxUI();
+            }
+        }
+
+        // Preset Buttons Handler
+        const presetBtn = e.target.closest('.preset-btn');
+        if (presetBtn) {
+            const preset = presetBtn.dataset.preset;
+            if (preset === 'left_chest') {
+                document.getElementById('placement_zone_label').value = 'LEFT CHEST';
+                document.getElementById('range_top_y').value = 35;
+                document.getElementById('range_left_x').value = 28;
+                document.getElementById('range_width').value = 28;
+                document.getElementById('range_height').value = 22;
+            } else if (preset === 'right_chest') {
+                document.getElementById('placement_zone_label').value = 'RIGHT CHEST';
+                document.getElementById('range_top_y').value = 35;
+                document.getElementById('range_left_x').value = 52;
+                document.getElementById('range_width').value = 28;
+                document.getElementById('range_height').value = 22;
+            } else if (preset === 'center_chest') {
+                document.getElementById('placement_zone_label').value = 'CENTER CHEST';
+                document.getElementById('range_top_y').value = 32;
+                document.getElementById('range_left_x').value = 34;
+                document.getElementById('range_width').value = 32;
+                document.getElementById('range_height').value = 25;
+            } else if (preset === 'upper_back') {
+                document.getElementById('placement_zone_label').value = 'UPPER BACK';
+                document.getElementById('range_top_y').value = 28;
+                document.getElementById('range_left_x').value = 32;
+                document.getElementById('range_width').value = 36;
+                document.getElementById('range_height').value = 28;
+            } else if (preset === 'sleeve') {
+                document.getElementById('placement_zone_label').value = currentPlacementView.toUpperCase() + ' SLEEVE';
+                document.getElementById('range_top_y').value = 38;
+                document.getElementById('range_left_x').value = 32;
+                document.getElementById('range_width').value = 28;
+                document.getElementById('range_height').value = 22;
+            }
+            updatePlacementBoxUI();
+        }
+    });
+
+    // Attach View Tab Listeners
+    document.querySelectorAll('.placement-view-tab').forEach(btn => {
+        btn.addEventListener('click', function() {
+            loadPlacementView(this.dataset.view);
+        });
+    });
+
+    // ===== MOUSE DRAG & CORNER HANDLE RESIZE LOGIC =====
+    (function initDragAndResize() {
+        const box = document.getElementById('draggable-placement-box');
+        const container = document.getElementById('placement-canvas-area');
+        if (!box || !container) return;
+
+        let isDragging = false;
+        let isResizing = false;
+        let resizeHandle = '';
+        let startX, startY, startLeft, startTop, startWidth, startHeight;
+
+        box.addEventListener('mousedown', function(e) {
+            if (e.target.classList.contains('ps-handle')) {
+                isResizing = true;
+                resizeHandle = e.target.dataset.handle;
+            } else {
+                isDragging = true;
+            }
+            startX = e.clientX;
+            startY = e.clientY;
+
+            const rect = box.getBoundingClientRect();
+            const parentRect = container.getBoundingClientRect();
+
+            startLeft = rect.left - parentRect.left;
+            startTop = rect.top - parentRect.top;
+            startWidth = rect.width;
+            startHeight = rect.height;
+
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging && !isResizing) return;
+            const parentRect = container.getBoundingClientRect();
+            if (!parentRect || parentRect.width === 0) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            if (isDragging) {
+                let newLeft = Math.max(0, Math.min(parentRect.width - startWidth, startLeft + dx));
+                let newTop = Math.max(0, Math.min(parentRect.height - startHeight, startTop + dy));
+
+                let leftPct = Math.round((newLeft / parentRect.width) * 100);
+                let topPct = Math.round((newTop / parentRect.height) * 100);
+
+                document.getElementById('range_left_x').value = Math.min(90, Math.max(0, leftPct));
+                document.getElementById('range_top_y').value = Math.min(90, Math.max(0, topPct));
+                updatePlacementBoxUI();
+            } else if (isResizing) {
+                let newWidth = startWidth;
+                let newHeight = startHeight;
+
+                if (resizeHandle.includes('e')) newWidth = Math.max(30, startWidth + dx);
+                if (resizeHandle.includes('s')) newHeight = Math.max(30, startHeight + dy);
+                if (resizeHandle.includes('w')) newWidth = Math.max(30, startWidth - dx);
+                if (resizeHandle.includes('n')) newHeight = Math.max(30, startHeight - dy);
+
+                let widthPct = Math.round((newWidth / parentRect.width) * 100);
+                let heightPct = Math.round((newHeight / parentRect.height) * 100);
+
+                document.getElementById('range_width').value = Math.min(80, Math.max(10, widthPct));
+                document.getElementById('range_height').value = Math.min(80, Math.max(10, heightPct));
+                updatePlacementBoxUI();
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+            isResizing = false;
+        });
+    })();
+
+    // Save Button Click
+    document.getElementById('save-placement-btn')?.addEventListener('click', function() {
+        if (!currentPlacementProductId) return;
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bx bx-loader-alt bx-spin me-1"></i> Saving...';
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        fetch(`/custom-products/${currentPlacementProductId}/save-placement`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ placement_config: placementConfigData })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bx bx-save me-1"></i> Save Placement Settings';
+            if (data.success) {
+                Swal.fire("Success!", data.message || "Placement settings saved successfully!", "success");
+                const modalEl = document.getElementById('placementModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+                if (data.products) gridjsReRender(data.products);
+            } else {
+                Swal.fire("Error!", "Failed to save placement settings.", "error");
+            }
+        })
+        .catch(err => {
+            console.error('Error saving placement:', err);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bx bx-save me-1"></i> Save Placement Settings';
+            Swal.fire("Error!", "Error saving placement settings.", "error");
+        });
+    });
 });
