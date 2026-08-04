@@ -193,6 +193,7 @@
 @endsection
 
 @section('script')
+    <script src="{{ URL::asset('assets/js/app.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const addressInput = document.getElementById('store_address');

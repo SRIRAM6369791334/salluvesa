@@ -64,19 +64,9 @@
                             </a>
                         </li>
 
-                        <li>
-                            <a href="{{ route('bank-details.index') }}">
-                                <i class="bx bx-bank nav-icon"></i>
-                                <span class="menu-item" data-key="t-bank-details">Bank Details</span>
-                            </a>
-                        </li>
+                        
 
-                        <li>
-                            <a href="{{ route('contact.settings.index') }}">
-                                <i class="bx bx-phone-call nav-icon"></i>
-                                <span class="menu-item" data-key="t-contact-settings">Contact Settings</span>
-                            </a>
-                        </li>
+                        
 
                         <li class="menu-title" data-key="t-applications">Users</li>
                         <li>
@@ -299,6 +289,12 @@
                             <a href="{{ route('bank-details.index') }}">
                                 <i class="mdi mdi-bank nav-icon"></i>
                                 <span class="menu-item" data-key="t-chat">Bank Details</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('contact.settings.index') }}">
+                                <i class="bx bx-phone-call nav-icon"></i>
+                                <span class="menu-item" data-key="t-contact-settings">Contact Settings</span>
                             </a>
                         </li>
                       
