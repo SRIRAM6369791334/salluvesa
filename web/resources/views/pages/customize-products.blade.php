@@ -180,13 +180,13 @@
                             </p>
 
                             {{-- /design?product_id=X — design.index has no name, so use url() --}}
-                            <div class="d-flex gap-2">
+                            <div class=" gap-2">
                                 <a href="{{ url('/design') . '?product_id=' . $product->id }}"
                                    class="btn tool-btn-premium active w-50 py-3 fw-bold"
                                    style="text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px;">
                                     <i class="fas fa-pen-ruler me-1"></i> {{ gt('Studio') }}
                                 </a>
-                                <button type="button"
+                                <!-- <button type="button"
                                         class="btn btn-primary w-50 py-3 fw-bold open-custom-modal"
                                         data-id="{{ $product->id }}"
                                         data-name="{{ e($product->name) }}"
@@ -198,7 +198,7 @@
                                         data-placement="{{ is_array($product->printable_rect) ? json_encode($product->printable_rect) : ($product->printable_rect ?: '') }}"
                                         style="text-transform: uppercase; letter-spacing: 0.5px; font-size: 11px; background: linear-gradient(135deg, #1C30A3 0%, #2B45D4 100%); border: none;">
                                     <i class="fas fa-magic me-1"></i> {{ gt('Quick Custom') }}
-                                </button>
+                                </button> -->
                             </div>
                         </div>
 

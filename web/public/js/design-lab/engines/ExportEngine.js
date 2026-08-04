@@ -40,6 +40,19 @@ class ExportEngine extends DesignLab.BaseEngine {
             return;
         }
 
+        // Ensure shirt size is selected
+        const selectedSize = this.app.productEngine?.getSelectedSize();
+        if (!selectedSize) {
+            this.bus.emit('ui:notify', { msg: 'Please select a shirt size before proceeding to checkout!', icon: 'warning' });
+            const sizeGrid = document.getElementById('product-size-grid');
+            if (sizeGrid) {
+                sizeGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                sizeGrid.classList.add('size-highlight-pulse');
+                setTimeout(() => sizeGrid.classList.remove('size-highlight-pulse'), 2000);
+            }
+            return;
+        }
+
         // App Setting Validation
         const qty = parseInt(document.getElementById('quantity-input')?.value, 10) || 1;
         if (window.__appSetting) {

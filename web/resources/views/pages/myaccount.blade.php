@@ -57,7 +57,7 @@
                     <i class="fa-solid fa-boxes-stacked"></i>{{ gt('Bulk Orders') }}
                   </a>
                 </li>
-                <li class="desktop-only-designs">
+                <li class="desktop-only-designs" style="display: none !important;">
                   <a href="#designs" class="cs_medium account-menu-item" data-tab="designs">
                     <i class="fa-solid fa-palette"></i>{{ gt('My Designs') }}
                   </a>
@@ -431,7 +431,7 @@
         </div>
 
         <!-- Designs Tab -->
-        <div id="tab-designs" class="tab-content-panel desktop-only-designs">
+        <div id="tab-designs" class="tab-content-panel desktop-only-designs" style="display: none !important;">
           <div class="cs_shop-card">
             <h2 class="cs_fs_28 cs_semibold">{{ gt('My Saved Designs') }}</h2>
             <div class="cs_height_30 cs_height_lg_30"></div>

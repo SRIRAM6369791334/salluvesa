@@ -127,8 +127,16 @@
                 <tr>
                   <td>
                     <div class="d-flex align-items-start gap-3">
-                      @if($item->design_id && $item->design)
-                      <x-design-preview :design="$item->design" width="40" />
+                      @if($item->preview_screenshot_url)
+                        <a href="{{ $item->preview_screenshot_url }}" target="_blank">
+                          <img src="{{ $item->preview_screenshot_url }}" alt="Preview" style="width: 45px; height: 45px; object-fit: contain; border-radius: 6px; border: 1px dashed #cbd5e1; background: #fff; flex-shrink: 0;">
+                        </a>
+                      @elseif($item->design_id && $item->design)
+                        <div style="width: 45px; flex-shrink: 0;">
+                          <x-design-preview :design="$item->design" width="45" />
+                        </div>
+                      @else
+                        <img src="{{ Str::startsWith($item->product_image, 'http') ? $item->product_image : (env('MAIN_URL') ? env('MAIN_URL') . 'images/' . $item->product_image : asset($item->product_image)) }}" alt="{{ $item->product_name }}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; flex-shrink: 0;">
                       @endif
                       <div>
                         {{ $item->product_name }} <br>

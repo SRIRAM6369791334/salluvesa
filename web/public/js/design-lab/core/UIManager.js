@@ -78,10 +78,21 @@ class UIManager {
         // Open drawer
         if (drawer) drawer.classList.add('active');
 
-        // Switch panel
-        document.querySelectorAll('.cs_tool_panel').forEach(panel => {
-            panel.classList.toggle('active', panel.id === `tool-panel-${tool}`);
-        });
+        // Check if unified mode is enabled
+        const isUnified = document.querySelector('.cs_drawer_content')?.classList.contains('cs_unified_mode');
+
+        if (isUnified) {
+            // Keep panels active and smooth-scroll to selected tool
+            const targetPanel = document.getElementById(`tool-panel-${tool}`);
+            if (targetPanel) {
+                targetPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+            // Standard tab panel switching
+            document.querySelectorAll('.cs_tool_panel').forEach(panel => {
+                panel.classList.toggle('active', panel.id === `tool-panel-${tool}`);
+            });
+        }
 
         // Update drawer title — read from tab dataset first, then fallback map
         const tab = document.querySelector(`.cs_sidebar_tab[data-tool="${tool}"]`);

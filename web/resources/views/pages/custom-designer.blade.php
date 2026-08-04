@@ -42,6 +42,123 @@
         margin-top: 1rem;
         line-height: 1.6;
     }
+    /* Hide WhatsApp floating icon & scroll-top button specifically on Custom Designer page */
+    .whatsapp_float_btn,
+    #cs_scroll_btn {
+        display: none !important;
+    }
+
+    @keyframes sizePulse {
+        0% { outline: 3px solid #1C30A3; box-shadow: 0 0 10px rgba(28, 48, 163, 0.5); }
+        50% { outline: 4px solid #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.7); }
+        100% { outline: 3px solid #1C30A3; box-shadow: 0 0 10px rgba(28, 48, 163, 0.5); }
+    }
+    .size-highlight-pulse {
+        animation: sizePulse 0.6s ease-in-out 3;
+        border-radius: 8px;
+    }
+
+    /* ════════════════════════ UNIFIED SIDEBAR PREMIUM UI ════════════════════════ */
+    .cs_design_sidebar {
+        background: #0f172a !important; /* Deep luxury navy */
+        border-right: 1px solid #1e293b;
+    }
+    .cs_sidebar_tab {
+        border-radius: 14px !important;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .cs_sidebar_tab:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        transform: translateY(-2px);
+    }
+    .cs_sidebar_tab.active {
+        background: linear-gradient(135deg, #1C30A3 0%, #0d1b69 100%) !important;
+        box-shadow: 0 6px 20px rgba(28, 48, 163, 0.4) !important;
+    }
+
+    .cs_design_drawer {
+        width: 410px !important;
+        background: #f8fafc !important; /* Soft off-white backdrop */
+        border-right: 1.5px solid #e2e8f0 !important;
+    }
+    .cs_drawer_header {
+        background: #ffffff !important;
+        border-bottom: 1.5px solid #e2e8f0 !important;
+        padding: 20px 24px !important;
+    }
+    .cs_drawer_header h3 {
+        font-family: var(--font-display, 'Outfit', sans-serif);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+    }
+    .cs_drawer_content {
+        padding: 20px 22px !important;
+    }
+
+    /* Section Cards inside Drawer */
+    .cs_unified_mode .cs_tool_panel {
+        background: #ffffff !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 16px !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03) !important;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cs_unified_mode .cs_tool_panel:hover {
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 6px 24px rgba(15, 23, 42, 0.06) !important;
+    }
+
+    /* Size Buttons styling */
+    .cs_size_grid .cs_size_btn {
+        height: 42px !important;
+        min-width: 50px !important;
+        padding: 0 16px !important;
+        border: 1.5px solid #cbd5e1 !important;
+        background: #ffffff !important;
+        color: #1e293b !important;
+        font-weight: 700 !important;
+        font-size: 13px !important;
+        border-radius: 10px !important;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .cs_size_grid .cs_size_btn:hover {
+        border-color: #1C30A3 !important;
+        color: #1C30A3 !important;
+        background: #f0f4ff !important;
+        transform: translateY(-2px);
+    }
+    .cs_size_grid .cs_size_btn.active {
+        background: linear-gradient(135deg, #1C30A3 0%, #0d1b69 100%) !important;
+        color: #ffffff !important;
+        border-color: #1C30A3 !important;
+        box-shadow: 0 4px 14px rgba(28, 48, 163, 0.35) !important;
+    }
+
+    /* Upload Box styling */
+    .cs_upload_box {
+        border: 2px dashed #cbd5e1 !important;
+        background: #f8fafc !important;
+        border-radius: 16px !important;
+        padding: 30px 20px !important;
+        transition: all 0.3s ease !important;
+    }
+    .cs_upload_box:hover {
+        border-color: #1C30A3 !important;
+        background: #f0f4ff !important;
+        transform: translateY(-2px);
+    }
+    .cs_upload_box i {
+        color: #1C30A3 !important;
+        transition: transform 0.3s ease;
+    }
+    .cs_upload_box:hover i {
+        transform: scale(1.15);
+    }
+
     @media (min-width: 200px) and (max-width: 1300px) {
         .mobile-blocked-overlay {
             display: flex !important;
@@ -95,11 +212,11 @@
 
             <div style="flex: 1;"></div>
 
-            <div class="cs_header_btn_group">
+            <div class="cs_header_btn_group" style="display: none !important;">
                 <input type="text" id="design-name-input" class="cs_header_input" placeholder="{{ gt('Design Name') }}" value="Untitled Design">
             </div>
 
-            <button class="cs_header_btn" id="save-design-btn" title="{{ gt('Save Draft') }}">
+            <button class="cs_header_btn" id="save-design-btn" title="{{ gt('Save Draft') }}" style="display: none !important;">
                 <i class="fas fa-save"></i> {{ gt('Save') }}
             </button>
             <button class="cs_header_btn accent" id="add-to-cart-btn" style="padding: 0 24px; font-weight: 700;">
@@ -122,7 +239,7 @@
                     <i class="fas fa-font"></i>
                     <span>{{ gt('Add Text') }}</span>
                 </button>
-                <button class="cs_sidebar_tab" data-tool="clipart" data-title="{{ gt('Add Art') }}">
+                <button class="cs_sidebar_tab" data-tool="clipart" data-title="{{ gt('Add Art') }}" style="display: none !important;">
                     <i class="fas fa-shapes"></i>
                     <span>{{ gt('Add Art') }}</span>
                 </button>
@@ -136,27 +253,49 @@
                 </button> -->
             </div>
 
-            <div class="cs_sidebar_bottom">
-                <button class="cs_sidebar_tab" data-tool="layers" data-title="{{ gt('Manage Layers') }}">
+            <div class="cs_sidebar_bottom" style="display: none !important;">
+                <button class="cs_sidebar_tab" data-tool="layers" data-title="{{ gt('Manage Layers') }}" style="display: none !important;">
                     <i class="fas fa-layer-group"></i>
                     <span>{{ gt('Layers') }}</span>
                 </button>
             </div>
         </div>
 
-        {{-- ══════════ CONTEXTUAL DRAWER ════════════════════════════════════ --}}
+        {{-- ══════════ CONTEXTUAL DRAWER (UNIFIED SIDEBAR) ═══════════════════ --}}
         <div class="cs_design_drawer active" id="design-drawer">
             <div class="cs_drawer_header">
-                <h3 id="drawer-title">{{ gt('Upload Image') }}</h3>
+                <h3 id="drawer-title">{{ gt('Design Studio Tools') }}</h3>
                 <button class="cs_drawer_close" id="close-drawer" aria-label="{{ gt('Close panel') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <div class="cs_drawer_content">
+            <div class="cs_drawer_content cs_unified_mode">
 
-                {{-- ── Upload Panel ──────────────────────────────────────── --}}
-                <div class="cs_tool_panel active" id="tool-panel-upload">
+                {{-- ── 1. Product & Size Options (Prominent First Section) ─ --}}
+                <div class="cs_tool_panel active" id="tool-panel-product" style="padding-bottom: 18px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px;">
+                    <div style="font-size: 13px; font-weight: 700; color: #1C30A3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+                        <span><i class="fas fa-tshirt me-1"></i> 1. {{ gt('Select Size & Quantity') }}</span>
+                        <span class="badge" style="background: #e0e7ff; color: #1C30A3; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 6px;">Required</span>
+                    </div>
+                    <div class="cs_drawer_section" style="margin-bottom: 14px;">
+                        <label class="cs_drawer_label" style="font-weight: 600;">{{ gt('Select Size') }} <span style="color: #ef4444;">*</span></label>
+                        <div class="cs_size_grid" id="product-size-grid">
+                            {{-- Populated by ProductEngine --}}
+                        </div>
+                    </div>
+                    <div class="cs_drawer_section" style="margin-bottom: 0;">
+                        <label class="cs_drawer_label" style="font-weight: 600;">{{ gt('Quantity') }}</label>
+                        <input type="number" class="cs_drawer_input" id="quantity-input"
+                                value="1" min="1" placeholder="{{ gt('Qty') }}">
+                    </div>
+                </div>
+
+                {{-- ── 2. Upload Image Panel ──────────────────────────────────────── --}}
+                <div class="cs_tool_panel active" id="tool-panel-upload" style="padding-bottom: 18px; border-bottom: 1.5px solid #e2e8f0; margin-bottom: 20px;">
+                    <div style="font-size: 13px; font-weight: 700; color: #1C30A3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-upload"></i> 2. {{ gt('Upload Image / Logo') }}
+                    </div>
                     <div class="cs_upload_box" id="upload-area" role="button" tabindex="0"
                          aria-label="{{ gt('Click or drag an image here to upload') }}">
                         <i class="fas fa-cloud-upload-alt"></i>
@@ -165,42 +304,17 @@
                         {{-- Accept attribute enforced at JS level too --}}
                         <input type="file" id="file-input" hidden accept="image/png,image/jpeg,image/webp,image/gif">
                     </div>
-                    <div class="cs_info_alert" style="margin-top: 20px;">
+                    <div class="cs_info_alert" style="margin-top: 15px;">
                         <i class="fas fa-shield-alt"></i>
                         <p>{{ gt('We respect copyrights. Please only upload art you own or have licensed.') }}</p>
                     </div>
                 </div>
 
-                {{-- ── Product Panel (color-grid ID matches ProductEngine) ─ --}}
-                <div class="cs_tool_panel" id="tool-panel-product">
-                    <!--<div class="cs_drawer_section">-->
-                    <!--    <label class="cs_drawer_label">{{ gt('Selected Color') }}</label>-->
-                    <!--    {{-- ID must match ProductEngine._renderColorGrid() → 'color-grid' --}}-->
-                    <!--    <div class="cs_color_grid" id="color-grid">-->
-                    <!--        {{-- Populated by ProductEngine --}}-->
-                    <!--    </div>-->
-                    <!--</div>-->
-                    <div class="cs_drawer_section">
-                        <label class="cs_drawer_label">{{ gt('Select Size') }}</label>
-                        <div class="cs_size_grid" id="product-size-grid">
-                            {{-- Populated by ProductEngine --}}
-                        </div>
+                {{-- ── 3. Add & Edit Text Panel ────────────────────────────────────────── --}}
+                <div class="cs_tool_panel active" id="tool-panel-text">
+                    <div style="font-size: 13px; font-weight: 700; color: #1C30A3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-font"></i> 3. {{ gt('Add & Edit Text') }}
                     </div>
-                    <div class="cs_drawer_section">
-                        <label class="cs_drawer_label">{{ gt('Quantity') }}</label>
-                        <input type="number" class="cs_drawer_input" id="quantity-input"
-                                value="1" min="1" placeholder="{{ gt('Qty') }}">
-                    </div>
-                    <div class="cs_drawer_section">
-                        <label class="cs_drawer_label">{{ gt('Decoration') }}</label>
-                        <div class="cs_summary_pill" style="background: #f0f7ff; color: #1C30A3;">
-                            <i class="fas fa-print"></i> {{ gt('High-Resolution Printing') }}
-                        </div>
-                    </div>
-                </div>
-
-                {{-- ── Text Panel ────────────────────────────────────────── --}}
-                <div class="cs_tool_panel" id="tool-panel-text">
                     <div class="cs_drawer_section">
                         <label class="cs_drawer_label">{{ gt('New Design Layer') }}</label>
                         <button class="cs_btn_primary" style="width: 100%" id="add-text-btn">

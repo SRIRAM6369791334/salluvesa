@@ -590,17 +590,21 @@
     ============================================ */
     .premium-products-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      margin-bottom: 80px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 320px));
+      gap: 28px;
+      justify-content: center;
+      margin-bottom: 60px;
     }
 
     .premium-product-card {
       opacity: 0;
       animation: cardFadeIn 0.6s ease-out forwards;
+      max-width: 320px;
+      width: 100%;
+      margin: 0 auto;
     }
 
-    @@keyframes cardFadeIn {
+    @keyframes cardFadeIn {
       from {
         opacity: 0;
         transform: translateY(30px);
@@ -629,32 +633,38 @@
 
     .product-card-inner {
       background: white;
-      border-radius: 24px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       height: 100%;
       display: flex;
       flex-direction: column;
     }
 
     .product-card-inner:hover {
-      transform: translateY(-12px);
-      box-shadow: 0 20px 60px rgba(28, 48, 163, 0.2);
+      transform: translateY(-8px);
+      border-color: #cbd5e1;
+      box-shadow: 0 16px 45px rgba(28, 48, 163, 0.15);
     }
 
     .product-image-wrapper {
       position: relative;
-      /* height: 320px; */
+      height: 290px;
       overflow: hidden;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .product-image {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      object-fit: contain;
+      padding: 10px;
+      transition: transform 0.5s ease;
     }
 
     /* .product-card-inner:hover .product-image {
@@ -965,13 +975,42 @@
     /* ============================================
        SIMPLE SAMPLE FORM MODAL
     ============================================ */
+    .premium-sample-swal-container {
+      padding: 10px !important;
+    }
+    .premium-sample-swal-container .swal2-popup {
+      margin: 0 auto !important;
+      max-width: 94vw !important;
+    }
+    .premium-sample-modal-popup {
+      border-radius: 20px !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      max-width: 94vw !important;
+      width: 760px !important;
+      border: 1px solid rgba(255, 255, 255, 0.6) !important;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25) !important;
+    }
+    .premium-sample-modal-popup .swal2-html-container {
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow-x: hidden !important;
+    }
     .simple-sample-form {
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fc 100%);
-      border-radius: 20px;
+      background: #ffffff;
+      border-radius: 0;
       padding: 0;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      box-shadow: none;
       overflow: hidden;
+      width: 100%;
       animation: modalSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+    }
+    .size-chart {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      width: 100% !important;
+      border-radius: 12px;
+      margin-top: 8px;
     }
 
     @@keyframes modalSlideIn {
@@ -1664,11 +1703,11 @@
             </div>
 
             <form class="garment-form" id="sample-order-form">
-              <div class="form-group" style="padding: 10px; background: #f8f9fa; border-radius: 6px; border-left: 4px solid #1C30A3; margin-bottom: 20px;">
-                <label style="margin-bottom: 5px; color: #555;">{{ gt('Product Price') }}</label>
-                <div style="font-size: 20px; font-weight: bold; color: #1C30A3;" id="sample_price_display">
+              <div class="sample-price-card">
+                <span style="font-weight: 600; color: #64748b; font-size: 13px;">{{ gt('Product Price') }}</span>
+                <span style="font-size: 22px; font-weight: 800; color: #1C30A3;" id="sample_price_display">
                   ${window.__currency?.symbol || '$'}${(parseFloat(productData.price || 0) * (window.__currency?.rate || 1)).toFixed(2)}
-                </div>
+                </span>
               </div>
 
               <div class="form-group">
@@ -1736,11 +1775,16 @@
         Swal.fire({
           title: false,
           html: formHtml,
-          width: '100%',
+          width: '760px',
+          customClass: {
+            container: 'premium-sample-swal-container',
+            popup: 'premium-sample-modal-popup'
+          },
           showCloseButton: true,
           showCancelButton: true,
           confirmButtonText: "{{ gt('Add to Order') }}",
           confirmButtonColor: '#1C30A3',
+          cancelButtonText: "{{ gt('Cancel') }}",
           didOpen: () => {
             // Optional: Add logic if specific color display is needed
           },
