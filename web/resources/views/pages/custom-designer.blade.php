@@ -456,7 +456,7 @@
                 <div style="display: flex; align-items: center;">
                     <div class="cs_price_block">
                         <span class="cs_label">{{ gt('Estimated Price') }}</span>
-                        <span class="cs_value" id="total-price" style="color: #111827;">$0.00</span>
+                        <span class="cs_value" id="total-price" style="color: #111827;">{{ format_currency(0) }}</span>
                     </div>
                     <div class="cs_summary_pill" style="margin-left: 20px;">
                         <i class="fas fa-truck"></i> {{ gt('Free Shipping included') }}
@@ -494,9 +494,9 @@
 
         @php
             $currService = app(\App\Services\CurrencyService::class);
-            $targetCurr = session('currency', 'USD');
-            $rate = $currService->getRate('USD', $targetCurr);
-            $symbol = $currService->getSupportedCurrencies()[$targetCurr]['symbol'] ?? '$';
+            $targetCurr = session('currency', 'INR');
+            $rate = $currService->getRate('INR', $targetCurr);
+            $symbol = $currService->getSupportedCurrencies()[$targetCurr]['symbol'] ?? '₹';
         @endphp
         window.__currency = {
             code: "{{ $targetCurr }}",

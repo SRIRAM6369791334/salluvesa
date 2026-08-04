@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
   <section class="premium-hero-section position-relative overflow-hidden"><div class="hero-particles" id="heroParticles"></div><div class="hero-gradient-overlay"></div><div class="container position-relative text-center" style="z-index:2"><div class="hero-content"><div class="hero-badge"><span class="badge-icon">✨</span><span>{{ gt('Our Story') }}</span></div><h1 class="premium-hero-title">{{ gt('About Us') }}</h1><p class="hero-subtitle">{{ gt('Discover our passion for quality and innovation') }}</p></div></div><div class="hero-wave"><svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="wave-fill"></path><path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="wave-fill"></path><path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="wave-fill"></path></svg></div></section>
@@ -15,7 +15,7 @@
               <img src="img/card4.jpg" alt="Card Image" class=" cs_radius_5 w-100">
               <div class="cs_card_badge position-absolute">
                 <h3 class="cs_fs_50 mb-0 cs_bold">{{ gt('Since') }}</h3>
-                <h3 class="cs_fs_50 mb-0 cs_bold">2010</h3>
+                <h3 class="cs_fs_50 mb-0 cs_bold">2015</h3>
                 <div class="cs_shape_1">
                   <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_395_2354)">
@@ -54,26 +54,20 @@
                 {{ gt('Welcome to our online fashion store, where style meets convenience. Explore the latest trends, timeless classics, and everything in between. Elevate your wardrobe with our curated collection of clothing, accessories, and more. Shop with confidence, knowing that quality and fashion are just a click away. Join us in the world of endless possibilities and express your unique style effortlessly. Happy shopping!') }}
               </p>
               <div class="cs_card_feature_list staggered-grid">
+                <div class="cs_store_feature position-relative">
+                  <div class="cs_feature_icon cs_accent_color position-absolute">
+                    <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M0 9.62275C0.0320847 8.83012 0.390363 8.2499 1.11227 7.93388C1.84487 7.61269 2.54004 7.73702 3.1443 8.25508C4.06406 9.0477 4.96777 9.85587 5.87684 10.6589C6.04796 10.8091 6.21908 10.9645 6.39554 11.1148C6.65757 11.3427 6.88751 11.3323 7.12279 11.0733C9.096 8.91819 11.0639 6.75789 13.0371 4.5976C14.3686 3.13668 15.7054 1.68094 17.037 0.220014C17.2027 0.0386945 17.3952 -0.0493752 17.6412 0.0283334C17.8498 0.0956808 18.0102 0.277001 17.9995 0.494585C17.9941 0.608557 17.946 0.732891 17.8819 0.831322C16.3685 3.19884 14.8552 5.56118 13.3419 7.92352C11.5986 10.6433 9.85534 13.3631 8.11207 16.0881C7.80727 16.5647 7.39551 16.8859 6.81264 16.974C6.15491 17.0776 5.60947 16.8704 5.19237 16.3782C3.69508 14.6116 2.20849 12.8399 0.716557 11.0681C0.433143 10.7469 0.133686 10.4257 0.0534744 9.98539C0.0267372 9.85587 0.0160423 9.73154 0 9.62275Z"
+                        fill="currentColor" />
+                    </svg>
+                  </div>
                   <h4 class="cs_feature_title cs_fs_21 cs_semibold">{{ gt('Fashion industries leading') }}</h4>
                   <p class="cs_feature_subtitle mb-0">{{ gt('We are a recognized authority in our field, setting industry standards through expertise and innovation.') }}</p>
-                  <div class="cs_feature_icon cs_accent_color position-absolute">
-                    <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M0 9.62275C0.0320847 8.83012 0.390363 8.2499 1.11227 7.93388C1.84487 7.61269 2.54004 7.73702 3.1443 8.25508C4.06406 9.0477 4.96777 9.85587 5.87684 10.6589C6.04796 10.8091 6.21908 10.9645 6.39554 11.1148C6.65757 11.3427 6.88751 11.3323 7.12279 11.0733C9.096 8.91819 11.0639 6.75789 13.0371 4.5976C14.3686 3.13668 15.7054 1.68094 17.037 0.220014C17.2027 0.0386945 17.3952 -0.0493752 17.6412 0.0283334C17.8498 0.0956808 18.0102 0.277001 17.9995 0.494585C17.9941 0.608557 17.946 0.732891 17.8819 0.831322C16.3685 3.19884 14.8552 5.56118 13.3419 7.92352C11.5986 10.6433 9.85534 13.3631 8.11207 16.0881C7.80727 16.5647 7.39551 16.8859 6.81264 16.974C6.15491 17.0776 5.60947 16.8704 5.19237 16.3782C3.69508 14.6116 2.20849 12.8399 0.716557 11.0681C0.433143 10.7469 0.133686 10.4257 0.0534744 9.98539C0.0267372 9.85587 0.0160423 9.73154 0 9.62275Z"
-                        fill="currentColor" />
-                    </svg>
-                  </div>
                 </div>
-                <div class="cs_store_feature position-relative">
+                <div class="cs_store_feature position-relative" style="padding-left: 0;">
                   <h4 class="cs_feature_title cs_fs_21 cs_semibold">{{ gt('Express your unique style') }}</h4>
                   <p class="cs_feature_subtitle mb-0">{{ gt('We believe in fashion as a form of self-expression. Our diverse range of products ensures that you can find pieces that reflect your individual style.') }}</p>
-                  <div class="cs_feature_icon cs_accent_color position-absolute">
-                    <svg width="18" height="17" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path
-                        d="M0 9.62275C0.0320847 8.83012 0.390363 8.2499 1.11227 7.93388C1.84487 7.61269 2.54004 7.73702 3.1443 8.25508C4.06406 9.0477 4.96777 9.85587 5.87684 10.6589C6.04796 10.8091 6.21908 10.9645 6.39554 11.1148C6.65757 11.3427 6.88751 11.3323 7.12279 11.0733C9.096 8.91819 11.0639 6.75789 13.0371 4.5976C14.3686 3.13668 15.7054 1.68094 17.037 0.220014C17.2027 0.0386945 17.3952 -0.0493752 17.6412 0.0283334C17.8498 0.0956808 18.0102 0.277001 17.9995 0.494585C17.9941 0.608557 17.946 0.732891 17.8819 0.831322C16.3685 3.19884 14.8552 5.56118 13.3419 7.92352C11.5986 10.6433 9.85534 13.3631 8.11207 16.0881C7.80727 16.5647 7.39551 16.8859 6.81264 16.974C6.15491 17.0776 5.60947 16.8704 5.19237 16.3782C3.69508 14.6116 2.20849 12.8399 0.716557 11.0681C0.433143 10.7469 0.133686 10.4257 0.0534744 9.98539C0.0267372 9.85587 0.0160423 9.73154 0 9.62275Z"
-                        fill="currentColor" />
-                    </svg>
-                  </div>
                 </div>
               </div>
               <a href="sample" class="cs_btn cs_style_1 cs_fs_16 cs_medium">{{ gt('Shop Now') }}</a>
@@ -283,7 +277,7 @@
   </section>
   <!-- End Featured -->
   <!-- Start testimonial -->
-  <section class="premium-contact-section">
+  <!-- <section class="premium-contact-section">
     <div class="animated-gradient-bg"></div>
     <div class="cs_height_120 cs_height_lg_70"></div>
     <div class="container">
@@ -354,7 +348,7 @@
     </div>
     <div class="cs_height_135 cs_height_lg_80"></div>
     
-  </section>
+  </section> -->
   <!-- End testimonial -->
 
   <style>.premium-hero-section{min-height:400px;display:flex;align-items:center;background:linear-gradient(135deg,#1C30A3 0%,#2541C8 50%,#3B5FE0 100%);position:relative;padding:120px 0 180px}.hero-particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:1}.hero-gradient-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 20% 50%,rgba(102,126,234,.3) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(240,147,251,.3) 0%,transparent 50%);z-index:1}.hero-content{position:relative;z-index:2}.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.3);padding:10px 24px;border-radius:50px;color:white;font-size:14px;font-weight:500;margin-bottom:30px}.premium-hero-title{font-size:56px;font-weight:900;font-family:'Merriweather',serif;color:white;margin:0 0 20px 0;line-height:1.2}.hero-subtitle{font-size:18px;color:rgba(255,255,255,.9);margin:0;max-width:600px;margin-left:auto;margin-right:auto}.hero-wave{position:absolute;bottom:0;left:0;width:100%;overflow:hidden;line-height:0;transform:rotate(180deg)}.hero-wave svg{position:relative;display:block;width:calc(100% + 1.3px);height:80px}.wave-fill{fill:#fff}.cs_height_100{height:100px}.cs_height_140{height:140px}@media(max-width:991px){.cs_height_lg_60{height:60px!important}.cs_height_lg_80{height:80px!important}}</style>

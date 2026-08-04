@@ -76,6 +76,22 @@
                             $shippingAddress = $order->orderAddress ?? null;
                             $addressState = $shippingAddress->state->state_name ?? null;
                             $billingAddress = $customer?->user_addresses?->firstWhere('address_type_id', 1); // 1 = home/billing
+
+                            $currencySymbols = [
+                                'USD' => '$',
+                                'INR' => '₹',
+                                'EUR' => '€',
+                                'GBP' => '£',
+                                'AED' => 'د.إ',
+                                'SAR' => 'ر.س',
+                                'CAD' => 'C$',
+                                'AUD' => 'A$',
+                                'SGD' => 'S$',
+                                'JPY' => '¥',
+                                'CNY' => '¥',
+                            ];
+                            $selectedCurr = $order->selected_currency ?? 'INR';
+                            $currencySymbol = $currencySymbols[$selectedCurr] ?? '₹';
                         @endphp
 
                         <div class="tm_invoice_info tm_mb25">
@@ -121,9 +137,9 @@
                                 <p class="tm_mb2"><b class="tm_primary_color">Office Address:</b></p>
                                 <p>
                                     Saaluvesa Pvt Ltd,<br>
-                                    116, Goodwill Promoters,<br>
-                                    Roja Street, Porur,<br>
-                                    Chennai - 600125
+                                    Dr.No.18/76, Thiru.Ve.Ka. St,<br>
+                                    Punjai Puliampatti, Sathyamangalam,<br>
+                                    Erode, Tamil Nadu - 638459
                                 </p>
                             </div>
                         </div>
@@ -135,7 +151,6 @@
                                         <tr class="tm_accent_bg">
                                             <th>S.No</th>
                                             <th>Image</th>
-                                            <th>Order ID</th>
                                             <th>Product Name</th>
                                             <th>Size</th>
                                             <th>Color</th>
@@ -143,7 +158,6 @@
                                             <th>Payment Method</th>
                                             <th>Price</th>
                                             <th>Qty</th>
-                                            <th>Printing</th>
                                             <th>Custom Design</th>
                                         </tr>
                                     </thead>
@@ -171,23 +185,25 @@
                                                              if (\Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])) return $path;
                                                              $trimmed = ltrim($path, '/');
                                                              
-                                                             if (\Illuminate\Support\Str::startsWith($trimmed, 'img/')) {
-                                                                 return 'http://127.0.0.1:8000/' . $trimmed;
-                                                             }
-                                                             
                                                              // Check local Dash public directory
                                                              if (file_exists(public_path($trimmed))) {
                                                                  return asset($trimmed);
+                                                             }
+                                                             if (file_exists(public_path('images/' . $trimmed))) {
+                                                                 return asset('images/' . $trimmed);
                                                              }
                                                              if (file_exists(public_path('uploads/' . $trimmed))) {
                                                                  return asset('uploads/' . $trimmed);
                                                              }
                                                              
-                                                             // Check Web public directory fallback
+                                                             // Check Web public directory fallback (port 8000)
+                                                             if (\Illuminate\Support\Str::startsWith($trimmed, ['img/', 'images/', 'samples/'])) {
+                                                                 return 'http://127.0.0.1:8000/' . $trimmed;
+                                                             }
                                                              if (\Illuminate\Support\Str::startsWith($trimmed, 'uploads/')) {
                                                                  return 'http://127.0.0.1:8000/' . $trimmed;
                                                              }
-                                                             return 'http://127.0.0.1:8000/uploads/' . $trimmed;
+                                                             return 'http://127.0.0.1:8000/' . $trimmed;
                                                          };
 
                                                          // 1. Check preview_screenshot_url (Quick Custom)
@@ -245,7 +261,6 @@
                                                          <span class="text-muted" style="font-size: 11px;">No Image</span>
                                                      @endif
                                                  </td>
-                                                 <td>{{$product->order_id ?? ''}}</td>
                                                  <td>{{ $product->product_name ?? 'N/A' }}</td>
                                                  <td>{{ $product->size_value ?? '' }}
                                                      {{ $product->productVarient ? ($variantDescriptions[$product->productVarient->varient] ?? '') : '' }}
@@ -287,9 +302,8 @@
                                                      @elseif(($product->productOrder->payment_method ?? '') == 'mp') Bank Transfer
                                                      @else {{ $product->productOrder->payment_method ?? '' }} @endif
                                                  </td>
-                                                 <td>${{ $product->product_rate ?? 0 }}</td>
+                                                  <td>{{ $currencySymbol }}{{ number_format($product->product_rate ?? 0, 2) }}</td>
                                                  <td>{{ $product->quantity }}</td>
-                                                 <td>{{ $order->printing_method ?? 'N/A' }}</td>
                                                  <td>
                                                      @if(!empty($product->preview_screenshot_url) || !empty($product->custom_logo_url) || !empty($product->custom_text))
                                                          <div class="d-flex flex-column" style="gap: 6px; text-align: left;">
@@ -451,10 +465,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td class="   ">$ {{ $grandTotal }}</td>
-                                            <td class="   ">$ {{ $grandTotal - $discount + $shipping }}</td>
-                                        </tr>
+                                         <tr>
+                                             <td class="   ">{{ $currencySymbol }}{{ number_format($grandTotal, 2) }}</td>
+                                             <td class="   ">{{ $currencySymbol }}{{ number_format($grandTotal - $discount + $shipping, 2) }}</td>
+                                         </tr>
                                     </tbody>
                                 </table>
                             </div>

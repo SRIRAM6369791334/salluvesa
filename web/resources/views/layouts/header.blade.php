@@ -1,4 +1,4 @@
-﻿<!-- Start header -->
+<!-- Start header -->
   <header class="cs_site_header cs_style_1 cs_primary_color cs_site_header_full_width cs_sticky_header">
     <!-- <div class="cs_top_header cs_primary_color">
       <div class="container-fluid">
@@ -159,8 +159,8 @@
                   @php
                     $currencyService = app(\App\Services\CurrencyService::class);
                     $supported = $currencyService->getSupportedCurrencies();
-                    $currentCurrency = session('currency', 'USD');
-                    $currentSymbol = $supported[$currentCurrency]['symbol'] ?? '$';
+                    $currentCurrency = session('currency', 'INR');
+                    $currentSymbol = $supported[$currentCurrency]['symbol'] ?? '₹';
                   @endphp
                   <a href="#">{{ $currentCurrency }} ({{ $currentSymbol }})</a>
                   <ul>
@@ -248,5 +248,30 @@
       /* background-color: #28a745; */
       border-radius: 50%;
       border: 2px solid #fff;
+    }
+
+    /* Scrollable Header Navigation Dropdowns (Language & Currency Dropdowns) */
+    .cs_nav .cs_nav_list ul:not(.cs_mega_wrapper) {
+      max-height: 280px !important;
+      overflow-y: auto !important;
+      scrollbar-width: thin;
+      scrollbar-color: #1C30A3 #f1f5f9;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .cs_nav .cs_nav_list ul:not(.cs_mega_wrapper)::-webkit-scrollbar {
+      width: 6px;
+    }
+    .cs_nav .cs_nav_list ul:not(.cs_mega_wrapper)::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .cs_nav .cs_nav_list ul:not(.cs_mega_wrapper)::-webkit-scrollbar-thumb {
+      background: #1C30A3;
+      border-radius: 4px;
+    }
+    .cs_nav .cs_nav_list ul:not(.cs_mega_wrapper)::-webkit-scrollbar-thumb:hover {
+      background: #152482;
     }
   </style>

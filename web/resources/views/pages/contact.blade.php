@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('content')
   <section class="premium-hero-section position-relative overflow-hidden">
@@ -31,6 +31,9 @@
           <div class="cs_height_16 cs_height_lg_16"></div>
           <p class="cs_section_subtitle mb-0">{{ gt("We're here to assist you in every way possible. If you have questions, concerns, or feedback, don't hesitate to get in touch with our dedicated team. We strive to provide you with the best service possible.") }}</p>
           <div class="cs_height_63 cs_height_lg_35"></div>
+          @php
+  $contactSettings = $contactSettings ?? \App\Models\ContactSetting::first();
+@endphp
           <div class="cs_iconbox cs_style_3">
             <div class="cs_iconbox_icon cs_primary_color">
               <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +57,7 @@
             </div>
             <div class="cs_iconbox_info">
               <h3 class="cs_iconbox_title cs_fs_21 cs_semibold">{{ gt('Offline store') }}</h3>
-              <p class="cs_iconbox_subtitle mb-0">452 15h Street, Office 741, Ohio,<br> De 47754, USA</p>
+              <p class="cs_iconbox_subtitle mb-0">{!! nl2br(e($contactSettings->store_address ?? "452 15h Street, Office 741, Ohio,\nDe 47754, USA")) !!}</p>
             </div>
           </div>
           <div class="cs_height_50 cs_height_lg_30"></div>
@@ -74,7 +77,7 @@
             </div>
             <div class="cs_iconbox_info">
               <h3 class="cs_iconbox_title cs_fs_21 cs_semibold">{{ gt('Email address') }}</h3>
-              <p class="cs_iconbox_subtitle mb-0">info@saaluvesa.com</p>
+              <p class="cs_iconbox_subtitle mb-0">{{ $contactSettings->email_address ?? 'info@saaluvesa.com' }}</p>
             </div>
           </div>
           <div class="cs_height_50 cs_height_lg_30"></div>
@@ -93,7 +96,7 @@
             </div>
             <div class="cs_iconbox_info">
               <h3 class="cs_iconbox_title cs_fs_21 cs_semibold">{{ gt('Live support') }}</h3>
-              <p class="cs_iconbox_subtitle mb-0">+91 9655482775</p>
+              <p class="cs_iconbox_subtitle mb-0">{{ $contactSettings->phone_number ?? '+91 9655482775' }}</p>
             </div>
           </div>
         </div>

@@ -38,7 +38,7 @@
 
 
 
-                    @if (Auth::user()->role == 1)
+                    @if (Auth::check() && Auth::user()->role == 1)
                         <li class="menu-title" data-key="t-menu">Menu</li>
                         <li>
                             <a href="{{ url('/') }}">
@@ -55,12 +55,26 @@
                         </li> --}}
 
 
-                        <li class="menu-title" data-key="t-applications">Web Banner</li>
+                        <li class="menu-title" data-key="t-applications">Web Banner & Settings</li>
 
                         <li>
                             <a href="{{ route('bannerImages.index') }}">
                                 <i class="mdi mdi-image-area nav-icon"></i>
                                 <span class="menu-item" data-key="t-chat">Banner Images</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('bank-details.index') }}">
+                                <i class="bx bx-bank nav-icon"></i>
+                                <span class="menu-item" data-key="t-bank-details">Bank Details</span>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('contact.settings.index') }}">
+                                <i class="bx bx-phone-call nav-icon"></i>
+                                <span class="menu-item" data-key="t-contact-settings">Contact Settings</span>
                             </a>
                         </li>
 
@@ -333,7 +347,7 @@
 
                             </a>
                         </li>
-                    @elseif (Auth::user()->role == 5)
+                    @elseif (Auth::check() && Auth::user()->role == 5)
                         <li class="menu-title" data-key="t-applications">Orders</li>
                         <li>
                             <a href="{{ route('productdelivery.index') }}">

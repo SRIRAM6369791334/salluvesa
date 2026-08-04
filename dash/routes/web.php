@@ -387,6 +387,10 @@ Route::get('/custom-products/edit/{id}', [App\Http\Controllers\CustomProductCont
 Route::post('/custom-products/update/{id}', [App\Http\Controllers\CustomProductController::class, 'update'])->name('custom-products.update');
 Route::post('/custom-products/{id}/save-placement', [App\Http\Controllers\CustomProductController::class, 'savePlacement'])->name('custom-products.save-placement');
 
+// Contact Settings Management
+Route::get('/contact-settings', [App\Http\Controllers\ContactSettingsController::class, 'index'])->name('contact.settings.index');
+Route::post('/contact-settings/update', [App\Http\Controllers\ContactSettingsController::class, 'update'])->name('contact.settings.update');
+
 
 //TODAY DEALS
 

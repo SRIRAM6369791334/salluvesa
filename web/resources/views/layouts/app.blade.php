@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -178,9 +178,9 @@
     window.baseUrl = '{{ url("/") }}';
     @php
         $currService = app(\App\Services\CurrencyService::class);
-        $targetCurr = session('currency', 'USD');
-        $rate = $currService->getRate('USD', $targetCurr);
-        $symbol = $currService->getSupportedCurrencies()[$targetCurr]['symbol'] ?? '$';
+        $targetCurr = session('currency', 'INR');
+        $rate = $currService->getRate('INR', $targetCurr);
+        $symbol = $currService->getSupportedCurrencies()[$targetCurr]['symbol'] ?? '₹';
     @endphp
     window.__currency = {
         code: "{{ $targetCurr }}",

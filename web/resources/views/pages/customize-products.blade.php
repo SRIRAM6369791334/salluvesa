@@ -158,7 +158,7 @@
 
                             {{-- Price badge --}}
                             <div class="position-absolute top-0 start-0 p-3">
-                                <span class="price-badge-premium">${{ number_format($product->base_price, 0) }}</span>
+                                <span class="price-badge-premium">{{ format_currency($product->base_price) }}</span>
                             </div>
 
                             @if($product->is_two_sided)
@@ -258,10 +258,10 @@
                             <div class="mb-3">
                                 <label class="form-label fw-bold small">1. Select Customization Method</label>
                                 <select class="form-select shadow-none" id="modal-custom-method">
-                                    <option value="Embroidery" data-price="150">Embroidery (+ ₹150)</option>
-                                    <option value="Screen Printing" data-price="100">Screen Printing (+ ₹100)</option>
-                                    <option value="DTF Printing" data-price="120">DTF Printing (+ ₹120)</option>
-                                    <option value="Text Only" data-price="75">Text Embroidery Only (+ ₹75)</option>
+                                    <option value="Embroidery" data-price="150">Embroidery (+ {{ format_currency(150) }})</option>
+                                    <option value="Screen Printing" data-price="100">Screen Printing (+ {{ format_currency(100) }})</option>
+                                    <option value="DTF Printing" data-price="120">DTF Printing (+ {{ format_currency(120) }})</option>
+                                    <option value="Text Only" data-price="75">Text Embroidery Only (+ {{ format_currency(75) }})</option>
                                 </select>
                             </div>
 
@@ -317,7 +317,7 @@
                             {{-- Price Calculation --}}
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <span class="fw-bold text-muted">Total Calculated Price:</span>
-                                <span class="fs-4 fw-bold text-primary" id="modal-total-price-display">₹0.00</span>
+                                <span class="fs-4 fw-bold text-primary" id="modal-total-price-display">{{ format_currency(0) }}</span>
                             </div>
 
                             <button type="button" class="btn btn-success btn-lg w-100 py-3 fw-bold shadow" id="modal-add-to-cart-btn" style="border-radius: 12px; background: #10b981; border: none;">
@@ -535,6 +535,21 @@
                 renderViewOverlay(currentActiveView);
             });
 
+            @php
+                $targetCurrency = session('currency', 'INR');
+                $currencyService = app(\App\Services\CurrencyService::class);
+                $currencySymbol = $currencyService->getSupportedCurrencies()[$targetCurrency]['symbol'] ?? '₹';
+                $exchangeRate = $currencyService->getRate('INR', $targetCurrency);
+            @endphp
+
+            const currentCurrencySymbol = '{!! $currencySymbol !!}';
+            const currentExchangeRate = {{ $exchangeRate }};
+
+            function formatCurrencyJS(amountInINR) {
+                const converted = amountInINR * currentExchangeRate;
+                return currentCurrencySymbol + ' ' + converted.toFixed(2);
+            }
+
             // 5. Method & Price Calculation
             document.getElementById('modal-custom-method')?.addEventListener('change', updatePriceDisplay);
 
@@ -543,8 +558,8 @@
                 if (!methodSelect) return;
                 const selectedOpt = methodSelect.options[methodSelect.selectedIndex];
                 const extraPrice = parseFloat(selectedOpt?.dataset?.price) || 0;
-                const totalPrice = basePrice + extraPrice;
-                document.getElementById('modal-total-price-display').innerText = '₹' + totalPrice.toFixed(2);
+                const totalPriceInINR = basePrice + extraPrice;
+                document.getElementById('modal-total-price-display').innerText = formatCurrencyJS(totalPriceInINR);
             }
 
             // 6. Multi-View Capture and Add Custom Product to Cart

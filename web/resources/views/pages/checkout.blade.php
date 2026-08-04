@@ -40,13 +40,13 @@
               <label class="premium-form-label">{{ gt('Select Shipping Address') }} *</label>
               <select id="address-selector" class="premium-form-input premium-form-select" name="address_id">
                 @foreach($addresses as $addr)
-                  <option value="{{ $addr->id }}" {{ $defaultAddress && $defaultAddress->id == $addr->id ? 'selected' : '' }}
-                    data-details="{{ json_encode($addr) }}">
-                    {{ $addr->address_type_name }}: {{ $addr->address_line_one }}, {{ $addr->city }}
-                  </option>
+                <option value="{{ $addr->id }}" {{ $defaultAddress && $defaultAddress->id == $addr->id ? 'selected' : '' }}
+                  data-details="{{ json_encode($addr) }}">
+                  {{ $addr->address_type_name }}: {{ $addr->address_line_one }}, {{ $addr->city }}
+                </option>
                 @endforeach
                 @if($addresses->isEmpty())
-                  <option value="">{{ gt('No addresses found. Click "Add New Address" above.') }}</option>
+                <option value="">{{ gt('No addresses found. Click "Add New Address" above.') }}</option>
                 @endif
               </select>
             </div>
@@ -90,23 +90,25 @@
           <label class="premium-form-label">{{ gt('Order notes (optional)') }}</label>
           <textarea cols="30" rows="6" class="premium-form-input" placeholder="{{ gt('Special instructions for delivery...') }}"></textarea>
         </div>
-        <div class="cs_height_30 cs_height_lg_30"></div>
-        <h2 class="cs_checkout-title">{{ gt('Printing Method') }} *</h2>
-        <div class="cs_height_20"></div>
-        <div class="d-flex gap-4">
-          <div class="form-check custom-radio">
-            <input class="form-check-input" type="radio" name="printing_method" id="method_ctf" value="CTF" checked>
-            <label class="form-check-label fw-bold" for="method_ctf">
-              <span class="d-block">CTF</span>
-              <small class="text-muted" style="font-size: 11px;">(Detailed/Complex prints)</small>
-            </label>
-          </div>
-          <div class="form-check custom-radio">
-            <input class="form-check-input" type="radio" name="printing_method" id="method_dtg" value="DTG">
-            <label class="form-check-label fw-bold" for="method_dtg">
-              <span class="d-block">DTG</span>
-              <small class="text-muted" style="font-size: 11px;">(Direct to Garment)</small>
-            </label>
+        <div style="display: none;">
+          <div class="cs_height_30 cs_height_lg_30"></div>
+          <h2 class="cs_checkout-title">{{ gt('Printing Method') }} *</h2>
+          <div class="cs_height_20"></div>
+          <div class="d-flex gap-4">
+            <div class="form-check custom-radio">
+              <input class="form-check-input" type="radio" name="printing_method" id="method_ctf" value="CTF" checked>
+              <label class="form-check-label fw-bold" for="method_ctf">
+                <span class="d-block">CTF</span>
+                <small class="text-muted" style="font-size: 11px;">(Detailed/Complex prints)</small>
+              </label>
+            </div>
+            <div class="form-check custom-radio">
+              <input class="form-check-input" type="radio" name="printing_method" id="method_dtg" value="DTG">
+              <label class="form-check-label fw-bold" for="method_dtg">
+                <span class="d-block">DTG</span>
+                <small class="text-muted" style="font-size: 11px;">(Direct to Garment)</small>
+              </label>
+            </div>
           </div>
         </div>
         <div class="cs_height_30 cs_height_lg_30"></div>
@@ -122,24 +124,24 @@
                   <td class="text-end">{{ gt('Amount') }}</td>
                 </tr>
                 @foreach($cartItems as $item)
-                  <tr>
-                    <td>
-                      <div class="d-flex align-items-start gap-3">
-                        @if($item->design_id && $item->design)
-                           <x-design-preview :design="$item->design" width="40" />
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-start gap-3">
+                      @if($item->design_id && $item->design)
+                      <x-design-preview :design="$item->design" width="40" />
+                      @endif
+                      <div>
+                        {{ $item->product_name }} <br>
+                        @if($item->product_type === 'own')
+                        <small style='color: #666; font-size: 11px;'>{{ gt('Cloth Type') }}: {{ $item->product_color }} | {{ gt('Size') }}: {{ $item->product_size }} | {{ gt('Qty') }}: {{ $item->product_quantity }}</small>
+                        @else
+                        <small style='color: #666; font-size: 11px;'>{{ gt('Color') }}: <span style="display:inline-block; width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,0.1); vertical-align:middle; background-color:{{ $item->product_color }}; box-shadow:0 1px 3px rgba(0,0,0,0.1);" title="{{ $item->product_color }}"></span> | {{ gt('Size') }}: {{ $item->product_size }} | {{ gt('Qty') }}: {{ $item->product_quantity }}</small>
                         @endif
-                        <div>
-                           {{ $item->product_name }} <br>
-                           @if($item->product_type === 'own')
-                             <small style='color: #666; font-size: 11px;'>{{ gt('Cloth Type') }}: {{ $item->product_color }} | {{ gt('Size') }}: {{ $item->product_size }} | {{ gt('Qty') }}: {{ $item->product_quantity }}</small>
-                           @else
-                             <small style='color: #666; font-size: 11px;'>{{ gt('Color') }}: <span style="display:inline-block; width:12px; height:12px; border-radius:50%; border:1px solid rgba(0,0,0,0.1); vertical-align:middle; background-color:{{ $item->product_color }}; box-shadow:0 1px 3px rgba(0,0,0,0.1);" title="{{ $item->product_color }}"></span> | {{ gt('Size') }}: {{ $item->product_size }} | {{ gt('Qty') }}: {{ $item->product_quantity }}</small>
-                           @endif
-                        </div>
                       </div>
-                    </td>
-                    <td class='text-end'>{{ format_currency($item->price * $item->product_quantity) }}</td>
-                  </tr>
+                    </div>
+                  </td>
+                  <td class='text-end'>{{ format_currency($item->price * $item->product_quantity) }}</td>
+                </tr>
                 @endforeach
                 <tr class='cs_semi_bold'>
                   <td>{{ gt('Total') }}</td>
@@ -151,35 +153,35 @@
             <!-- <button id="place-order-btn" class="cs_btn cs_style_1 cs_fs_16 cs_medium w-100">{{ gt('Place Order (COD)') }}</button> -->
             <div class="cs_height_15"></div>
             @if(isset($totalQuantity) && isset($paypalMaxQty) && $totalQuantity <= $paypalMaxQty)
-                <button id="paypal-btn" class="cs_btn cs_style_1 cs_fs_16 cs_medium w-100" style="background:#0070BA">💳 {{ gt('Pay with PayPal') }}</button>
-                <div class="cs_height_15"></div>
-            @else
-                <div class="alert alert-warning mb-3" style="font-size: 14px; background-color: #fff3cd; color: #856404; border-color: #ffeeba; padding: 10px; border-radius: 5px;">
-                    <i class="fas fa-info-circle me-1"></i> {{ gt('PayPal is only available for orders up to') }} {{ $paypalMaxQty ?? 10 }} {{ gt('items. For larger orders, please use Bank Transfer.') }}
-                </div>
-            @endif
-            <button id="bank-transfer-btn" class="cs_btn cs_style_1 cs_fs_16 cs_medium w-100" style="background:#2E5DD8">🏦 {{ gt('Bank Transfer') }}</button>
-            
-            <!-- Bank Country Selection (Hidden by default, shown for Bank Transfer) -->
-            <div id="bank-country-container" class="mt-3" style="display:none;">
-              <label class="premium-form-label mb-1" style="font-size: 12px; color: #4a5568;">{{ gt('Select Bank Country') }} *</label>
-              <select id="bank-country-selector" class="premium-form-input premium-form-select" style="padding: 8px 12px; height: auto;">
-                <option value="">-- {{ gt('Choose Country') }} --</option>
-                @foreach($bankDetails->pluck('bank_country')->unique() as $country)
-                  <option value="{{ $country }}">{{ $country }}</option>
-                @endforeach
-              </select>
-            </div>
-
-            <!-- Dynamic Bank Info Container -->
-            <div id="dynamic-bank-info" class="mt-3 p-3 rounded shadow-sm" style="background:#f8f9fa; border:1px solid #e2e8f0; display:none; font-size:13px; color:#4a5568;">
-              <h6 class="mb-2 fw-bold text-dark"><i class="fas fa-university me-1"></i> {{ gt('Bank Account Details') }}</h6>
-              <div id="bank-info-content" class="mb-2"></div>
-              <small class="text-muted d-block border-top pt-2 mt-2"><i class="fas fa-info-circle"></i> {{ gt('Please transfer the exact amount and save the transaction receipt.') }}</small>
-              <div class="mt-3">
-                <button id="confirm-bank-transfer-btn" class="cs_btn cs_style_1 cs_fs_14 cs_medium w-100" style="background:#1a202c; height:40px; line-height:40px;">{{ gt('Place Order & Get Details') }}</button>
+              <button id="paypal-btn" class="cs_btn cs_style_1 cs_fs_16 cs_medium w-100" style="background:#0070BA">💳 {{ gt('Pay with PayPal') }}</button>
+              <div class="cs_height_15"></div>
+              @else
+              <div class="alert alert-warning mb-3" style="font-size: 14px; background-color: #fff3cd; color: #856404; border-color: #ffeeba; padding: 10px; border-radius: 5px;">
+                <i class="fas fa-info-circle me-1"></i> {{ gt('PayPal is only available for orders up to') }} {{ $paypalMaxQty ?? 10 }} {{ gt('items. For larger orders, please use Bank Transfer.') }}
               </div>
-            </div>
+              @endif
+              <button id="bank-transfer-btn" class="cs_btn cs_style_1 cs_fs_16 cs_medium w-100" style="background:#2E5DD8">🏦 {{ gt('Bank Transfer') }}</button>
+
+              <!-- Bank Country Selection (Hidden by default, shown for Bank Transfer) -->
+              <div id="bank-country-container" class="mt-3" style="display:none;">
+                <label class="premium-form-label mb-1" style="font-size: 12px; color: #4a5568;">{{ gt('Select Bank Country') }} *</label>
+                <select id="bank-country-selector" class="premium-form-input premium-form-select" style="padding: 8px 12px; height: auto;">
+                  <option value="">-- {{ gt('Choose Country') }} --</option>
+                  @foreach($bankDetails->pluck('bank_country')->unique() as $country)
+                  <option value="{{ $country }}">{{ $country }}</option>
+                  @endforeach
+                </select>
+              </div>
+
+              <!-- Dynamic Bank Info Container -->
+              <div id="dynamic-bank-info" class="mt-3 p-3 rounded shadow-sm" style="background:#f8f9fa; border:1px solid #e2e8f0; display:none; font-size:13px; color:#4a5568;">
+                <h6 class="mb-2 fw-bold text-dark"><i class="fas fa-university me-1"></i> {{ gt('Bank Account Details') }}</h6>
+                <div id="bank-info-content" class="mb-2"></div>
+                <small class="text-muted d-block border-top pt-2 mt-2"><i class="fas fa-info-circle"></i> {{ gt('Please transfer the exact amount and save the transaction receipt.') }}</small>
+                <div class="mt-3">
+                  <button id="confirm-bank-transfer-btn" class="cs_btn cs_style_1 cs_fs_14 cs_medium w-100" style="background:#1a202c; height:40px; line-height:40px;">{{ gt('Place Order & Get Details') }}</button>
+                </div>
+              </div>
 
           </div>
           <div class="cs_height_50 cs_height_lg_30"></div>
@@ -214,11 +216,117 @@
 </section>
 
 
-<style>.premium-hero-section{min-height:400px;display:flex;align-items:center;background:linear-gradient(135deg,#1C30A3 0%,#2541C8 50%,#3B5FE0 100%);position:relative;padding:120px 0 180px}.hero-particles{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;z-index:1}.hero-gradient-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 20% 50%,rgba(102,126,234,.3) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(240,147,251,.3) 0%,transparent 50%);z-index:1}.hero-content{position:relative;z-index:2}.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.3);padding:10px 24px;border-radius:50px;color:white;font-size:14px;font-weight:500;margin-bottom:30px}.premium-hero-title{font-size:56px;font-weight:900;font-family:'Merriweather',serif;color:white;margin:0 0 20px 0;line-height:1.2}.hero-subtitle{font-size:18px;color:rgba(255,255,255,.9);margin:0;max-width:600px;margin-left:auto;margin-right:auto}.hero-wave{position:absolute;bottom:0;left:0;width:100%;overflow:hidden;line-height:0;transform:rotate(180deg)}.hero-wave svg{position:relative;display:block;width:calc(100% + 1.3px);height:80px}.wave-fill{fill:#fff}.cs_height_100{height:100px}.cs_height_140{height:140px}@media(max-width:991px){.cs_height_lg_60{height:60px!important}.cs_height_lg_80{height:80px!important}}</style>
+<style>
+  .premium-hero-section {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #1C30A3 0%, #2541C8 50%, #3B5FE0 100%);
+    position: relative;
+    padding: 120px 0 180px
+  }
+
+  .hero-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1
+  }
+
+  .hero-gradient-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, .3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(240, 147, 251, .3) 0%, transparent 50%);
+    z-index: 1
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, .2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, .3);
+    padding: 10px 24px;
+    border-radius: 50px;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 30px
+  }
+
+  .premium-hero-title {
+    font-size: 56px;
+    font-weight: 900;
+    font-family: 'Merriweather', serif;
+    color: white;
+    margin: 0 0 20px 0;
+    line-height: 1.2
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, .9);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto
+  }
+
+  .hero-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg)
+  }
+
+  .hero-wave svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 80px
+  }
+
+  .wave-fill {
+    fill: #fff
+  }
+
+  .cs_height_100 {
+    height: 100px
+  }
+
+  .cs_height_140 {
+    height: 140px
+  }
+
+  @media(max-width:991px) {
+    .cs_height_lg_60 {
+      height: 60px !important
+    }
+
+    .cs_height_lg_80 {
+      height: 80px !important
+    }
+  }
+</style>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const addressSelector = document.getElementById('address-selector');
-    
+
     function updateBillingDisplay() {
       if (!addressSelector) return;
       const selectedOption = addressSelector.options[addressSelector.selectedIndex];
@@ -242,7 +350,7 @@
 
         const pinEl = document.getElementById('billing-pincode');
         if (pinEl) pinEl.value = details.pincode || '';
-        
+
         // Show matching bank details by country
         updateBankDetailsPreview(details.country);
       }
@@ -259,18 +367,18 @@
     const bankTransferBtn = document.getElementById('bank-transfer-btn');
     const bankCountryContainer = document.getElementById('bank-country-container');
     const bankCountrySelector = document.getElementById('bank-country-selector');
-    
+
     if (bankTransferBtn) {
       bankTransferBtn.addEventListener('click', function() {
         if (bankCountryContainer.style.display === 'none') {
-           bankCountryContainer.style.display = 'block';
-           bankTransferBtn.innerHTML = "🏦 {{ gt('Cancel Bank Transfer') }}";
-           bankTransferBtn.style.background = "#4a5568";
+          bankCountryContainer.style.display = 'block';
+          bankTransferBtn.innerHTML = "🏦 {{ gt('Cancel Bank Transfer') }}";
+          bankTransferBtn.style.background = "#4a5568";
         } else {
-           bankCountryContainer.style.display = 'none';
-           bankTransferBtn.innerHTML = "🏦 {{ gt('Bank Transfer') }}";
-           bankTransferBtn.style.background = "#2E5DD8";
-           document.getElementById('dynamic-bank-info').style.display = 'none';
+          bankCountryContainer.style.display = 'none';
+          bankTransferBtn.innerHTML = "🏦 {{ gt('Bank Transfer') }}";
+          bankTransferBtn.style.background = "#2E5DD8";
+          document.getElementById('dynamic-bank-info').style.display = 'none';
         }
       });
     }
@@ -349,28 +457,28 @@
 
 
     function updateBankDetailsPreview(country) {
-        const infoDiv = document.getElementById('dynamic-bank-info');
-        const contentDiv = document.getElementById('bank-info-content');
-        
-        if (!country) {
-            if (infoDiv) infoDiv.style.display = 'none';
-            return;
-        }
+      const infoDiv = document.getElementById('dynamic-bank-info');
+      const contentDiv = document.getElementById('bank-info-content');
 
-        const details = bankDetailsData.find(b => 
-            b.bank_country && b.bank_country.toLowerCase().trim() === country.toLowerCase().trim()
-        );
+      if (!country) {
+        if (infoDiv) infoDiv.style.display = 'none';
+        return;
+      }
 
-        if (details) {
-            contentDiv.innerHTML = `
+      const details = bankDetailsData.find(b =>
+        b.bank_country && b.bank_country.toLowerCase().trim() === country.toLowerCase().trim()
+      );
+
+      if (details) {
+        contentDiv.innerHTML = `
                 <div class="bank-details-description">
                     ${details.description || '<p class="text-muted">No details provided.</p>'}
                 </div>
             `;
-            infoDiv.style.display = 'block';
-        } else {
-            if (infoDiv) infoDiv.style.display = 'none';
-        }
+        infoDiv.style.display = 'block';
+      } else {
+        if (infoDiv) infoDiv.style.display = 'none';
+      }
     }
 
     // Confirm Bank Transfer Order
