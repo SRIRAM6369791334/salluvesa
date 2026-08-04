@@ -36,93 +36,20 @@
         </div>
       </div>
     </div> -->
-    <div class="cs_main_header" style="height: 130px;">
+    <div class="cs_main_header">
       <div class="container-fluid">
         <div class="cs_main_header_in">
           <div class="cs_main_header_left">
             <a class="cs_site_branding" href="/">
-              <img src="img/logo.png" alt="Logo" class="headerimage" style="max-width:100%;margin-top: 50px;" />
+              <img src="img/logo.png" alt="Logo" class="headerimage" />
             </a>
           </div>
-          <div class="cs_main_header_center" style="margin-top: 22px;">
+          <div class="cs_main_header_center">
             <div class="cs_nav cs_medium">
               <ul class="cs_nav_list">
                 <li><a href="/" @if(request()->is('/') || request()->is('home')) style="color: #5e5e5e;" @endif>{{ gt('Home') }}</a></li>
-                <!-- <li class="menu-item-has-children cs_mega_menu">
-                  <a href="/categories">{{ gt('Categorys') }}</a>
-                  <ul class="cs_mega_wrapper">
-                    <li class="menu-item-has-children">
-                      <a href="" style="text-decoration: underline; text-decoration-color: #1C30A3;">{{ gt('Mens') }}</a>
-                      <ul>
-                         <li><a href="#">{{ gt('POLO T – SHIRTS') }} </a></li>
-                        <li><a href="#">{{ gt('T- SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('TANK TOPS') }} </a></li>                       
-                      </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                      <a href="" style="text-decoration: underline; text-decoration-color: #1C30A3;">{{ gt('Womens') }}</a>
-                      <ul>
-                        <li><a href="#">{{ gt('POLO T – SHIRTS') }} </a></li>
-                        <li><a href="#">{{ gt('T- SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('TANK TOPS') }} </a></li>    
-                      </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                      <a href="" style="text-decoration: underline; text-decoration-color: #1C30A3;">{{ gt('Kids') }}</a>
-                      <ul>
-                        <li><a href="#">{{ gt('POLO T – SHIRTS') }} </a></li>
-                        <li><a href="#">{{ gt('T- SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('TANK TOPS') }} </a></li>    
-                      </ul>
-                    </li>
-                    <li class="menu-item-has-children">
-                      <a href="" style="text-decoration: underline; text-decoration-color: #1C30A3;">{{ gt('Children') }}</a>
-                      <ul>
-                       <li><a href="#">{{ gt('POLO T – SHIRTS') }} </a></li>
-                        <li><a href="#">{{ gt('T- SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('SHIRTS') }}</a></li>
-                        <li><a href="#">{{ gt('TANK TOPS') }} </a></li>    
-                      </ul>
-                    </li>
-                  </ul>
-                </li> -->
-                
-                  <!-- <li><a href="/shop" @if(request()->is('shop')) style="color: #5e5e5e;" @endif>{{ gt('Products') }}</a></li> -->
-                
-                  <li><a href="/sample" @if(request()->is('sample')) style="color: #5e5e5e;" @endif>{{ gt('Sample') }}</a></li>
-               
+                <li><a href="/sample" @if(request()->is('sample')) style="color: #5e5e5e;" @endif>{{ gt('Sample') }}</a></li>
                 <li><a href="/about" @if(request()->is('about')) style="color: #5e5e5e;" @endif>{{ gt('About') }}</a></li>
-                <!-- <li class="menu-item-has-children">
-                  <a href="#">Home</a>
-                  <ul>
-                    <li><a href="#">Fashion V1</a></li>
-                    <li><a href="home-v2.html">Fashion V2</a></li>
-                    <li><a href="home-v3.html">Jewelry</a></li>
-                  </ul>
-                </li> -->
-                <!-- <li class="menu-item-has-children">
-                  <a href="#">Product</a>
-                  <ul>
-                    <li><a href="#">All Product</a></li>
-                    <li><a href="shop_sidebar.html">Shop Sidebar</a></li>
-                    <li><a href="product-details">Product Details</a></li>
-                  </ul>
-                </li> -->
-                <!-- <li><a href="blog.html">Blog</a></li>
-                <li class="menu-item-has-children">
-                  <a href="">Pages</a>
-                  <ul>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="blog_details.html">Blog Details</a></li>
-                    <li><a href="cart">Cart</a></li>
-                    <li><a href="checkout">Checkout</a></li>
-                    <li><a href="success">Success</a></li>
-                    <li><a href="wishlist">Wishlist</a></li>
-                  </ul>
-                </li> -->
                 <li><a href="/contact" @if(request()->is('contact')) style="color: #5e5e5e;" @endif>{{ gt('Contact') }}</a></li>
                 @if(Auth::check() && Auth::user()->hasPurchasedSample())
                   <li><a href="/own-design" @if(request()->is('own-design')) style="color: #5e5e5e;" @endif>{{ gt('Own Design') }}</a></li>
@@ -155,7 +82,7 @@
                     <li><a href="{{ route('language.switch', 'es') }}">Spain – Spanish</a></li>
                   </ul>
                 </li>
-                <li class="menu-item-has-children" style="margin-left: 10px;">
+                <li class="menu-item-has-children">
                   @php
                     $currencyService = app(\App\Services\CurrencyService::class);
                     $supported = $currencyService->getSupportedCurrencies();
@@ -176,30 +103,17 @@
               </ul>
             </div>
           </div>
-          <div class="cs_main_header_right"style="margin-top: 22px;">
+          <div class="cs_main_header_right">
             <div class="cs_header_action">
-              <!-- <button type="button" class="cs_action_icon cs_header_search_btn">
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </button> -->
-              <a href="{{ Auth::check() ? route('myaccount') : route('login') }}" class="cs_action_icon cs_modal_btn @if(Auth::check()) auth-hover @endif">
+              <a href="{{ Auth::check() ? route('myaccount') : route('login') }}" class="cs_action_icon cs_modal_btn @if(Auth::check()) auth-hover @endif" title="{{ gt('My Account') }}">
                 <i class="fa-regular fa-circle-user"></i>
               </a>
-              <a href="{{ Auth::check() ? '/cart' : route('login') }}" class="cs_action_icon">
-                <span>
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g clip-path="url(#clip0_395_1018)">
-                      <path d="M17.0347 3.05775C16.8238 2.80458 16.5597 2.60096 16.2612 2.46136C15.9626 2.32176 15.637 2.2496 15.3075 2.25H3.1815L3.15 1.98675C3.08554 1.43956 2.82254 0.935049 2.41087 0.568858C1.9992 0.202667 1.46747 0.000256345 0.9165 0L0.75 0C0.551088 0 0.360322 0.0790176 0.21967 0.21967C0.0790176 0.360322 0 0.551088 0 0.75C0 0.948912 0.0790176 1.13968 0.21967 1.28033C0.360322 1.42098 0.551088 1.5 0.75 1.5H0.9165C1.1002 1.50002 1.2775 1.56747 1.41478 1.68954C1.55206 1.81161 1.63976 1.97981 1.66125 2.16225L2.69325 10.9373C2.80039 11.8498 3.23886 12.6913 3.92543 13.302C4.612 13.9127 5.49889 14.25 6.41775 14.25H14.25C14.4489 14.25 14.6397 14.171 14.7803 14.0303C14.921 13.8897 15 13.6989 15 13.5C15 13.3011 14.921 13.1103 14.7803 12.9697C14.6397 12.829 14.4489 12.75 14.25 12.75H6.41775C5.95354 12.7487 5.5011 12.6038 5.12245 12.3353C4.7438 12.0668 4.45748 11.6877 4.30275 11.25H13.2428C14.122 11.2501 14.9733 10.9412 15.6479 10.3773C16.3225 9.81348 16.7775 9.03052 16.9335 8.16525L17.5223 4.89975C17.581 4.57576 17.5678 4.2428 17.4836 3.92448C17.3993 3.60616 17.2461 3.31026 17.0347 3.05775ZM16.05 4.6335L15.4605 7.899C15.3668 8.41875 15.0934 8.889 14.6879 9.2274C14.2824 9.5658 13.7709 9.7508 13.2428 9.75H4.06425L3.3585 3.75H15.3075C15.4177 3.74934 15.5266 3.77297 15.6267 3.81919C15.7267 3.86542 15.8153 3.93311 15.8861 4.01746C15.957 4.1018 16.0085 4.20073 16.0368 4.3072C16.0651 4.41368 16.0696 4.52508 16.05 4.6335Z" fill="currentColor" />
-                      <path d="M5.25 18C6.07843 18 6.75 17.3284 6.75 16.5C6.75 15.6716 6.07843 15 5.25 15C4.42157 15 3.75 15.6716 3.75 16.5C3.75 17.3284 4.42157 18 5.25 18Z" fill="currentColor" />
-                      <path d="M12.75 18C13.5784 18 14.25 17.3284 14.25 16.5C14.25 15.6716 13.5784 15 12.75 15C11.9216 15 11.25 15.6716 11.25 16.5C11.25 17.3284 11.9216 18 12.75 18Z" fill="currentColor" />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_395_1018">
-                        <rect width="18" height="18" fill="currentColor" />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                </span>
+              <a href="{{ Auth::check() ? '/cart' : route('login') }}" class="cs_action_icon" title="{{ gt('Cart') }}">
+                <i class="fa-solid fa-cart-shopping"></i>
               </a>
+              <button type="button" class="cs_action_icon cs_mobile_menu_btn d-lg-none" id="mobile-menu-toggle-btn" aria-label="{{ gt('Toggle Menu') }}">
+                <i class="fa-solid fa-bars"></i>
+              </button>
             </div>
           </div>
         </div>
@@ -214,40 +128,241 @@
           </div>
           <form action="#" class="cs_header_search_form">
             <input type="text" placeholder="{{ gt('Search...') }}">
-            <!-- <button type="submit">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button> -->
           </form>
         </div>
       </div>
     </div>
   </header>
-  <div class="cs_height_130 cs_height_lg_130"></div>
+  <div class="cs_header_spacer"></div>
   <!-- End header -->
   <style>
+    /* Main Header Container & Vertical Alignment Fix */
+    .cs_main_header {
+      height: 85px !important;
+      display: flex !important;
+      align-items: center !important;
+      background: #ffffff !important;
+      box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06) !important;
+      transition: height 0.3s ease, background 0.3s ease !important;
+    }
+    .cs_main_header_in {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+    }
+    .cs_main_header_left,
+    .cs_main_header_center,
+    .cs_main_header_right {
+      display: flex !important;
+      align-items: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Logo Image Sizing */
+    .headerimage {
+      max-height: 52px !important;
+      height: auto !important;
+      width: auto !important;
+      margin: 0 !important;
+      display: block !important;
+      object-fit: contain !important;
+    }
+
+    /* Action Icons Flex Container & Pixel-Perfect Baseline Alignment */
+    .cs_header_action {
+      display: flex !important;
+      align-items: center !important;
+      gap: 14px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .cs_header_action .cs_action_icon {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 50% !important;
+      background: #f8fafc !important;
+      border: 1.5px solid #e2e8f0 !important;
+      color: #1e293b !important;
+      font-size: 17px !important;
+      line-height: 1 !important;
+      transition: all 0.25s ease !important;
+      text-decoration: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .cs_header_action .cs_action_icon i {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 1 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .cs_header_action .cs_action_icon:hover {
+      background: #1C30A3 !important;
+      color: #ffffff !important;
+      border-color: #1C30A3 !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 6px 18px rgba(28, 48, 163, 0.25) !important;
+    }
+
+    /* Page Top Spacer */
+    .cs_header_spacer {
+      height: 85px !important;
+    }
+
     @media (max-width: 1300px) {
       .desktop-only-nav-item {
         display: none !important;
       }
     }
-    .auth-hover {
-      position: relative;
-      transition: all 0.3s ease;
+
+    /* Explicit Desktop Breakpoint Enforcement (≥ 992px) */
+    @media (min-width: 992px) {
+      #mobile-menu-toggle-btn,
+      .cs_mobile_menu_btn,
+      span.cs_menu_toggle {
+        display: none !important;
+      }
+      .cs_main_header_center .cs_nav {
+        display: flex !important;
+        position: static !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+      .cs_nav_list {
+        display: flex !important;
+        align-items: center !important;
+      }
     }
-    .auth-hover:hover {
-      color: #1C30A3 !important;
-      transform: scale(1.15);
+
+    /* Hide default theme injected span toggle element */
+    span.cs_menu_toggle {
+      display: none !important;
     }
-    .auth-hover::after {
-      content: '';
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      width: 8px;
-      height: 8px;
-      /* background-color: #28a745; */
-      border-radius: 50%;
-      border: 2px solid #fff;
+
+    @media (max-width: 992px) {
+      .cs_main_header {
+        height: 72px !important;
+      }
+      .cs_header_spacer {
+        height: 72px !important;
+      }
+      .headerimage {
+        max-height: 40px !important;
+      }
+      .cs_main_header_in {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+        height: 100% !important;
+      }
+      .cs_main_header_left {
+        display: flex !important;
+        align-items: center !important;
+      }
+      .cs_main_header_right {
+        display: flex !important;
+        align-items: center !important;
+        margin-left: auto !important;
+      }
+      .cs_header_action {
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+      }
+      .cs_header_action .cs_action_icon {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 16px !important;
+      }
+
+      /* Clean Full-Width Mobile Navigation Drawer (CLOSED BY DEFAULT) */
+      .cs_site_header .cs_main_header_center .cs_nav,
+      .cs_main_header_center .cs_nav {
+        display: none !important;
+        position: fixed !important;
+        top: 72px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15) !important;
+        border-bottom: 3px solid #1C30A3 !important;
+        z-index: 99999 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .cs_site_header .cs_main_header_center .cs_nav.cs_mobile_active,
+      .cs_main_header_center .cs_nav.cs_mobile_active {
+        display: block !important;
+      }
+      .cs_nav_list {
+        display: block !important;
+        padding: 12px 16px !important;
+        margin: 0 !important;
+        list-style: none !important;
+      }
+      .cs_nav_list > li {
+        position: relative !important;
+        margin-left: 0 !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+      }
+      .cs_nav_list > li:last-child {
+        border-bottom: none !important;
+      }
+      .cs_nav_list > li > a {
+        padding: 12px 10px !important;
+        font-weight: 600 !important;
+        font-size: 15px !important;
+        color: #1e293b !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        transition: all 0.2s ease !important;
+        border-radius: 8px !important;
+      }
+      .cs_nav_list > li.menu-item-has-children > a {
+        padding-right: 48px !important;
+      }
+      .cs_nav_list > li > a:hover {
+        color: #1C30A3 !important;
+        background: #f8fafc !important;
+        padding-left: 14px !important;
+      }
+      .cs_menu_dropdown_toggle {
+        position: absolute !important;
+        top: 50% !important;
+        left: auto !important;
+        right: 12px !important;
+        transform: translateY(-50%) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 50% !important;
+        background: #f1f5f9 !important;
+        color: #1C30A3 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        cursor: pointer !important;
+        transition: all 0.25s ease !important;
+        z-index: 2 !important;
+      }
+      .cs_menu_dropdown_toggle.active {
+        background: #1C30A3 !important;
+        color: #ffffff !important;
+      }
     }
 
     /* Scrollable Header Navigation Dropdowns (Language & Currency Dropdowns) */
@@ -274,4 +389,33 @@
     .cs_nav .cs_nav_list ul:not(.cs_mega_wrapper)::-webkit-scrollbar-thumb:hover {
       background: #152482;
     }
+    #mobile-menu-toggle-btn.active {
+      background: #1C30A3 !important;
+      border-color: #1C30A3 !important;
+      color: #ffffff !important;
+    }
   </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggleBtn = document.getElementById('mobile-menu-toggle-btn');
+      const navMenu = document.querySelector('.cs_main_header_center .cs_nav');
+      if (toggleBtn && navMenu) {
+        toggleBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const isOpen = navMenu.classList.toggle('cs_mobile_active');
+          const icon = toggleBtn.querySelector('i');
+          if (isOpen) {
+            if (icon) icon.className = 'fa-solid fa-xmark';
+            toggleBtn.classList.add('active');
+            toggleBtn.setAttribute('title', 'Close Menu');
+          } else {
+            if (icon) icon.className = 'fa-solid fa-bars';
+            toggleBtn.classList.remove('active');
+            toggleBtn.setAttribute('title', 'Open Menu');
+          }
+        });
+      }
+    });
+  </script>

@@ -136,7 +136,8 @@
         margin-top: 20px;
     }
 }
-@media screen and (max-width: 450px) {
+
+@media screen and (max-width: 1200px) {
   .cs_site_branding img {
     margin-top: 26px !important;
   }
@@ -144,9 +145,9 @@
    font-size: 20px;
   }
 }
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 450px) {
   .cs_site_branding img {
-    margin-top: 26px !important;
+    margin-top: 0px !important;
   }
   .fa-regular{
    font-size: 20px;
