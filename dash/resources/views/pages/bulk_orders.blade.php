@@ -60,6 +60,52 @@
         </div>
     </div>
 
+    <!-- Edit Final Details Modal -->
+    <div class="modal fade" id="editDetailsModal" tabindex="-1" aria-labelledby="editDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDetailsModalLabel">Edit Final Order Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editDetailsForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="edit_order_id">
+                        
+                        <div class="alert alert-info font-size-13">
+                            Set the final negotiated details here. These will be reflected on the invoice.
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="final_size" class="form-label">Final Size(s)</label>
+                                <input type="text" class="form-control" id="final_size" placeholder="e.g. M, L, XL or Assorted">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="final_color" class="form-label">Final Color(s)</label>
+                                <input type="text" class="form-control" id="final_color" placeholder="e.g. Navy Blue, Red">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="final_qty" class="form-label">Final Quantity</label>
+                                <input type="number" class="form-control" id="final_qty" placeholder="Total units">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="final_rate" class="form-label">Agreed Rate (₹) per unit</label>
+                                <input type="number" step="0.01" class="form-control" id="final_rate" placeholder="e.g. 250.00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save Details</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- View Custom Image Modal -->
     <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg">

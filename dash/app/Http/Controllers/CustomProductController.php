@@ -38,8 +38,8 @@ class CustomProductController extends Controller
             'front_mockup' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'back_mockup' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'colors' => 'nullable|array',
-            'colors.*.name' => 'required|string',
-            'colors.*.code' => 'required|string',
+            'colors.*.name' => 'nullable|string',
+            'colors.*.code' => 'nullable|string',
             'colors.*.images' => 'nullable|array',
         ]);
 
@@ -49,6 +49,26 @@ class CustomProductController extends Controller
         $customProduct->base_price = $request->base_price;
         $customProduct->product_type = $request->product_type;
         $customProduct->status = 'active';
+        if ($request->has('badge')) $customProduct->badge = $request->badge;
+        if ($request->has('badge_type')) $customProduct->badge_type = $request->badge_type;
+        if ($request->has('cloth_types')) $customProduct->cloth_types = $request->cloth_types;
+        if ($request->has('sort_order')) $customProduct->sort_order = $request->sort_order;
+        if ($request->has('is_active')) $customProduct->is_active = $request->is_active;
+
+        if ($request->has('sizes')) {
+            $customProduct->sizes = is_array($request->sizes) ? $request->sizes : explode(',', $request->sizes);
+        }
+        if ($request->has('gsm')) {
+            $customProduct->gsm = is_array($request->gsm) ? $request->gsm : explode(',', $request->gsm);
+        }
+        if ($request->has('features')) {
+            $customProduct->features = is_array($request->features) ? $request->features : explode(',', $request->features);
+        }
+        if ($request->has('sample_colors')) {
+            $customProduct->colors = is_array($request->sample_colors) ? $request->sample_colors : explode(',', $request->sample_colors);
+        } elseif ($request->has('colors') && is_string($request->colors)) {
+            $customProduct->colors = explode(',', $request->colors);
+        }
 
         if ($request->hasFile('front_mockup')) {
             $imageName = time() . '_front.' . $request->front_mockup->extension();
@@ -105,6 +125,8 @@ class CustomProductController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Product created successfully',
+            'product_id' => $customProduct->id,
+            'product' => $customProduct,
             'products' => CustomProduct::all()
         ]);
     }
@@ -123,7 +145,10 @@ class CustomProductController extends Controller
         // Validation (simplified for now)
         $request->validate([
              'name' => 'required|string|max:255',
-             // ... other fields
+             'base_price' => 'required|numeric',
+             'colors' => 'nullable|array',
+             'colors.*.name' => 'required|string',
+             'colors.*.code' => 'required|string',
         ]);
 
         $customProduct = CustomProduct::find($id);
@@ -136,6 +161,26 @@ class CustomProductController extends Controller
         $customProduct->description = $request->description;
         $customProduct->base_price = $request->base_price;
         $customProduct->product_type = $request->product_type;
+        if ($request->has('badge')) $customProduct->badge = $request->badge;
+        if ($request->has('badge_type')) $customProduct->badge_type = $request->badge_type;
+        if ($request->has('cloth_types')) $customProduct->cloth_types = $request->cloth_types;
+        if ($request->has('sort_order')) $customProduct->sort_order = $request->sort_order;
+        if ($request->has('is_active')) $customProduct->is_active = $request->is_active;
+
+        if ($request->has('sizes')) {
+            $customProduct->sizes = is_array($request->sizes) ? $request->sizes : explode(',', $request->sizes);
+        }
+        if ($request->has('gsm')) {
+            $customProduct->gsm = is_array($request->gsm) ? $request->gsm : explode(',', $request->gsm);
+        }
+        if ($request->has('features')) {
+            $customProduct->features = is_array($request->features) ? $request->features : explode(',', $request->features);
+        }
+        if ($request->has('sample_colors')) {
+            $customProduct->colors = is_array($request->sample_colors) ? $request->sample_colors : explode(',', $request->sample_colors);
+        } elseif ($request->has('colors') && is_string($request->colors)) {
+            $customProduct->colors = explode(',', $request->colors);
+        }
         
         if ($request->hasFile('front_mockup')) {
             // Delete old image
@@ -337,7 +382,7 @@ class CustomProductController extends Controller
             $newProduct->push(); // Save and push to DB
 
             // Replicate colors and images
-            foreach ($product->colors as $color) {
+            foreach ($product->colors()->get() as $color) {
                 $newColor = $color->replicate();
                 $newColor->customproduct_id = $newProduct->id;
                 $newColor->push();
@@ -372,38 +417,42 @@ class CustomProductController extends Controller
         $sizes = $product->available_sizes ?? ['S', 'M', 'L', 'XL', 'XXL'];
 
         // Prepare colors/views data
-        $colors = $product->colors->filter(fn($c) => $c->status === 'active')->map(function ($color) use ($product) {
-            $views = [];
-            
-            // 1. Try to use color-specific images first (from product_color_images table)
-            foreach ($color->images as $image) {
-                // Use the image_path directly and prepend with asset()
-                $views[$image->view_type] = asset($image->image_path);
-            }
-
-            // 2. If no color-specific images, use the Product's Base Mockups (New System)
-            if (empty($views['front']) && $product->front_mockup) {
-                $views['front'] = asset($product->front_mockup);
-            }
-            if (empty($views['back']) && $product->back_mockup) {
-                $views['back'] = asset($product->back_mockup);
-            }
-
-            // Fill missing views with nulls to maintain structure
-            $requiredViews = ['front', 'back', 'chest', 'shoulder'];
-            foreach ($requiredViews as $rv) {
-                if (!isset($views[$rv])) {
-                    $views[$rv] = null;
+        $productColorsRel = $product->colors()->with('images')->get();
+        $colors = collect();
+        if ($productColorsRel && $productColorsRel->isNotEmpty()) {
+            $colors = $productColorsRel->filter(fn($c) => $c->status === 'active')->map(function ($color) use ($product) {
+                $views = [];
+                
+                // 1. Try to use color-specific images first (from product_color_images table)
+                foreach ($color->images as $image) {
+                    // Use the image_path directly and prepend with asset()
+                    $views[$image->view_type] = asset($image->image_path);
                 }
-            }
 
-            return [
-                'id' => $color->id,
-                'color_name' => $color->color_name,
-                'color_code' => $color->color_code,
-                'views' => $views
-            ];
-        })->values();
+                // 2. If no color-specific images, use the Product's Base Mockups (New System)
+                if (empty($views['front']) && $product->front_mockup) {
+                    $views['front'] = asset($product->front_mockup);
+                }
+                if (empty($views['back']) && $product->back_mockup) {
+                    $views['back'] = asset($product->back_mockup);
+                }
+
+                // Fill missing views with nulls to maintain structure
+                $requiredViews = ['front', 'back', 'chest', 'shoulder'];
+                foreach ($requiredViews as $rv) {
+                    if (!isset($views[$rv])) {
+                        $views[$rv] = null;
+                    }
+                }
+
+                return [
+                    'id' => $color->id,
+                    'color_name' => $color->color_name,
+                    'color_code' => $color->color_code,
+                    'views' => $views
+                ];
+            })->values();
+        }
 
         // Fallback if no colors exist
         if ($colors->isEmpty()) {

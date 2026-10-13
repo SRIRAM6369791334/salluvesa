@@ -44,10 +44,10 @@
 
 <div class="cs_design_preview_box" style="position: relative; width: {{ $width }}px; height: {{ $width }}px; background: #f8f9ff; border-radius: 8px; overflow: hidden; border: 1px solid #eee;">
     @if($designImage)
-        <img src="{{ \Illuminate\Support\Facades\Storage::disk('shared')->url($designImage) }}" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+        <img src="{{ route('image.proxy', ['url' => \Illuminate\Support\Facades\Storage::disk('shared')->url($designImage)]) }}" style="width: 100%; height: 100%; object-fit: contain; display: block;">
     @elseif($mockupUrl)
         {{-- Fallback: just show the empty shirt --}}
-        <img src="{{ $mockupUrl }}" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+        <img src="{{ route('image.proxy', ['url' => $mockupUrl]) }}" style="width: 100%; height: 100%; object-fit: contain; display: block;">
     @else
         <div class="text-muted text-center mt-4"><i class="fa-solid fa-image fa-2x"></i></div>
     @endif

@@ -96,16 +96,51 @@
                             </div>
                         </div>
 
-                        <!-- Colors Section -->
-                        <!-- <div class="mb-3">
-                            <label class="form-label">Color Variants</label>
-                            <div id="colors_container">
-                                <!-- Colors will be added here dynamically -->
-                            <!-- </div>
-                            <button type="button" class="btn btn-secondary btn-sm mt-2" id="add_color_btn">
-                                <i class="mdi mdi-plus"></i> Add Color
-                            </button>
-                        </div> --> 
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="badge" class="form-label">Badge</label>
+                                <input type="text" class="form-control" id="badge" name="badge" placeholder="Badge (e.g. Popular)">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="badge_type" class="form-label">Badge Type</label>
+                                <input type="text" class="form-control" id="badge_type" name="badge_type" placeholder="Badge Type (e.g. popular)">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="sizes" class="form-label">Sizes (Comma separated)</label>
+                                <input type="text" class="form-control" id="sizes" name="sizes" placeholder="e.g. S,M,L,XL">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cloth_types" class="form-label">Cloth Types</label>
+                                <input type="text" class="form-control" id="cloth_types" name="cloth_types" placeholder="Cloth Types">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gsm" class="form-label">GSM Options (Comma separated)</label>
+                                <input type="text" class="form-control" id="gsm" name="gsm" placeholder="e.g. 160,180,200">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="sort_order" class="form-label">Sort Order</label>
+                                <input type="number" class="form-control" id="sort_order" name="sort_order" placeholder="Sort Order" value="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="is_active" class="form-label">Status</label>
+                                <select class="form-select" id="is_active" name="is_active">
+                                    <option value="1" selected>Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="features" class="form-label">Features (Comma separated)</label>
+                                <input type="text" class="form-control" id="features" name="features" placeholder="e.g. Durable,Soft">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Color Options</label>
+                                <div id="colors_container">
+                                    <!-- Dynamic rows will be added here by addColorRow() -->
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm mt-1" id="add_color_btn">Add Another Color</button>
+                            </div>
+                        </div>
+
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary">Save Product</button>
                         </div>
@@ -171,17 +206,51 @@
                                 <input type="file" class="form-control" id="edit_left_shoulder_mockup" name="left_shoulder_mockup">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_badge" class="form-label">Badge</label>
+                                <input type="text" class="form-control" id="edit_badge" name="badge" placeholder="Badge">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_badge_type" class="form-label">Badge Type</label>
+                                <input type="text" class="form-control" id="edit_badge_type" name="badge_type" placeholder="Badge Type">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_sizes" class="form-label">Sizes (Comma separated)</label>
+                                <input type="text" class="form-control" id="edit_sizes" name="sizes" placeholder="Sizes">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_cloth_types" class="form-label">Cloth Types</label>
+                                <input type="text" class="form-control" id="edit_cloth_types" name="cloth_types" placeholder="Cloth Types">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_gsm" class="form-label">GSM Options (Comma separated)</label>
+                                <input type="text" class="form-control" id="edit_gsm" name="gsm" placeholder="GSM Options">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_sort_order" class="form-label">Sort Order</label>
+                                <input type="number" class="form-control" id="edit_sort_order" name="sort_order" placeholder="Sort Order">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_is_active" class="form-label">Status</label>
+                                <select class="form-select" id="edit_is_active" name="is_active">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_features" class="form-label">Features (Comma separated)</label>
+                                <input type="text" class="form-control" id="edit_features" name="features" placeholder="Features">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Color Options</label>
+                                <div id="edit_colors_container">
+                                    <!-- Dynamic rows -->
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm mt-1" id="edit_add_color_btn">Add Another Color</button>
+                            </div>
+                        </div>
 
-                        <!-- Edit Colors Section -->
-                         <!-- <div class="mb-3">
-                            <label class="form-label">Color Variants</label>
-                            <div id="edit_colors_container">
-                                <!-- Colors will be added here dynamically -->
-                            <!-- </div>
-                            <button type="button" class="btn btn-secondary btn-sm mt-2" id="edit_add_color_btn">
-                                <i class="mdi mdi-plus"></i> Add Color
-                            </button> 
-                        </div> -->
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-primary">Update Product</button>
                         </div>

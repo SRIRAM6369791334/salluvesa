@@ -87,6 +87,44 @@
                                 <label class="form-label">Cloth Types*</label>
                                 <input type="text" class="form-control" id="add_designClothTypes" name="cloth_types" placeholder="Cloth Types" required>
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Badge</label>
+                                <input type="text" class="form-control" id="add_designBadge" name="badge" placeholder="Badge (e.g. Popular)">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Badge Type</label>
+                                <input type="text" class="form-control" id="add_designBadgeType" name="badge_type" placeholder="Badge Type (e.g. popular)">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">GSM Options (Comma separated)</label>
+                                <input type="text" class="form-control" id="add_designGsm" name="gsm" placeholder="e.g. 160,180,200">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Sort Order</label>
+                                <input type="number" class="form-control" id="add_designSortOrder" name="sort_order" placeholder="Sort Order" value="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="add_designIsActive" name="is_active">
+                                    <option value="1" selected>Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Features (Comma separated)</label>
+                                <input type="text" class="form-control" id="add_designFeatures" name="features" placeholder="e.g. Durable,Soft">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Color Options</label>
+                                <div id="add-colors-container-designs">
+                                    <div class="d-flex align-items-center gap-2 mb-2 color-row">
+                                        <input type="color" class="form-control form-control-color color-picker-tool" value="#000000" title="Choose color" style="width: 60px; height: 38px; padding: 0;">
+                                        <input type="text" class="form-control color-input-value" name="colors[]" placeholder="Color Hex/Name">
+                                        <button type="button" class="btn btn-danger remove-color">Delete</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm mt-1 add-color-btn" data-target="add-colors-container-designs">Add Another Color</button>
+                            </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Description*</label>
                                 <textarea class="form-control" id="add_designDescription" name="description" rows="3" placeholder="Description" required></textarea>
@@ -140,6 +178,40 @@
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Cloth Types*</label>
                                 <input type="text" class="form-control" id="edit_designClothTypes" name="cloth_types" placeholder="Cloth Types" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Badge</label>
+                                <input type="text" class="form-control" id="edit_designBadge" name="badge" placeholder="Badge">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Badge Type</label>
+                                <input type="text" class="form-control" id="edit_designBadgeType" name="badge_type" placeholder="Badge Type">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">GSM Options (Comma separated)</label>
+                                <input type="text" class="form-control" id="edit_designGsm" name="gsm" placeholder="GSM Options">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Sort Order</label>
+                                <input type="number" class="form-control" id="edit_designSortOrder" name="sort_order" placeholder="Sort Order">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" id="edit_designIsActive" name="is_active">
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Features (Comma separated)</label>
+                                <input type="text" class="form-control" id="edit_designFeatures" name="features" placeholder="Features">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Color Options</label>
+                                <div id="edit-colors-container-designs">
+                                    <!-- Dynamic rows -->
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm mt-1 add-color-btn" data-target="edit-colors-container-designs">Add Another Color</button>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Description*</label>

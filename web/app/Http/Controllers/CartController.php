@@ -195,7 +195,7 @@ class CartController extends Controller
                 'design_id' => $type === 'custom' ? $request->design_id : null,
                 'customization_type' => $request->input('customization_type') ?: 'none',
                 'customization_method' => $request->input('customization_method') ?: 'none',
-                'customization_position' => $request->input('customization_position') ?: 'Left Chest',
+                'customization_position' => $request->input('customization_position') ?: 'none',
                 'custom_text' => $request->input('custom_text'),
                 'custom_text_color' => $request->input('custom_text_color'),
                 'custom_logo_url' => $request->input('custom_logo_url'),

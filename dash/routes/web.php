@@ -349,6 +349,7 @@ Route::middleware(['auth'])->group(function () {
     // Bulk Orders
     Route::get('bulk-orders', [BulkOrderController::class, 'index'])->name('bulk-orders.index');
     Route::post('bulk-orders/update-status', [BulkOrderController::class, 'updateStatus'])->name('bulk-orders.update-status');
+    Route::post('bulk-orders/update-details', [BulkOrderController::class, 'updateDetails'])->name('bulk-orders.update-details');
     Route::get('/currency-test', [\App\Http\Controllers\CurrencyController::class, 'index']);
     Route::get('/currency/convert', [\App\Http\Controllers\CurrencyController::class, 'convert']);
     Route::post('/currency/switch', [\App\Http\Controllers\CurrencyController::class, 'switchCurrency'])->name('currency.switch');

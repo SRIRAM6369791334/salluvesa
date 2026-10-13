@@ -29,7 +29,8 @@ class DesignsController extends Controller {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $path = $image->store('designs', 'public');
-            Design::create([
+            
+            $data = [
                 'image' => $path,
                 'title' => $request->title,
                 'tag' => $request->tag,
@@ -38,8 +39,24 @@ class DesignsController extends Controller {
                 'description' => $request->description,
                 'stocks' => $stocks,
                 'size' => $request->size,
-                'cloth_types' => $request->cloth_types
-            ]);
+                'cloth_types' => $request->cloth_types,
+                'badge' => $request->badge,
+                'badge_type' => $request->badge_type,
+                'sort_order' => $request->sort_order ?? 0,
+                'is_active' => $request->is_active ?? 1,
+            ];
+
+            if ($request->has('gsm') && !empty($request->gsm)) {
+                $data['gsm'] = is_array($request->gsm) ? $request->gsm : explode(',', $request->gsm);
+            }
+            if ($request->has('features') && !empty($request->features)) {
+                $data['features'] = is_array($request->features) ? $request->features : explode(',', $request->features);
+            }
+            if ($request->has('colors') && !empty($request->colors)) {
+                $data['colors'] = is_array($request->colors) ? $request->colors : explode(',', $request->colors);
+            }
+
+            Design::create($data);
 
             $designs = Design::orderBy('id', 'asc')->get();
             return response()->json([
@@ -74,8 +91,22 @@ class DesignsController extends Controller {
             'description' => $request->description,
             'stocks' => $stocks,
             'size' => $request->size,
-            'cloth_types' => $request->cloth_types
+            'cloth_types' => $request->cloth_types,
+            'badge' => $request->badge,
+            'badge_type' => $request->badge_type,
+            'sort_order' => $request->sort_order ?? 0,
+            'is_active' => $request->is_active ?? 1,
         ];
+
+        if ($request->has('gsm')) {
+            $data['gsm'] = is_array($request->gsm) ? $request->gsm : explode(',', $request->gsm);
+        }
+        if ($request->has('features')) {
+            $data['features'] = is_array($request->features) ? $request->features : explode(',', $request->features);
+        }
+        if ($request->has('colors')) {
+            $data['colors'] = is_array($request->colors) ? $request->colors : explode(',', $request->colors);
+        }
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');

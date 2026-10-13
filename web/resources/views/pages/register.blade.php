@@ -117,9 +117,10 @@
             <div class="col-lg-6">
               <div class="premium-form-group">
                 <label class="premium-form-label">{{ gt('Password') }} *</label>
-                <div class="form-icon-wrapper">
-                  <input type="password" name="password" class="premium-form-input" required>
+                <div class="form-icon-wrapper" style="position: relative;">
+                  <input type="password" name="password" id="password" class="premium-form-input" required style="padding-right: 40px;">
                   <i class="fa-solid fa-lock"></i>
+                  <i class="fa-solid fa-eye toggle-password" toggle="#password" style="cursor: pointer; position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
                 </div>
                 @error('password') <span class="text-danger small">{{ $message }}</span> @enderror
               </div>
@@ -127,9 +128,10 @@
             <div class="col-lg-6">
               <div class="premium-form-group">
                 <label class="premium-form-label">{{ gt('Confirm Password') }} *</label>
-                <div class="form-icon-wrapper">
-                  <input type="password" name="password_confirmation" class="premium-form-input" required>
+                <div class="form-icon-wrapper" style="position: relative;">
+                  <input type="password" name="password_confirmation" id="password_confirmation" class="premium-form-input" required style="padding-right: 40px;">
                   <i class="fa-solid fa-lock"></i>
+                  <i class="fa-solid fa-eye toggle-password" toggle="#password_confirmation" style="cursor: pointer; position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
                 </div>
               </div>
             </div>
@@ -145,6 +147,16 @@
         @push('scripts')
         <script>
           $(document).ready(function() {
+            $('.toggle-password').click(function() {
+              $(this).toggleClass("fa-eye fa-eye-slash");
+              var input = $($(this).attr("toggle"));
+              if (input.attr("type") == "password") {
+                input.attr("type", "text");
+              } else {
+                input.attr("type", "password");
+              }
+            });
+
             $('#user_type').on('change', function() {
               if ($(this).val() === 'B2B') {
                 $('#gst_number_container').show();
@@ -201,8 +213,9 @@
           });
         </script>
         @endpush
+          </div>
+        </div>
       </div>
-    </div>
     </div>
     <div class="hero-wave">
       <svg viewBox="0 0 1200 120" preserveAspectRatio="none">

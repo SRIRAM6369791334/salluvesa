@@ -1169,7 +1169,7 @@
   <!--<div class="cs_height_140 cs_height_lg_80"></div>-->
   <!-- End partners -->
   <!-- Start testimonial -->
-  <section class="cs_gray_bg parallax-section">
+  <!-- <section class="cs_gray_bg parallax-section">
     <div class="cs_height_120 cs_height_lg_70"></div>
     <div class="container">
       <h2 class="cs_section_title cs_fs_50 cs_bold mb-0 text-center">{{ gt('What Our People Says') }}</h2>
@@ -1239,7 +1239,7 @@
       <div class="cs_pagination cs_style_2 cs_hide_desktop"></div>
     </div>
     <div class="cs_height_135 cs_height_lg_80"></div>
-  </section>
+  </section> -->
   <!-- End testimonial -->
   <!-- Start collection 2 -->
   <section class="parallax-section">
@@ -1426,7 +1426,7 @@
             {{ gt('A to Z Workflow') }}
         </h2>
         <p class="text-muted mx-auto" style="max-width: 650px; font-size: 18px; font-weight: 500;">
-            {{ gt('Experience a seamless, high-performance journey from initial registration to doorstep delivery.') }}
+            {{ gt('Experience a seamless journey from initial registration to doorstep delivery.') }}
         </p>
       </div>
 
@@ -1435,33 +1435,173 @@
         <div class="row g-0">
           @php
             $steps = [
-              ['icon' => 'user-check', 'title' => 'Registration & Access', 'desc' => 'Create your professional profile securely and gain instant access to our unified dashboard for managing custom projects and bulk orders.', 'side' => 'left'],
-              ['icon' => 'box-open', 'title' => 'Precision Sampling', 'desc' => 'Order a physical sample to physically test our premium fabric breathability, color accuracy, and true-to-life fitment before committing to bulk.', 'side' => 'right'],
-              ['icon' => 'pen-nib', 'title' => 'Advanced Design Lab', 'desc' => 'Use our industrial-grade CAD tools to position high-fidelity graphics with millimeter precision across the chest, back, sleeves, and shoulders.', 'side' => 'left'],
-              ['icon' => 'layer-group', 'title' => 'Process & Bulk Scaling', 'desc' => 'Once your sample is perfect, effortlessly scale into bulk production with tiered wholesale pricing and dynamic cost analytics.', 'side' => 'right'],
-              ['icon' => 'check-double', 'title' => 'Production & Quality', 'desc' => 'Your designs are produced using high-tech sustainable inks, then put through rigorous multi-stage quality control to guarantee perfection.', 'side' => 'left'],
-              ['icon' => 'truck-fast', 'title' => 'Global Fulfillment', 'desc' => 'Monitor your finished masterpiece as our logistics network securely ships it from our manufacturing facility directly to your doorstep.', 'side' => 'right'],
+              [
+                'step' => '01',
+                'title' => 'LOGIN AND REGISTRATION',
+                'icon' => 'user-plus',
+                'side' => 'left',
+                'desc' => '',
+                'points' => [
+                  'You can find the login and Registration option above the right corner of the website',
+                  'Click on that option',
+                  'Login and Registration page opens',
+                  'Click Register which appears right below',
+                  'Create an account by entering the essential information.'
+                ]
+              ],
+              [
+                'step' => '02',
+                'title' => 'ACCOUNT LOGIN',
+                'icon' => 'sign-in-alt',
+                'side' => 'right',
+                'desc' => '',
+                'points' => [
+                  'Login to your account with your Email ID and password as per your Registration',
+                  'The My Account page will open',
+                  'You can find list of our features as Account Menu'
+                ]
+              ],
+              [
+                'step' => '03',
+                'title' => 'DASHBOARD VIEW',
+                'icon' => 'tachometer-alt',
+                'side' => 'left',
+                'desc' => 'In Dashboard you can find Numbers of Total Orders, Cart Items, Saved Address and Notifications for the process yet to be completed.',
+                'points' => []
+              ],
+              [
+                'step' => '04',
+                'title' => 'YOUR PROFILE',
+                'icon' => 'user-cog',
+                'side' => 'right',
+                'desc' => 'In My profile you can find the Profile information as Customer Name and Contact Number which can be changed. Email ID and User Type cannot be changed.',
+                'points' => []
+              ],
+              [
+                'step' => '05',
+                'title' => 'SAMPLE ORDER PAGE',
+                'icon' => 'box-open',
+                'side' => 'left',
+                'desc' => '',
+                'points' => [
+                  'Click on the sample order page',
+                  'You will find our samples listed on the page',
+                  'Read the Features and click add sample order',
+                  'The order appears in the cart',
+                  'You could proceed with PAYPAL if only 5 items',
+                  'Otherwise your must choose Bank Transfer'
+                ]
+              ],
+              [
+                'step' => '06',
+                'title' => 'MY DESIGNS',
+                'icon' => 'paint-brush',
+                'side' => 'right',
+                'desc' => 'In My Designs you can find option to create a Design by clicking that. You can find a t-shirt image with price and mentioned features.',
+                'points' => [
+                  'Click start Designing and you can find the Front, Back, Right Shoulder and Left Shoulder images of t-shirt found at your right side of the page',
+                  'Own Designs can be placed on t-shirt image by clicking on Drop your image option',
+                  'In your top right corner you can save your design for future Orders',
+                  'You can go for Get price check out and it will be directed to cart',
+                  'In Cart you can find your Billing Details, fill any additional information option, Order details and total amount',
+                  'You can find bank transfer right below',
+                  'Click on that option to choose Country',
+                  'If you Choose your country your International bank account list appears',
+                  'Select yours',
+                  'Copy and save your bank details personally',
+                  'Click on place order and get details Below',
+                  'Proforma invoice will be sent to your mail',
+                  'Order will be processed after payment confirmation'
+                ]
+              ],
+              [
+                'step' => '07',
+                'title' => 'BULK ORDERS',
+                'icon' => 'layer-group',
+                'side' => 'left',
+                'desc' => '',
+                'points' => [
+                  'In Bulk Orders you can find the option Request Bulk Orders by clicking that',
+                  'You can find your account information along with Customization Style Select Options',
+                  'By clicking that you can find options: Our Catalogue Own Design OR Your own Custom Designed assets by My Designs page',
+                  'Then you can fill your requirement Details and send your enquiry',
+                  'Proforma invoice will be sent to your mail',
+                  'Your International Bank details will be sent to your mail to receive payment',
+                  'After payment confirmation Orders will be processed'
+                ]
+              ],
+              [
+                'step' => '08',
+                'title' => 'MY ORDERS',
+                'icon' => 'shopping-bag',
+                'side' => 'right',
+                'desc' => 'Proforma invoice will be sent to your mail after you place your order.',
+                'points' => [
+                  'In My Orders you can find your Orders with order ID, Date, Total Amount, Status of order and Action of order with view details',
+                  'View details option could be Clicked to find your Shipping Address Manual Bank Transfer with view full bank details Below',
+                  'By clicking View full bank details you can find Payment Instructions with Bank Country, International Bank Account Details and upload payment proof option',
+                  'By clicking Upload payment proof option Bank Details page opens and you can upload payment proof right below the page after making payment'
+                ]
+              ],
+              [
+                'step' => '09',
+                'title' => 'DELIVERY ADDRESS',
+                'icon' => 'map-marker-alt',
+                'side' => 'left',
+                'desc' => 'In Delivery Address you can find your home/business addresses with the Options Edit, Delete and Set as default.',
+                'points' => [
+                  'You can find Add New Address Option straight right to your address'
+                ]
+              ],
+              [
+                'step' => '10',
+                'title' => 'ACCOUNT SETTINGS',
+                'icon' => 'sliders-h',
+                'side' => 'right',
+                'desc' => '',
+                'points' => [
+                  'In Account Settings you can find Change Password Option with Current Password, New Password and Confirm New Password',
+                  'Delete My Account Option'
+                ]
+              ],
+              [
+                'step' => '11',
+                'title' => 'LOGOUT',
+                'icon' => 'sign-out-alt',
+                'side' => 'left',
+                'desc' => 'You can find log out Option finally to securely exit your session.',
+                'points' => []
+              ],
             ];
           @endphp
 
-          @foreach($steps as $index => $step)
+          @foreach($steps as $step)
             <div class="col-12 mb-5">
               <div class="row align-items-center {{ $step['side'] == 'left' ? 'flex-row' : 'flex-row-reverse' }}">
                   {{-- Content --}}
                   <div class="col-md-5 {{ $step['side'] == 'left' ? 'text-md-end text-start reveal-left' : 'text-start reveal-right' }}">
-                      <div class="cs_journey_premium_card p-4 d-inline-block text-start w-100" style="max-width: 500px;">
+                      <div class="cs_journey_premium_card p-4 d-inline-block text-start w-100" style="max-width: 550px;">
                         <div class="card-glass-blur"></div>
                         <div class="card-content">
                             <div class="d-flex align-items-center mb-3">
-                                <div class="cs_journey_icon_box flex-shrink-0" style="width: 60px; height: 60px; background: #111; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
+                                <div class="cs_journey_icon_box flex-shrink-0" style="width: 56px; height: 56px; background: #111; border-radius: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.15);">
                                     <i class="fas fa-{{ $step['icon'] }} fa-lg text-white"></i>
                                 </div>
                                 <div class="ms-3 text-start">
-                                    <span class="step-count text-muted d-block" style="font-weight: 800; font-size: 13px; opacity: 0.6; margin-bottom: 2px;">STEP 0{{ $index + 1 }}</span>
+                                    <span class="step-count text-muted d-block" style="font-weight: 800; font-size: 13px; opacity: 0.6; margin-bottom: 2px;">STEP {{ $step['step'] }}</span>
                                     <h4 class="cs_fs_21 cs_semibold m-0" style="color: #000; letter-spacing: -0.5px;">{{ gt($step['title']) }}</h4>
                                 </div>
                             </div>
-                            <p class="text-muted mb-0" style="font-size: 15px; line-height: 1.6; font-weight: 400;">{{ gt($step['desc']) }}</p>
+                            @if(!empty($step['desc']))
+                                <p class="text-muted mb-2" style="font-size: 15px; line-height: 1.6; font-weight: 400;">{{ gt($step['desc']) }}</p>
+                            @endif
+                            @if(!empty($step['points']))
+                                <ol class="cs_step_points_list mb-0 ps-3" style="font-size: 14px; line-height: 1.6; color: #444;">
+                                    @foreach($step['points'] as $pt)
+                                        <li class="mb-1">{{ gt($pt) }}</li>
+                                    @endforeach
+                                </ol>
+                            @endif
                         </div>
                         <div class="card-corner-accent"></div>
                       </div>
@@ -1484,7 +1624,7 @@
 
       <div class="text-center mt-5 pt-5 reveal-up">
         <a href="/register" class="luxury_journey_btn">
-            <span>{{ gt('Start Your Professional Journey') }}</span>
+            <span>{{ gt('Start Your Journey') }}</span>
             <i class="fas fa-arrow-right ms-2"></i>
         </a>
       </div>
@@ -1572,6 +1712,20 @@
             border-color: rgba(209, 164, 112, 0.2);
             bottom: 10px;
             right: 10px;
+        }
+
+        /* Step Points List */
+        .cs_step_points_list {
+            padding-left: 20px;
+        }
+        .cs_step_points_list li {
+            position: relative;
+            margin-bottom: 6px;
+            padding-left: 4px;
+        }
+        .cs_step_points_list li::marker {
+            color: #D1A470;
+            font-weight: 700;
         }
 
         /* Luxury Button */

@@ -155,36 +155,84 @@ Route::get('/shipping-policy', function () {
 // Image Proxy to resolve CORS issues for cross-origin mockups
 Route::get('/proxy-image', function (Illuminate\Http\Request $request) {
     $url = $request->query('url');
-    if (!$url) return abort(404);
+    if (!$url) return response('Missing image URL', 400);
     
     $mainUrl = rtrim(config('app.main_url') ?: env('MAIN_URL', ''), '/');
+    $appUrl = rtrim(config('app.url') ?: env('APP_URL', ''), '/');
     
-    // Safety check: only allow proxying from our own dashboard
-    // We parse the host only to allow http/https flexibility on production
-    $allowedHost = strtolower(parse_url($mainUrl, PHP_URL_HOST));
-    $targetHost = strtolower(parse_url($url, PHP_URL_HOST));
+    $targetHost = strtolower(parse_url($url, PHP_URL_HOST) ?? '');
+    $allowedHosts = array_filter(array_unique([
+        strtolower(parse_url($mainUrl, PHP_URL_HOST) ?? ''),
+        strtolower(parse_url($appUrl, PHP_URL_HOST) ?? ''),
+        'placehold.co'
+    ]));
     
-    if ($mainUrl && $allowedHost && $targetHost !== $allowedHost && $targetHost !== 'placehold.co') {
-        \Log::warning("[ImageProxy] Blocked: Host mismatch. Allowed: $allowedHost, Got: $targetHost | URL: $url");
+    if (!empty($targetHost) && !empty($allowedHosts) && !in_array($targetHost, $allowedHosts)) {
+        \Log::warning("[ImageProxy] Blocked: Host mismatch. Allowed: " . implode(', ', $allowedHosts) . ", Got: $targetHost | URL: $url");
         return response("Unauthorized proxy target: $targetHost", 403)
             ->header('Access-Control-Allow-Origin', '*');
     }
 
+    $parsedPath = ltrim(parse_url($url, PHP_URL_PATH) ?? '', '/');
+
+    // 1. Check local web public directory
+    if ($parsedPath) {
+        $localWebFile = public_path($parsedPath);
+        if (file_exists($localWebFile) && is_file($localWebFile)) {
+            $mimeType = mime_content_type($localWebFile) ?: 'image/png';
+            return response(file_get_contents($localWebFile))
+                ->header('Content-Type', $mimeType)
+                ->header('Cache-Control', 'public, max-age=86400')
+                ->header('Access-Control-Allow-Origin', '*');
+        }
+
+        // 2. Check shared disk root directory (e.g. UPLOAD_PATH)
+        $sharedRoot = rtrim(config('filesystems.disks.shared.root') ?: env('UPLOAD_PATH', ''), '/\\');
+        if ($sharedRoot) {
+            $relPath = preg_replace('#^uploads/#', '', $parsedPath);
+            $localSharedFile = $sharedRoot . '/' . $relPath;
+            if (file_exists($localSharedFile) && is_file($localSharedFile)) {
+                $mimeType = mime_content_type($localSharedFile) ?: 'image/png';
+                return response(file_get_contents($localSharedFile))
+                    ->header('Content-Type', $mimeType)
+                    ->header('Cache-Control', 'public, max-age=86400')
+                    ->header('Access-Control-Allow-Origin', '*');
+            }
+        }
+
+        // 3. Check dash public directory relative to web folder
+        $dashPublicFile = base_path('../dash/public/' . $parsedPath);
+        if (file_exists($dashPublicFile) && is_file($dashPublicFile)) {
+            $mimeType = mime_content_type($dashPublicFile) ?: 'image/png';
+            return response(file_get_contents($dashPublicFile))
+                ->header('Content-Type', $mimeType)
+                ->header('Cache-Control', 'public, max-age=86400')
+                ->header('Access-Control-Allow-Origin', '*');
+        }
+    }
+
+    // 4. Fetch via HTTP with Browser User-Agent and headers
     try {
-        $response = Illuminate\Support\Facades\Http::withOptions([
+        $response = Illuminate\Support\Facades\Http::withHeaders([
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept' => 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+        ])->withOptions([
             'verify' => false,
-            'connect_timeout' => 5,
-            'timeout' => 10
+            'connect_timeout' => 10,
+            'timeout' => 15,
+            'allow_redirects' => true,
         ])->get($url);
 
         if ($response->failed()) {
-            \Log::error("[ImageProxy] Failed to fetch: " . $url . " | Status: " . $response->status());
+            \Log::error("[ImageProxy] Failed to fetch: " . $url . " | Status: " . $response->status() . " | Body: " . substr($response->body(), 0, 200));
             return response('Image not found via proxy', 404)
                 ->header('Access-Control-Allow-Origin', '*');
         }
 
+        $contentType = $response->header('Content-Type') ?: 'image/png';
+
         return response($response->body())
-            ->header('Content-Type', $response->header('Content-Type'))
+            ->header('Content-Type', $contentType)
             ->header('Cache-Control', 'public, max-age=86400')
             ->header('Access-Control-Allow-Origin', '*');
 

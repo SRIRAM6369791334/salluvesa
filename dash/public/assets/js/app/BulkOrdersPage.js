@@ -72,6 +72,9 @@ function renderGrid(data) {
 
             const actions = gridjs.html(`
                 <div class="d-flex gap-2 justify-content-center">
+                    <button class="btn btn-warning btn-sm waves-effect waves-light" title="Edit Pricing & Details" onclick="showEditModal(${order.id}, '${order.final_size || ''}', '${order.final_color || ''}', '${order.final_qty || ''}', '${order.final_rate || ''}')">
+                        <i class="bx bx-edit"></i>
+                    </button>
                     <a href="viewProductdetail/${displayOrderId}" target="_blank">
                         <button type="button" class="btn btn-info btn-sm waves-effect waves-light" title="View Details">
                             <i class="bx bx-show"></i>
@@ -116,6 +119,56 @@ function viewImage(url) {
     document.getElementById('download_link').href = url;
     new bootstrap.Modal(document.getElementById('imageModal')).show();
 }
+
+function showEditModal(id, size, color, qty, rate) {
+    document.getElementById('edit_order_id').value = id;
+    document.getElementById('final_size').value = size;
+    document.getElementById('final_color').value = color;
+    document.getElementById('final_qty').value = qty;
+    document.getElementById('final_rate').value = rate;
+    new bootstrap.Modal(document.getElementById('editDetailsModal')).show();
+}
+
+document.getElementById('editDetailsForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const id = document.getElementById('edit_order_id').value;
+    const finalSize = document.getElementById('final_size').value;
+    const finalColor = document.getElementById('final_color').value;
+    const finalQty = document.getElementById('final_qty').value;
+    const finalRate = document.getElementById('final_rate').value;
+
+    Swal.fire({
+        title: 'Saving Details...',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+
+    $.ajax({
+        url: '/bulk-orders/update-details',
+        method: 'POST',
+        data: {
+            id: id,
+            final_size: finalSize,
+            final_color: finalColor,
+            final_qty: finalQty,
+            final_rate: finalRate,
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (response) {
+            Swal.fire('Saved!', response.message, 'success');
+            currentData = response.bulkOrders;
+            const activeFilter = document.querySelector('.filter-btn.active')?.dataset?.status || 'all';
+            applyFilter(activeFilter);
+            bootstrap.Modal.getInstance(document.getElementById('editDetailsModal')).hide();
+        },
+        error: function (xhr) {
+            const msg = xhr.responseJSON ? xhr.responseJSON.message : 'Something went wrong';
+            Swal.fire('Error!', msg, 'error');
+        }
+    });
+});
 
 function approveOrder(id) {
     Swal.fire({

@@ -434,16 +434,80 @@ $(function () {
     // Update Edit Button Click Handler
     $(document).on("click", ".edit_btn", function () {
         const designId = $(this).attr("data-designid");
-        $("#edit_design_id").val(designId);
-        $("#edit_designTitle").val($(this).attr("data-designtitle"));
-        $("#edit_designTag").val($(this).attr("data-designtag"));
-        $("#edit_designType").val($(this).attr("data-designtype"));
-        $("#edit_designPrice").val($(this).attr("data-designprice"));
-        $("#edit_designSize").val($(this).attr("data-designsize"));
-        $("#edit_designClothTypes").val($(this).attr("data-designclothtypes"));
-        $("#edit_designDescription").val($(this).attr("data-designdescription"));
+        const item = designs.find(d => d.id == designId);
+        if (item) {
+            $("#edit_design_id").val(item.id);
+            $("#edit_designTitle").val(item.title || '');
+            $("#edit_designTag").val(item.tag || '');
+            $("#edit_designType").val(item.type || '');
+            $("#edit_designPrice").val(item.price || '');
+            $("#edit_designSize").val(item.size || '');
+            $("#edit_designClothTypes").val(item.cloth_types || '');
+            $("#edit_designDescription").val(item.description || '');
+            $("#edit_designBadge").val(item.badge || '');
+            $("#edit_designBadgeType").val(item.badge_type || '');
+            $("#edit_designSortOrder").val(item.sort_order !== undefined ? item.sort_order : 0);
+            $("#edit_designIsActive").val(item.is_active !== undefined ? item.is_active : 1);
 
-        const image = $(this).attr("data-designimage");
-        $(".edit_preview_image").attr("src", `images/${image}`);
+            let gsm = item.gsm;
+            if (typeof gsm === 'string') { try { gsm = JSON.parse(gsm); } catch (e) {} }
+            $("#edit_designGsm").val(Array.isArray(gsm) ? gsm.join(',') : (gsm || ''));
+
+            let features = item.features;
+            if (typeof features === 'string') { try { features = JSON.parse(features); } catch (e) {} }
+            $("#edit_designFeatures").val(Array.isArray(features) ? features.join(',') : (features || ''));
+
+            let colors = item.colors;
+            if (typeof colors === 'string') { try { colors = JSON.parse(colors); } catch (e) {} }
+            const designColorContainer = $("#edit-colors-container-designs");
+            designColorContainer.empty();
+            if (Array.isArray(colors) && colors.length > 0) {
+                colors.forEach(col => appendColorRow(designColorContainer, col));
+            } else {
+                appendColorRow(designColorContainer, "#000000");
+            }
+
+            $(".edit_preview_image").attr("src", `images/${item.image}`);
+        }
     });
+});
+
+// --- Dynamic Color Row Management ---
+function appendColorRow(container, value = "#000000") {
+    const isHex = /^#([0-9A-F]{3}){1,2}$/i.test(value);
+    const pickerValue = isHex ? value : "#000000";
+    
+    const row = `
+        <div class="d-flex align-items-center gap-2 mb-2 color-row">
+            <input type="color" class="form-control form-control-color color-picker-tool" value="${pickerValue}" title="Choose color" style="width: 60px; height: 38px; padding: 0;">
+            <input type="text" class="form-control color-input-value" name="colors[]" value="${value}" placeholder="Color Hex/Name">
+            <button type="button" class="btn btn-danger remove-color">Delete</button>
+        </div>
+    `;
+    if ($(container).length) {
+        $(container).append(row);
+    }
+}
+
+$(document).on("click", ".add-color-btn", function () {
+    const target = $(this).data("target");
+    appendColorRow($("#" + target));
+});
+
+$(document).on("click", ".remove-color", function () {
+    const container = $(this).closest('.color-row').parent();
+    if (container.find('.color-row').length > 1) {
+        $(this).closest(".color-row").remove();
+    }
+});
+
+$(document).on("input", ".color-picker-tool", function () {
+    $(this).next(".color-input-value").val($(this).val());
+});
+
+$(document).on("input", ".color-input-value", function () {
+    const val = $(this).val();
+    if (/^#([0-9A-F]{3}){1,2}$/i.test(val)) {
+        $(this).prev(".color-picker-tool").val(val);
+    }
 });

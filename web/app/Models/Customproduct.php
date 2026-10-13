@@ -21,6 +21,15 @@ class Customproduct extends Model
         'available_sizes',
         'canvas_config',
         'extra_element_price',
+        'sizes',
+        'cloth_types',
+        'gsm',
+        'colors',
+        'features',
+        'badge',
+        'badge_type',
+        'sort_order',
+        'is_active',
     ];
 
     protected $casts = [
@@ -29,6 +38,12 @@ class Customproduct extends Model
         'is_two_sided' => 'boolean',
         'available_sizes' => 'array',
         'canvas_config' => 'array',
+        'sizes' => 'array',
+        'gsm' => 'array',
+        'colors' => 'array',
+        'features' => 'array',
+        'is_active' => 'integer',
+        'sort_order' => 'integer',
     ];
 
     /**

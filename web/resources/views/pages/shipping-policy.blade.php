@@ -33,7 +33,7 @@
             <div class="policy-content">
               <h2 class="h4 cs_bold mb-3">{{ gt('International Shipping') }}</h2>
               <ul class="list-group list-group-flush mb-4">
-                <li class="list-group-item bg-transparent border-0 px-0 py-1"><i class="fas fa-truck text-muted me-2"></i><strong>{{ gt('Global Partners:') }}</strong> {{ gt('Export shipments handled via global courier partners (DHL, Aramex).') }}</li>
+                <!-- <li class="list-group-item bg-transparent border-0 px-0 py-1"><i class="fas fa-truck text-muted me-2"></i><strong>{{ gt('Global Partners:') }}</strong> {{ gt('Export shipments handled via global courier partners (DHL, Aramex).') }}</li> -->
                 <li class="list-group-item bg-transparent border-0 px-0 py-1"><i class="fas fa-calendar-alt text-muted me-2"></i><strong>{{ gt('Delivery timelines:') }}</strong> {{ gt('10-30 business days depending on Customers Product Requirements and Destination.') }}</li>
                 <li class="list-group-item bg-transparent border-0 px-0 py-1"><i class="fas fa-exclamation-circle text-muted me-2"></i><strong>{{ gt('Customs & Duties:') }}</strong> {{ gt('Customs duties/taxes at destination are borne by the customer if not choosing DELIVERY DUTY PAID (DDP) option.') }}</li>
               </ul>

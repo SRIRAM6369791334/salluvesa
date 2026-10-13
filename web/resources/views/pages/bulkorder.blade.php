@@ -8,11 +8,35 @@
     <div class="container position-relative text-center" style="z-index: 2;">
       <div class="hero-content">
         <div class="hero-badge reveal-text">
-          <span class="badge-icon">📦</span>
+          <i class="fa-solid fa-box-archive badge-icon me-2"></i>
           <span>{{ gt('Premium Bulk Solutions') }}</span>
         </div>
         <h1 class="hero-title reveal-text">{{ gt('Scale Your Vision with Ease') }}</h1>
         <p class="hero-desc reveal-text">{{ gt('From corporate apparel to event merchandise, we deliver premium quality at scale with unmatched precision.') }}</p>
+        
+        <!-- Hero Quick Stats -->
+        <div class="hero-stats-container mt-5">
+          <div class="row g-3 justify-content-center">
+            <div class="col-6 col-md-3">
+              <div class="hero-stat-card">
+                <div class="stat-num">500+</div>
+                <div class="stat-label">{{ gt('Corporate Clients') }}</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="hero-stat-card">
+                <div class="stat-num">99.8%</div>
+                <div class="stat-label">{{ gt('On-Time Delivery') }}</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="hero-stat-card">
+                <div class="stat-num">100k+</div>
+                <div class="stat-label">{{ gt('Units Crafted') }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="hero-wave-container">
@@ -30,28 +54,36 @@
         <div class="row g-4 text-center justify-content-center">
             <div class="col-6 col-md-3">
                 <div class="benefit-box">
-                    <div class="benefit-icon">💰</div>
+                    <div class="benefit-icon-badge">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
                     <h4 class="benefit-title">{{ gt('Best Rates') }}</h4>
                     <p class="small text-muted mb-0">{{ gt('Guaranteed wholesale pricing') }}</p>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="benefit-box">
-                    <div class="benefit-icon">🎨</div>
+                    <div class="benefit-icon-badge">
+                        <i class="fa-solid fa-pen-ruler"></i>
+                    </div>
                     <h4 class="benefit-title">{{ gt('Custom Art') }}</h4>
                     <p class="small text-muted mb-0">{{ gt('Your vision, our creation') }}</p>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="benefit-box">
-                    <div class="benefit-icon">⚡</div>
+                    <div class="benefit-icon-badge">
+                        <i class="fa-solid fa-bolt-lightning"></i>
+                    </div>
                     <h4 class="benefit-title">{{ gt('Express') }}</h4>
                     <p class="small text-muted mb-0">{{ gt('Swift production & shipping') }}</p>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="benefit-box">
-                    <div class="benefit-icon">🛡️</div>
+                    <div class="benefit-icon-badge">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
                     <h4 class="benefit-title">{{ gt('Quality') }}</h4>
                     <p class="small text-muted mb-0">{{ gt('100% Satisfaction guaranteed') }}</p>
                 </div>
@@ -66,7 +98,7 @@
       <div class="row align-items-center g-5">
         <div class="col-lg-6">
             <div class="section-header">
-                <span class="section-badge">{{ gt('Why Saaluvesa?') }}</span>
+                <span class="section-badge"><i class="fa-solid fa-star me-1"></i> {{ gt('Why Saaluvesa?') }}</span>
                 <h2 class="section-title">{{ gt('Premium Quality, Every Single Thread') }}</h2>
                 <div class="title-underline"></div>
                 <p class="text-muted section-desc">
@@ -76,23 +108,23 @@
             <div class="row g-4">
                 <div class="col-sm-6">
                     <div class="info-item-card">
-                        <h6 class="info-item-title">💎 {{ gt('Premium Fabrics') }}</h6>
+                        <h6 class="info-item-title"><i class="fa-solid fa-gem text-primary me-2"></i>{{ gt('Premium Fabrics') }}</h6>
                         <p class="info-item-desc">{{ gt('100% Combed cotton & biowashed fabric for maximum comfort and durability.') }}</p>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="info-item-card">
-                        <h6 class="info-item-title">🎨 {{ gt('Vibrant Printing') }}</h6>
+                        <h6 class="info-item-title"><i class="fa-solid fa-palette text-primary me-2"></i>{{ gt('Vibrant Printing') }}</h6>
                         <p class="info-item-desc">{{ gt('High-definition DTF, Screen, and durable Embroidery options that never fade.') }}</p>
                     </div>
                 </div>
                 <div class="col-sm-12">
                     <div class="expert-guide-box">
-                        <div class="expert-icon">🤝</div>
+                        <div class="expert-icon"><i class="fa-solid fa-headset"></i></div>
                         <h5 class="expert-title">{{ gt('One-on-One Expert Guidance') }}</h5>
                         <p class="expert-desc">{{ gt('Our dedicated account managers guide you through every step, from design refinements to final logistics.') }}</p>
-                        <a href="https://wa.me/919597538270" class="custom-cta-btn">
-                            <i class="fab fa-whatsapp"></i> {{ gt('Chat on WhatsApp') }}
+                        <a href="https://wa.me/919597538270" target="_blank" rel="noopener noreferrer" class="custom-cta-btn">
+                            <i class="fab fa-whatsapp me-2"></i> {{ gt('Chat on WhatsApp') }}
                         </a>
                     </div>
                 </div>
@@ -119,9 +151,27 @@
           <div class="form-card">
             <div class="form-content">
                 <div class="form-header-center">
-                    <span class="form-label-badge">{{ gt('Get Started') }}</span>
+                    <span class="form-label-badge"><i class="fa-solid fa-paper-plane me-1"></i> {{ gt('Get Started') }}</span>
                     <h2 class="form-main-title">{{ gt('Tailor Your Bulk Order') }}</h2>
                     <p class="text-muted form-subtitle">{{ gt('Fill in your specs and our specialist will handle the rest.') }}</p>
+                </div>
+
+                <!-- Form Step Pills Indicator -->
+                <div class="form-steps-indicator mb-5">
+                  <div class="step-pill active" id="stepPill1">
+                    <span class="pill-number">1</span>
+                    <span class="pill-text">{{ gt('Contact Details') }}</span>
+                  </div>
+                  <div class="step-pill-line"></div>
+                  <div class="step-pill" id="stepPill2">
+                    <span class="pill-number">2</span>
+                    <span class="pill-text">{{ gt('Order Specs') }}</span>
+                  </div>
+                  <div class="step-pill-line"></div>
+                  <div class="step-pill" id="stepPill3">
+                    <span class="pill-number">3</span>
+                    <span class="pill-text">{{ gt('Customization') }}</span>
+                  </div>
                 </div>
                 
                 <form id="bulkOrderForm" action="{{ route('bulk.order.post') }}" method="POST" enctype="multipart/form-data">
@@ -129,57 +179,81 @@
                     <div class="row g-4">
                       <div class="col-md-6">
                         <div class="premium-form-group">
-                          <label class="premium-form-label"> {{ gt('Full Name') }} *</label>
+                          <label class="premium-form-label"> <i class="fa-solid fa-user me-1 text-primary"></i> {{ gt('Full Name') }} *</label>
                           <div class="form-icon-wrapper">
-                            <input type="text" name="name" class="premium-form-input guest-guard" value="{{ Auth::check() ? Auth::user()->name : '' }}" {{ Auth::check() ? 'readonly' : '' }} required>
-                            <i class="fa-solid fa-user"></i>
+                            <input type="text" name="name" class="premium-form-input guest-guard" value="{{ Auth::check() ? Auth::user()->name : '' }}" {{ Auth::check() ? 'readonly' : '' }} required placeholder="{{ gt('Enter your full name') }}">
+                            <i class="fa-solid fa-id-badge input-icon"></i>
                           </div>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="premium-form-group">
-                          <label class="premium-form-label"> {{ gt('Email Address') }} *</label>
+                          <label class="premium-form-label"> <i class="fa-solid fa-envelope me-1 text-primary"></i> {{ gt('Email Address') }} *</label>
                           <div class="form-icon-wrapper">
-                            <input type="email" name="email" class="premium-form-input guest-guard" value="{{ Auth::check() ? Auth::user()->email : '' }}" {{ Auth::check() ? 'readonly' : '' }} required>
-                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" name="email" class="premium-form-input guest-guard" value="{{ Auth::check() ? Auth::user()->email : '' }}" {{ Auth::check() ? 'readonly' : '' }} required placeholder="{{ gt('name@company.com') }}">
+                            <i class="fa-solid fa-envelope-open input-icon"></i>
                           </div>
                         </div>
                       </div>
                       
                       <div class="col-md-6">
                         <div class="premium-form-group">
-                          <label class="premium-form-label">{{ gt('Account Type') }} *</label>
-                          @if(Auth::check())
-                            <select class="premium-form-input premium-form-select" disabled style="background: #f8f9fa;">
-                              <option value="Normal User" {{ Auth::user()->user_type == 'Normal User' ? 'selected' : '' }}>{{ gt('Normal User') }}</option>
-                              <option value="B2B" {{ Auth::user()->user_type == 'B2B' ? 'selected' : '' }}>{{ gt('B2B') }}</option>
-                            </select>
-                            <input type="hidden" name="user_type" id="user_type_field" value="{{ Auth::user()->user_type }}">
-                          @else
-                            <select name="user_type" id="user_type_field" class="premium-form-input premium-form-select guest-guard" required>
-                              <option value="Normal User">{{ gt('Normal User') }}</option>
-                              <option value="B2B">{{ gt('B2B') }}</option>
-                            </select>
-                          @endif
+                          <label class="premium-form-label"><i class="fa-solid fa-building me-1 text-primary"></i> {{ gt('Account Type') }} *</label>
+                          <div class="form-icon-wrapper">
+                            @if(Auth::check())
+                              <select class="premium-form-input premium-form-select" disabled style="background: #f8f9fa;">
+                                <option value="Normal User" {{ Auth::user()->user_type == 'Normal User' ? 'selected' : '' }}>{{ gt('Normal User') }}</option>
+                                <option value="B2B" {{ Auth::user()->user_type == 'B2B' ? 'selected' : '' }}>{{ gt('B2B Enterprise') }}</option>
+                              </select>
+                              <input type="hidden" name="user_type" id="user_type_field" value="{{ Auth::user()->user_type }}">
+                            @else
+                              <select name="user_type" id="user_type_field" class="premium-form-input premium-form-select guest-guard" required>
+                                <option value="Normal User">{{ gt('Normal User') }}</option>
+                                <option value="B2B">{{ gt('B2B Enterprise') }}</option>
+                              </select>
+                            @endif
+                            <i class="fa-solid fa-user-gear input-icon"></i>
+                          </div>
                         </div>
                       </div>
                       
                       <div class="col-md-6">
                         <div class="premium-form-group">
-                          <label class="premium-form-label"> {{ gt('Approximate Quantity') }} <span id="quantity_limit_badge" style="font-size: 11px; color: #1C30A3; margin-left: 5px; opacity: 0.8;"></span> *</label>
+                          <label class="premium-form-label"> <i class="fa-solid fa-layer-group me-1 text-primary"></i> {{ gt('Approximate Quantity') }} <span id="quantity_limit_badge" class="badge bg-primary-soft text-primary ms-2" style="font-size: 11px;"></span> *</label>
                           <div class="form-icon-wrapper">
                             <input type="number" name="quantity" id="quantity_input" class="premium-form-input guest-guard" min="1" required placeholder="{{ gt('e.g. 50') }}">
-                            <i class="fa-solid fa-layer-group"></i>
+                            <i class="fa-solid fa-boxes-stacked input-icon"></i>
                           </div>
                         </div>
                       </div>
           
                       <div class="col-12">
                         <div class="premium-form-group">
-                          <label class="premium-form-label">{{ gt('Customization Style') }} *</label>
-                          <select name="product_type" id="product_type" class="premium-form-input premium-form-select guest-guard" required>
+                          <label class="premium-form-label"><i class="fa-solid fa-paintbrush me-1 text-primary"></i> {{ gt('Customization Style') }} *</label>
+                          
+                          <!-- Visual Style Selector Cards -->
+                          <div class="style-cards-grid mb-3">
+                            <div class="style-choice-card active" data-value="own_design">
+                              <div class="card-icon"><i class="fa-solid fa-shirt"></i></div>
+                              <div class="card-title">{{ gt('Our Catalog') }}</div>
+                              <div class="card-sub">{{ gt('Choose existing design') }}</div>
+                            </div>
+                            <div class="style-choice-card" data-value="custom_design">
+                              <div class="card-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                              <div class="card-title">{{ gt('My Custom Designs') }}</div>
+                              <div class="card-sub">{{ gt('Pick saved creations') }}</div>
+                            </div>
+                            <!-- <div class="style-choice-card" data-value="own_custom">
+                              <div class="card-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                              <div class="card-title">{{ gt('Upload Image/Logo') }}</div>
+                              <div class="card-sub">{{ gt('Upload custom reference') }}</div>
+                            </div> -->
+                          </div>
+
+                          <!-- Native Select Field (Hidden/Synced) -->
+                          <select name="product_type" id="product_type" class="premium-form-input premium-form-select guest-guard visually-hidden" required>
                             <option value="">{{ gt('Select Option') }}</option>
-                            <option value="own_design">{{ gt('Our Catalog (Own Design)') }}</option>
+                            <option value="own_design" selected>{{ gt('Our Catalog (Our Design)') }}</option>
                             <option value="custom_design">{{ gt('My Custom Designs') }}</option>
                             <option value="own_custom">{{ gt('Upload My Own Image/Logo') }}</option>
                           </select>
@@ -189,35 +263,47 @@
                         <!-- Conditional Fields -->
                         <div class="col-12 product-selection-div" id="own_design_div" style="display: none;">
                           <div class="premium-form-group">
-                            <label class="premium-form-label">{{ gt('Select from Catalog') }} *</label>
-                            <select name="product_id" class="premium-form-input premium-form-select">
-                                <option value="">{{ gt('Select a product') }}</option>
-                                @foreach($ownDesigns as $design)
-                                    <option value="{{ $design->id }}">{{ $design->title }}</option>
-                                @endforeach
-                            </select>
+                            <label class="premium-form-label"><i class="fa-solid fa-list-check me-1 text-primary"></i> {{ gt('Select from Catalog') }} *</label>
+                            <div class="form-icon-wrapper">
+                              <select name="product_id" class="premium-form-input premium-form-select">
+                                  <option value="">{{ gt('Select a product') }}</option>
+                                  @foreach($ownDesigns as $design)
+                                      <option value="{{ $design->id }}">{{ $design->title }}</option>
+                                  @endforeach
+                              </select>
+                              <i class="fa-solid fa-store input-icon"></i>
+                            </div>
                           </div>
                         </div>
           
                         <div class="col-12 product-selection-div" id="custom_design_div" style="display: none;">
                           <div class="premium-form-group">
-                            <label class="premium-form-label">{{ gt('Your Saved Design') }} *</label>
+                            <label class="premium-form-label"><i class="fa-solid fa-palette me-1 text-primary"></i> {{ gt('Your Saved Design') }} *</label>
                             @if(Auth::check())
                               @if(count($userCustomDesigns) > 0)
-                                <select name="product_id" class="premium-form-input premium-form-select">
-                                    <option value="">{{ gt('Select design') }}</option>
-                                    @foreach($userCustomDesigns as $custom)
-                                        <option value="{{ $custom->id }}">{{ $custom->customproduct->name ?? gt('Unknown Product') }} ({{ $custom->created_at->format('M d') }})</option>
-                                    @endforeach
-                                </select>
+                                <div class="form-icon-wrapper">
+                                  <select name="product_id" class="premium-form-input premium-form-select">
+                                      <option value="">{{ gt('Select design') }}</option>
+                                      @foreach($userCustomDesigns as $custom)
+                                          <option value="{{ $custom->id }}">{{ $custom->customproduct->name ?? gt('Unknown Product') }} ({{ $custom->created_at->format('M d') }})</option>
+                                      @endforeach
+                                  </select>
+                                  <i class="fa-solid fa-folder-open input-icon"></i>
+                                </div>
                               @else
-                                <div class="alert alert-info py-2" style="border-radius: 12px; font-size: 13px;">
-                                    {{ gt('No custom designs found.') }} <a href="{{ route('customize-products.index') }}" class="alert-link">{{ gt('Create one now') }}</a>
+                                <div class="alert alert-info d-flex align-items-center py-3" style="border-radius: 14px; font-size: 14px;">
+                                    <i class="fa-solid fa-circle-info fa-lg me-3"></i>
+                                    <div>
+                                      {{ gt('No custom designs found.') }} <a href="{{ route('customize-products.index') }}" class="alert-link text-decoration-underline ms-1">{{ gt('Create one now') }}</a>
+                                    </div>
                                 </div>
                               @endif
                             @else
-                              <div class="alert alert-warning py-2" style="border-radius: 12px; font-size: 13px;">
-                                  {{ gt('Authenticating required:') }} <a href="{{ route('login') }}" class="alert-link">{{ gt('Login') }}</a> {{ gt('to pick your designs.') }}
+                              <div class="alert alert-warning d-flex align-items-center py-3" style="border-radius: 14px; font-size: 14px;">
+                                  <i class="fa-solid fa-lock fa-lg me-3"></i>
+                                  <div>
+                                    {{ gt('Authentication required:') }} <a href="{{ route('login') }}" class="alert-link text-decoration-underline mx-1">{{ gt('Login') }}</a> {{ gt('to pick your designs.') }}
+                                  </div>
                               </div>
                             @endif
                           </div>
@@ -225,12 +311,15 @@
           
                         <div class="col-12 product-selection-div" id="own_custom_div" style="display: none;">
                           <div class="premium-form-group">
-                            <label class="premium-form-label">{{ gt('Upload Your Reference Art') }} *</label>
-                            <div class="upload-zone" style="border: 2px dashed #e5e7eb; border-radius: 14px; padding: 25px;">
-                              <input type="file" name="custom_image" accept="image/*" class="guest-guard" style="width: 100%;">
-                              <div class="upload-text-container mt-2">
-                                  <span class="upload-main-text" style="font-size: 13px; color: #6b7280;">{{ gt('Drag & drop or browse files') }}</span>
-                                  <span class="upload-sub-text" style="font-size: 11px; color: #9ca3af;">{{ gt('Supports JPG, PNG, SVG (Max 5MB)') }}</span>
+                            <label class="premium-form-label"><i class="fa-solid fa-file-arrow-up me-1 text-primary"></i> {{ gt('Upload Your Reference Art') }} *</label>
+                            <div class="upload-zone position-relative">
+                              <input type="file" name="custom_image" id="custom_image_input" accept="image/*" class="guest-guard upload-input-hidden">
+                              <div class="upload-zone-content">
+                                  <div class="upload-icon-circle mb-2">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                  </div>
+                                  <span class="upload-main-text font-weight-bold" id="upload_file_name">{{ gt('Drag & drop or browse files') }}</span>
+                                  <span class="upload-sub-text text-muted mt-1">{{ gt('Supports JPG, PNG, SVG (Max 5MB)') }}</span>
                               </div>
                             </div>
                           </div>
@@ -238,16 +327,15 @@
           
                       <div class="col-12 mt-2">
                         <div class="premium-form-group">
-                          <label class="premium-form-label"> {{ gt('Requirement Details') }}</label>
-                          <textarea name="notes" class="premium-form-input guest-guard" rows="5" placeholder="{{ gt('Tell us about sizes, fabric weights, specific colors or event deadlines...') }}" style="resize: vertical;"></textarea>
+                          <label class="premium-form-label"> <i class="fa-solid fa-clipboard-list me-1 text-primary"></i> {{ gt('Requirement Details') }}</label>
+                          <textarea name="notes" class="premium-form-input guest-guard" rows="4" placeholder="{{ gt('Tell us about sizes, fabric weights, specific colors or event deadlines...') }}" style="resize: vertical;"></textarea>
                         </div>
                       </div>
                     </div>
                     
-                    <button type="submit" class="cs_btn cs_style_1 cs_fs_18 cs_medium w-100 mt-4 guest-guard" style="padding: 18px;">{{ gt('Send My Inquiry') }}</button>
-
-                </form>
-
+                    <button type="submit" class="submit-query-btn w-100 mt-4 guest-guard">
+                      <i class="fa-solid fa-paper-plane me-2"></i> {{ gt('Send My Inquiry') }}
+                    </button>
                 </form>
             </div>
           </div>
@@ -260,45 +348,48 @@
   <section class="lifecycle-section">
     <div class="container text-center">
         <div class="lifecycle-header">
-            <span class="lifecycle-badge">{{ gt('The Journey') }}</span>
+            <span class="lifecycle-badge"><i class="fa-solid fa-route me-1"></i> {{ gt('The Journey') }}</span>
             <h2 class="lifecycle-title">{{ gt('How We Fulfill Your Order') }}</h2>
             <div class="lifecycle-underline"></div>
             <p class="lifecycle-desc">{{ gt('A transparent, streamlined process from your initial inquiry to final doorstep delivery.') }}</p>
         </div>
-        <div class="row g-5 px-lg-4">
-            <div class="col-md-3">
+        <div class="row g-4 g-lg-5 px-lg-4">
+            <div class="col-6 col-md-3">
                 <div class="process-step-container">
                     <div class="step-circle">
-                        1
-                        <div class="step-line d-none d-lg-block"></div>
+                        <i class="fa-solid fa-file-pen"></i>
+                        <span class="step-number">1</span>
                     </div>
                     <h5 class="step-title">{{ gt('Inquiry') }}</h5>
                     <p class="step-desc">{{ gt('Submit your requirements through our integrated bulk form.') }}</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="process-step-container">
                     <div class="step-circle">
-                        2
-                        <div class="step-line d-none d-lg-block"></div>
+                        <i class="fa-solid fa-comments-dollar"></i>
+                        <span class="step-number">2</span>
                     </div>
                     <h5 class="step-title">{{ gt('Proposal') }}</h5>
                     <p class="step-desc">{{ gt('Dedicated managers send mockups & quotes within 24 hours.') }}</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="process-step-container">
                     <div class="step-circle">
-                        3
-                        <div class="step-line d-none d-lg-block"></div>
+                        <i class="fa-solid fa-shirt"></i>
+                        <span class="step-number">3</span>
                     </div>
                     <h5 class="step-title">{{ gt('Production') }}</h5>
                     <p class="step-desc">{{ gt('High-quality fabric sourcing & precision printing begins.') }}</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-md-3">
                 <div class="process-step-container">
-                    <div class="step-circle">4</div>
+                    <div class="step-circle">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        <span class="step-number">4</span>
+                    </div>
                     <h5 class="step-title">{{ gt('Logistics') }}</h5>
                     <p class="step-desc">{{ gt('Real-time tracked shipping to your primary destination.') }}</p>
                 </div>
@@ -306,8 +397,6 @@
         </div>
     </div>
   </section>
-
-
 
   <!-- Section 6: Final Dynamic CTA -->
   <section class="final-cta-section">
@@ -320,8 +409,8 @@
                 <h2 class="cta-title">{{ gt('Fuel Your Brand Today') }}</h2>
                 <p class="cta-desc">{{ gt('Join hundreds of elite companies that trust Saaluvesa for their primary merchandise needs.') }}</p>
                 <div class="cta-btns-container">
-                    <a href="#bulkOrderFormSection" class="cta-btn-primary">{{ gt('Inquire Now') }}</a>
-                    <a href="/sample" class="cta-btn-outline">{{ gt('Explore Catalog') }}</a>
+                    <a href="#bulkOrderFormSection" class="cta-btn-primary"><i class="fa-solid fa-paper-plane me-2"></i> {{ gt('Inquire Now') }}</a>
+                    <a href="/sample" class="cta-btn-outline"><i class="fa-solid fa-table-cells me-2"></i> {{ gt('Explore Catalog') }}</a>
                 </div>
           </div>
       </div>
@@ -330,9 +419,45 @@
   @push('scripts')
   <script>
     $(document).ready(function() {
+      // Style Cards Click Handler
+      $('.style-choice-card').on('click', function() {
+        $('.style-choice-card').removeClass('active');
+        $(this).addClass('active');
+        const selectedVal = $(this).data('value');
+        $('#product_type').val(selectedVal).trigger('change');
+      });
+
+      // File upload zone name display
+      $('#custom_image_input').on('change', function() {
+        if(this.files && this.files[0]) {
+          $('#upload_file_name').text(this.files[0].name);
+        } else {
+          $('#upload_file_name').text("{{ gt('Drag & drop or browse files') }}");
+        }
+      });
+
+      // Step pills indicator update on focus
+      $('input[name="name"], input[name="email"], select[name="user_type"]').on('focus', function() {
+        $('.step-pill').removeClass('active');
+        $('#stepPill1').addClass('active');
+      });
+      $('input[name="quantity"]').on('focus', function() {
+        $('.step-pill').removeClass('active');
+        $('#stepPill2').addClass('active');
+      });
+      $('#product_type, textarea[name="notes"]').on('focus', function() {
+        $('.step-pill').removeClass('active');
+        $('#stepPill3').addClass('active');
+      });
+
       // Toggle logic for product selection
       $('#product_type').on('change', function() {
         const val = $(this).val();
+        
+        // Sync active style card
+        $('.style-choice-card').removeClass('active');
+        $(`.style-choice-card[data-value="${val}"]`).addClass('active');
+
         $('.product-selection-div').hide();
         // Disable and un-require all conditional inputs to prevent multiple 'product_id' fields being sent
         $('.product-selection-div select, .product-selection-div input').attr('required', false).attr('disabled', true);
@@ -341,7 +466,7 @@
           const targetDiv = $(`#${val}_div`);
           targetDiv.fadeIn(400);
           // Enable and require only the active inputs
-          targetDiv.find('select, input').attr('required', true).attr('disabled', false).focus();
+          targetDiv.find('select, input').attr('required', true).attr('disabled', false);
         }
       });
 
@@ -353,9 +478,9 @@
         e.preventDefault();
         let formData = new FormData(this);
         let submitBtn = $(this).find('button[type="submit"]');
-        let originalBtnText = submitBtn.text();
+        let originalBtnHtml = submitBtn.html();
         
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> {{ gt("Synthesizing...") }}');
+        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> {{ gt("Submitting...") }}');
         showLoader("{{ gt('Submitting your inquiry...') }}");
         
         $.ajax({
@@ -366,7 +491,7 @@
           contentType: false,
           success: function(response) {
             hideLoader();
-            submitBtn.prop('disabled', false).text(originalBtnText);
+            submitBtn.prop('disabled', false).html(originalBtnHtml);
             if (response.success) {
               Swal.fire({
                 icon: 'success',
@@ -383,9 +508,9 @@
           },
           error: function(xhr) {
             hideLoader();
-            submitBtn.prop('disabled', false).text(originalBtnText);
+            submitBtn.prop('disabled', false).html(originalBtnHtml);
             let errorMessage = "{{ gt('Error processing your request.') }}";
-            if (xhr.status === 422) {
+            if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
               errorMessage = Object.values(xhr.responseJSON.errors)[0][0];
             }
             Swal.fire({
@@ -410,166 +535,195 @@
     });
   </script>
   <style>
-
-    /* Add specific pointer cursor for accordion */
+    /* Global Section Foundations */
     .faq-accord-btn { cursor: pointer !important; position: relative; width: 100%; display: flex; align-items: center; justify-content: space-between; }
     
     /* Hero Section Styles */
     .premium-hero-section {
-        min-height: 500px; padding: 120px 0 120px; display: flex; align-items: center; justify-content: center;
-        background: linear-gradient(135deg, #1C30A3 0%, #2541C8 50%, #3B5FE0 100%); position: relative; overflow: hidden;
+        min-height: 540px; padding: 120px 0 130px; display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #0F172A 0%, #1C30A3 50%, #2541C8 100%); position: relative; overflow: hidden;
     }
     .hero-particles { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 1; }
     .hero-overlay-gradient {
         position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: radial-gradient(circle at 20% 50%, rgba(102,126,234,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(240,147,251,0.3) 0%, transparent 50%); z-index: 1;
+        background: radial-gradient(circle at 20% 40%, rgba(37,99,235,0.25) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(139,92,246,0.25) 0%, transparent 60%); z-index: 1;
     }
     .hero-badge {
-        display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.3); padding: 10px 24px; border-radius: 50px; color: white; font-size: 14px; font-weight: 500; margin-bottom: 30px;
+        display: inline-flex; align-items: center; background: rgba(255,255,255,0.12); backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.25); padding: 10px 24px; border-radius: 50px; color: white; font-size: 14px; font-weight: 600; margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
     }
-    .hero-title { font-size: clamp(36px, 6vw, 64px); font-weight: 900; font-family: 'Merriweather', serif; color: white; margin: 0 0 20px 0; line-height: 1.1; }
-    .hero-desc { font-size: clamp(16px, 2.5vw, 20px); color: rgba(255,255,255,0.9); margin: 0; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    .hero-title { font-size: clamp(38px, 5.5vw, 64px); font-weight: 900; font-family: 'Playfair Display', serif; color: white; margin: 0 0 20px 0; line-height: 1.15; letter-spacing: -0.5px; }
+    .hero-desc { font-size: clamp(16px, 2.2vw, 20px); color: rgba(255,255,255,0.88); margin: 0 auto; max-width: 720px; line-height: 1.65; }
+    
+    .hero-stats-container { max-width: 800px; margin: 0 auto; }
+    .hero-stat-card {
+        background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 18px; padding: 16px 20px; transition: all 0.3s ease;
+    }
+    .hero-stat-card:hover { transform: translateY(-4px); background: rgba(255, 255, 255, 0.15); }
+    .stat-num { font-size: 26px; font-weight: 800; color: #60A5FA; line-height: 1; margin-bottom: 4px; }
+    .stat-label { font-size: 12px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
     .hero-wave-container { position: absolute; bottom: -1px; left: 0; width: 100%; overflow: hidden; line-height: 0; transform: rotate(180deg); }
     .hero-wave-svg { position: relative; display: block; width: calc(100% + 1.3px); height: 80px; }
 
     /* Features Overlay */
     .features-overlay-section { margin-top: -50px; position: relative; z-index: 10; padding-bottom: 20px; padding-top: 70px; }
     .benefit-box {
-        background: white; padding: 35px 20px; border-radius: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(0,0,0,0.03);
+        background: white; padding: 35px 20px; border-radius: 24px; box-shadow: 0 10px 40px rgba(15,23,42,0.06); 
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(226, 232, 240, 0.8);
     }
-    .benefit-box:hover { transform: translateY(-12px); box-shadow: 0 20px 45px rgba(28,48,163,0.12) !important; border-bottom: 5px solid #1C30A3 !important; }
-    .benefit-icon { font-size: 44px; margin-bottom: 20px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
-    .benefit-title { font-size: 18px; font-weight: 700; color: #1C30A3; margin-bottom: 8px; }
+    .benefit-box:hover { transform: translateY(-10px); box-shadow: 0 20px 45px rgba(28,48,163,0.12) !important; border-bottom: 4px solid #1C30A3 !important; }
+    .benefit-icon-badge {
+        width: 64px; height: 64px; background: #EBF0FF; color: #1C30A3; border-radius: 50%; display: inline-flex;
+        align-items: center; justify-content: center; font-size: 26px; margin-bottom: 18px; transition: all 0.3s ease;
+    }
+    .benefit-box:hover .benefit-icon-badge { background: #1C30A3; color: white; transform: scale(1.1); }
+    .benefit-title { font-size: 18px; font-weight: 700; color: #0F172A; margin-bottom: 8px; }
 
     /* Why Choose Section */
-    .why-choose-section { padding: 120px 0 80px; background: #fff; }
+    .why-choose-section { padding: 110px 0 80px; background: #fff; }
     .section-header { margin-bottom: 35px; }
     .section-badge {
         display: inline-block; padding: 6px 18px; background: #EBF0FF; color: #1C30A3; border-radius: 50px;
         font-size: 13px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;
     }
-    .section-title { font-size: clamp(32px, 5vw, 48px); font-weight: 900; color: #222; margin-bottom: 25px; line-height: 1.2; }
-    .title-underline { width: 80px; height: 5px; background: #1C30A3; border-radius: 10px; margin-bottom: 30px; }
-    .section-desc { font-size: 17px; line-height: 1.8; margin-bottom: 40px; }
+    .section-title { font-size: clamp(32px, 4.5vw, 48px); font-weight: 900; color: #0F172A; margin-bottom: 22px; line-height: 1.2; }
+    .title-underline { width: 80px; height: 5px; background: #1C30A3; border-radius: 10px; margin-bottom: 25px; }
+    .section-desc { font-size: 17px; line-height: 1.8; margin-bottom: 35px; color: #475569; }
     
-    .info-item-card { background: #F8FAFF; border-radius: 20px; padding: 30px; border-left: 5px solid #1C30A3; transition: all 0.3s ease; }
-    .info-item-card:hover { transform: scale(1.02); background: white !important; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    .info-item-title { font-weight: 700; margin-bottom: 12px; font-size: 16px; }
-    .info-item-desc { font-size: 14px; color: #6c757d; margin: 0; line-height: 1.6; }
+    .info-item-card { background: #F8FAFC; border-radius: 20px; padding: 28px; border-left: 5px solid #1C30A3; border-top: 1px solid #F1F5F9; border-right: 1px solid #F1F5F9; border-bottom: 1px solid #F1F5F9; transition: all 0.3s ease; }
+    .info-item-card:hover { transform: translateY(-4px); background: white !important; box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+    .info-item-title { font-weight: 700; margin-bottom: 10px; font-size: 16px; color: #0F172A; }
+    .info-item-desc { font-size: 14px; color: #64748B; margin: 0; line-height: 1.6; }
 
-    .expert-guide-box { background: #1C30A3; color: white; border-radius: 20px; padding: 35px; box-shadow: 0 15px 30px rgba(28,48,163,0.15); position: relative; overflow: hidden; }
-    .expert-icon { position: absolute; right: -20px; top: -20px; font-size: 100px; opacity: 0.1; transform: rotate(15deg); }
+    .expert-guide-box { background: linear-gradient(135deg, #1C30A3, #2541C8); color: white; border-radius: 24px; padding: 35px; box-shadow: 0 15px 35px rgba(28,48,163,0.2); position: relative; overflow: hidden; }
+    .expert-icon { position: absolute; right: -15px; top: -15px; font-size: 90px; opacity: 0.12; color: white; transform: rotate(12deg); }
     .expert-title { font-weight: 700; margin-bottom: 12px; color: white; }
-    .expert-desc { font-size: 14px; color: rgba(255,255,255,0.8); margin-bottom: 20px; max-width: 85%; }
+    .expert-desc { font-size: 14px; color: rgba(255,255,255,0.85); margin-bottom: 22px; max-width: 85%; }
 
-    .custom-cta-btn { display: inline-flex; align-items: center; gap: 10px; background: white; color: #1C30A3; padding: 12px 25px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px; transition: all 0.3s ease;}
-    .custom-cta-btn:hover { background: #f0f0f0 !important; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .custom-cta-btn { display: inline-flex; align-items: center; gap: 8px; background: white; color: #1C30A3; padding: 12px 26px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 14px; transition: all 0.3s ease;}
+    .custom-cta-btn:hover { background: #f8fafc !important; color: #1C30A3 !important; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
 
-    .hero-image-container { position: relative; border-radius: 40px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.12); }
-    .why-choose-img { width: 100%; height: auto; display: block; filter: brightness(0.95); }
+    .hero-image-container { position: relative; border-radius: 36px; overflow: hidden; box-shadow: 0 25px 50px rgba(15,23,42,0.14); }
+    .why-choose-img { width: 100%; height: auto; display: block; filter: brightness(0.96); }
     .floating-badge {
-        position: absolute; bottom: 30px; left: 30px; background: white; padding: 25px 40px; border-radius: 24px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15); animation: float 3s ease-in-out infinite;
+        position: absolute; bottom: 25px; left: 25px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 22px 35px; border-radius: 22px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.12); border: 1px solid rgba(255,255,255,0.8); animation: float 3s ease-in-out infinite;
     }
-    .floating-badge-num { font-weight: 900; color: #1C30A3; font-size: 32px; margin-bottom: 5px; }
-    .floating-badge-text { margin: 0; font-weight: 600; color: #444; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .floating-badge-num { font-weight: 900; color: #1C30A3; font-size: 32px; margin-bottom: 2px; }
+    .floating-badge-text { margin: 0; font-weight: 700; color: #334155; font-size: 13px; text-transform: uppercase; letter-spacing: 0.8px; }
 
     /* Form Styles */
-    .form-section { padding: 120px 0; background: #fafafa; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; }
-    .form-card { background: white; border-radius: 40px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.05); }
-    .form-content { padding: clamp(35px, 7vw, 70px); }
-    .form-header-center { text-align: center; margin-bottom: 50px; }
-    .form-label-badge { color: #1C30A3; font-weight: 700; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
-    .form-main-title { font-size: clamp(34px, 5vw, 44px); font-weight: 800; margin: 15px 0; color: #222; }
-    .form-subtitle { font-size: 16px; max-width: 500px; margin: 0 auto; }
-    .form-input-label { font-weight: 700; margin-bottom: 10px; font-size: 14px; color: #333; display: block; }
-    .custom-form-input { 
-        border-radius: 15px; border: 2px solid #f2f2f2; padding: 15px 20px; width: 100%; font-size: 15px; 
-        transition: all 0.3s ease; outline: none; background: #fdfdfd;
-    }
-    .custom-form-input:focus { border-color: #1C30A3; background: #fff; }
-    select.custom-form-input { height: 55px; cursor: pointer; }
-    .text-area-custom { height: 140px; resize: none; }
-    .submit-query-btn {
-        margin-top: 40px; width: 100%; padding: 20px; border-radius: 15px; font-size: 18px; font-weight: 800;
-        background: #1C30A3; color: white; border: none; box-shadow: 0 12px 25px rgba(28,48,163,0.25); transition: all 0.3s ease; cursor: pointer;
-    }
-    .submit-query-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(28,48,163,0.4) !important; filter: brightness(1.1); }
-    .form-alert-info { padding: 20px; background: #f8f9fa; border-radius: 15px; font-size: 14px; border: 1px solid #eee; }
-    .form-alert-warning { padding: 20px; background: #FFF3CD; border-radius: 15px; font-size: 14px; border: 1px solid #FFEEBA; color: #856404; }
-    .alert-link-custom { color: #1C30A3; font-weight: 700; text-decoration: underline; }
+    .form-section { padding: 110px 0; background: #F8FAFC; border-top: 1px solid #E2E8F0; border-bottom: 1px solid #E2E8F0; }
+    .form-card { background: white; border-radius: 36px; overflow: hidden; box-shadow: 0 25px 70px rgba(15,23,42,0.08); border: 1px solid #E2E8F0; }
+    .form-content { padding: clamp(30px, 6vw, 65px); }
+    .form-header-center { text-align: center; margin-bottom: 40px; }
+    .form-label-badge { color: #1C30A3; font-weight: 700; font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; }
+    .form-main-title { font-size: clamp(30px, 4.5vw, 42px); font-weight: 800; margin: 12px 0; color: #0F172A; }
+    .form-subtitle { font-size: 16px; max-width: 520px; margin: 0 auto; color: #64748B; }
+    
+    /* Step Pills */
+    .form-steps-indicator { display: flex; align-items: center; justify-content: center; max-width: 600px; margin: 0 auto; }
+    .step-pill { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 30px; background: #F1F5F9; color: #64748B; font-weight: 600; font-size: 13px; transition: all 0.3s ease; }
+    .step-pill.active { background: #EBF0FF; color: #1C30A3; font-weight: 700; }
+    .step-pill .pill-number { width: 22px; height: 22px; border-radius: 50%; background: #CBD5E1; color: white; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; }
+    .step-pill.active .pill-number { background: #1C30A3; }
+    .step-pill-line { flex: 1; height: 2px; background: #E2E8F0; margin: 0 10px; }
 
-    .upload-zone { border: 2px dashed #1C30A3; padding: 40px; border-radius: 20px; text-align: center; background: #F8FAFF; transition: all 0.3s ease; }
-    .upload-zone:hover { background: #eff4ff !important; border-color: #3b5fe0 !important; }
-    .upload-input { cursor: pointer; position: relative; z-index: 2; }
-    .upload-main-text { font-size: 13px; color: #666; display: block; }
-    .upload-sub-text { font-size: 11px; color: #999; }
+    /* Inputs */
+    .premium-form-group { margin-bottom: 0; }
+    .premium-form-label { font-weight: 700; margin-bottom: 10px; font-size: 14px; color: #1E293B; display: block; }
+    .form-icon-wrapper { position: relative; }
+    .form-icon-wrapper .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #94A3B8; font-size: 15px; pointer-events: none; transition: color 0.3s ease; }
+    .premium-form-input { 
+        border-radius: 16px; border: 1.5px solid #E2E8F0; padding: 14px 20px 14px 48px; width: 100%; font-size: 15px; 
+        transition: all 0.3s ease; outline: none; background: #F8FAFC; color: #0F172A;
+    }
+    .premium-form-input:focus { border-color: #1C30A3; background: #fff; box-shadow: 0 0 0 4px rgba(28,48,163,0.1); }
+    .form-icon-wrapper:focus-within .input-icon { color: #1C30A3; }
+    select.premium-form-input { height: 52px; cursor: pointer; }
+    
+    /* Custom Style Cards */
+    .style-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .style-choice-card {
+        border: 2px solid #E2E8F0; background: #F8FAFC; border-radius: 18px; padding: 18px 14px; text-align: center;
+        cursor: pointer; transition: all 0.3s ease; user-select: none;
+    }
+    .style-choice-card:hover { border-color: #93C5FD; background: white; transform: translateY(-2px); }
+    .style-choice-card.active { border-color: #1C30A3; background: #EBF0FF; box-shadow: 0 6px 20px rgba(28,48,163,0.12); }
+    .style-choice-card .card-icon { font-size: 24px; color: #64748B; margin-bottom: 8px; transition: color 0.3s ease; }
+    .style-choice-card.active .card-icon { color: #1C30A3; }
+    .style-choice-card .card-title { font-weight: 700; font-size: 14px; color: #0F172A; margin-bottom: 2px; }
+    .style-choice-card .card-sub { font-size: 11px; color: #64748B; }
+
+    /* Upload Zone */
+    .upload-zone { border: 2px dashed #CBD5E1; padding: 35px 20px; border-radius: 20px; text-align: center; background: #F8FAFC; transition: all 0.3s ease; cursor: pointer; }
+    .upload-zone:hover { background: #EFF6FF; border-color: #1C30A3; }
+    .upload-input-hidden { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; z-index:10; }
+    .upload-icon-circle { width: 50px; height: 50px; background: #EBF0FF; color: #1C30A3; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 22px; }
+
+    .submit-query-btn {
+        margin-top: 30px; width: 100%; padding: 18px; border-radius: 16px; font-size: 17px; font-weight: 800;
+        background: linear-gradient(135deg, #1C30A3, #2541C8); color: white; border: none; box-shadow: 0 12px 25px rgba(28,48,163,0.25); transition: all 0.3s ease; cursor: pointer;
+    }
+    .submit-query-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(28,48,163,0.38) !important; filter: brightness(1.05); }
 
     /* Lifecycle Section */
-    .lifecycle-section { padding: 120px 0; background: #fff; }
-    .lifecycle-header { margin-bottom: 70px; }
-    .lifecycle-badge { display: inline-block; padding: 6px 20px; background: #EBF0FF; color: #1C30A3; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; }
-    .lifecycle-title { font-size: clamp(34px, 5.5vw, 46px); font-weight: 900; margin-bottom: 20px; color: #222; }
-    .lifecycle-underline { width: 70px; height: 4px; background: #1C30A3; border-radius: 10px; margin: 0 auto 25px;}
-    .lifecycle-desc { color: #666; max-width: 650px; margin: 0 auto; font-size: 17px; line-height: 1.7; }
+    .lifecycle-section { padding: 110px 0; background: #fff; }
+    .lifecycle-header { margin-bottom: 60px; }
+    .lifecycle-badge { display: inline-block; padding: 6px 20px; background: #EBF0FF; color: #1C30A3; border-radius: 50px; font-size: 13px; font-weight: 700; margin-bottom: 18px; text-transform: uppercase; }
+    .lifecycle-title { font-size: clamp(32px, 4.5vw, 46px); font-weight: 900; margin-bottom: 18px; color: #0F172A; }
+    .lifecycle-underline { width: 70px; height: 4px; background: #1C30A3; border-radius: 10px; margin: 0 auto 22px;}
+    .lifecycle-desc { color: #64748B; max-width: 650px; margin: 0 auto; font-size: 17px; line-height: 1.7; }
     
-    .process-step-container { transition: all 0.3s ease; }
+    .process-step-container { transition: all 0.3s ease; padding: 15px 10px; border-radius: 20px; }
+    .process-step-container:hover { background: #F8FAFC; transform: translateY(-4px); }
     .step-circle {
-        width: 85px; height: 85px; background: #1C30A3; color: white; border-radius: 50%; display: flex; 
-        align-items: center; justify-content: center; font-weight: 900; font-size: 32px; margin: 0 auto 25px; 
-        box-shadow: 0 15px 30px rgba(28,48,163,0.3); border: 8px solid #f8f9fa; position: relative;
+        width: 80px; height: 80px; background: #1C30A3; color: white; border-radius: 50%; display: flex; 
+        align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 22px; 
+        box-shadow: 0 12px 25px rgba(28,48,163,0.25); border: 6px solid #F8FAFC; position: relative;
     }
-    .step-line { position: absolute; width: 100px; height: 2px; background: #eee; right: -100px; top: 50%; z-index: -1; }
-    .step-title { font-weight: 800; margin-bottom: 12px; color: #222; }
-    .step-desc { font-size: 15px; color: #777; line-height: 1.6; }
-
-    /* FAQ Section */
-    .faq-section { padding: 120px 0; background: #fafafa; }
-    .faq-left-content { margin-bottom: 40px; }
-    .faq-badge { display: inline-block; padding: 6px 18px; background: #F8FAFF; color: #1C30A3; border-radius: 50px; font-size: 12px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
-    .faq-main-title { font-size: clamp(34px, 5vw, 48px); font-weight: 900; margin-bottom: 25px; color: #222; line-height: 1.1; }
-    .faq-sub-desc { color: #666; font-size: 17px; line-height: 1.8; margin-bottom: 45px; }
-    .faq-cta-box { padding: 35px; background: #1C30A3; border-radius: 30px; color: white; box-shadow: 0 15px 35px rgba(28,48,163,0.2); }
-    .faq-cta-title { color: white; margin-bottom: 12px; font-weight: 700; }
-    .faq-cta-desc { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
-    .faq-contact-btn { display: inline-block; padding: 14px 30px; background: white; color: #1C30A3; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 15px; transition: all 0.3s ease; }
-
-    .faq-accord-item { border: none; margin-bottom: 20px; border-radius: 20px !important; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); transition: transform 0.3s ease; }
-    .faq-accord-item:hover { transform: translateY(-3px); }
-    .faq-accord-btn { border-radius: 0; padding: 25px 35px !important; font-weight: 700; font-size: 17px !important; background: white !important; color: #222 !important; box-shadow: none !important; }
-    .faq-accord-btn:not(.collapsed) { color: #1C30A3 !important; font-size: 18px !important; background-color: #F8FAFF !important;}
-    .faq-accord-body { padding: 5px 35px 35px; color: #666; font-size: 16px; background: white; line-height: 1.7; }
+    .step-number { position: absolute; top: -5px; right: -5px; width: 26px; height: 26px; background: #2563EB; color: white; border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+    .step-title { font-weight: 800; margin-bottom: 10px; color: #0F172A; font-size: 18px; }
+    .step-desc { font-size: 14px; color: #64748B; line-height: 1.6; margin: 0; }
 
     /* Final CTA */
-    .final-cta-section { padding: 0 0 120px; background: #fafafa; }
-    .cta-card { padding: clamp(60px, 10vw, 100px); background: linear-gradient(135deg, #1C30A3, #3B5FE0); border-radius: 50px; position: relative; overflow: hidden; text-align: center; box-shadow: 0 25px 60px rgba(28,48,163,0.3); }
-    .cta-pattern-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.1; background: url('https://www.transparenttextures.com/patterns/cubes.png'); pointer-events: none; }
-    .cta-decor-circle-lg { position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.05); border-radius: 50%; top: -100px; right: -100px; }
-    .cta-decor-circle-sm { position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%; bottom: -50px; left: -50px; }
+    .final-cta-section { padding: 0 0 110px; background: #F8FAFC; }
+    .cta-card { padding: clamp(50px, 8vw, 90px); background: linear-gradient(135deg, #0F172A, #1C30A3, #2541C8); border-radius: 44px; position: relative; overflow: hidden; text-align: center; box-shadow: 0 25px 60px rgba(15,23,42,0.2); }
+    .cta-pattern-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.08; background: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px; pointer-events: none; }
+    .cta-decor-circle-lg { position: absolute; width: 300px; height: 300px; background: rgba(255,255,255,0.04); border-radius: 50%; top: -100px; right: -100px; }
+    .cta-decor-circle-sm { position: absolute; width: 200px; height: 200px; background: rgba(255,255,255,0.04); border-radius: 50%; bottom: -50px; left: -50px; }
     
-    .cta-title { color: white; font-size: clamp(32px, 6vw, 54px); font-weight: 900; margin-bottom: 25px; position: relative; z-index: 2; line-height: 1.1; }
-    .cta-desc { color: rgba(255,255,255,0.85); margin-bottom: 45px; max-width: 650px; margin-left: auto; margin-right: auto; position: relative; z-index: 2; font-size: 18px; line-height: 1.6; }
-    .cta-btns-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; position: relative; z-index: 2; }
+    .cta-title { color: white; font-size: clamp(30px, 5vw, 52px); font-weight: 900; margin-bottom: 20px; position: relative; z-index: 2; line-height: 1.15; font-family: 'Playfair Display', serif; }
+    .cta-desc { color: rgba(255,255,255,0.85); margin-bottom: 40px; max-width: 650px; margin-left: auto; margin-right: auto; position: relative; z-index: 2; font-size: 18px; line-height: 1.6; }
+    .cta-btns-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; position: relative; z-index: 2; }
     
-    .cta-btn-primary { padding: 18px 50px; background: white; color: #1C30A3; font-weight: 800; border-radius: 15px; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-size: 16px; transition: all 0.3s ease; }
-    .cta-btn-outline { padding: 18px 50px; background: transparent; border: 2px solid rgba(255,255,255,0.4); color: white; font-weight: 800; border-radius: 15px; text-decoration: none; font-size: 16px; transition: all 0.3s ease; }
+    .cta-btn-primary { padding: 16px 42px; background: white; color: #1C30A3; font-weight: 800; border-radius: 14px; text-decoration: none; box-shadow: 0 10px 25px rgba(0,0,0,0.15); font-size: 15px; transition: all 0.3s ease; }
+    .cta-btn-primary:hover { background: #f8fafc; color: #1C30A3; transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,0.22); }
+    .cta-btn-outline { padding: 16px 42px; background: transparent; border: 2px solid rgba(255,255,255,0.35); color: white; font-weight: 800; border-radius: 14px; text-decoration: none; font-size: 15px; transition: all 0.3s ease; }
+    .cta-btn-outline:hover { background: rgba(255,255,255,0.1); color: white; border-color: white; transform: translateY(-2px); }
 
     @keyframes float {
         0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-15px); }
+        50% { transform: translateY(-12px); }
     }
 
     @media (max-width: 991px) {
-        .premium-hero-section { min-height: 400px; padding: 80px 0; }
+        .premium-hero-section { min-height: 440px; padding: 80px 0 100px; }
         .hero-wave-svg { height: 45px; }
         .features-overlay-section { padding-top: 50px; }
+    }
+    @media (max-width: 576px) {
+        .style-cards-grid { grid-template-columns: 1fr; }
+        .step-pill-line { display: none; }
+        .form-steps-indicator { gap: 8px; flex-wrap: wrap; }
     }
   </style>
   <script>
     $(document).ready(function() {
-      // Manual accordion toggle fallback (if it still exists in header/footer or other sections)
+      // Manual accordion toggle fallback
       $('.faq-accord-btn').on('click', function(e) {
         const targetId = $(this).attr('data-bs-target');
         const $target = $(targetId);

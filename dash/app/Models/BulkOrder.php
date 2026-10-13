@@ -20,6 +20,10 @@ class BulkOrder extends Model
         'notes',
         'status',
         'admin_notes',
+        'final_size',
+        'final_color',
+        'final_qty',
+        'final_rate',
     ];
 
     /**

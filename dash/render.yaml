@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: saaluvesa-dash
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    plan: free
+    region: singapore
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: APP_KEY
+        generateValue: true
+      - key: WKHTML_PDF_BINARY
+        value: /usr/bin/wkhtmltopdf
+      - key: RUN_MIGRATIONS
+        value: "false"

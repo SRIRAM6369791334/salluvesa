@@ -1,9 +1,9 @@
-// Design Gallery JavaScript with Premium Animations
+// Design Gallery JavaScript with Premium Studio Animations, Filtering, & Search
 document.addEventListener('DOMContentLoaded', function () {
     // Check if required elements exist
     if (!document.getElementById('cs_design_lightbox')) return;
 
-    // Lightbox functionality
+    // Lightbox elements
     const lightbox = document.getElementById('cs_design_lightbox');
     const lightboxImg = document.getElementById('cs_lightbox_img');
     const lightboxTitle = document.getElementById('cs_lightbox_title');
@@ -11,10 +11,26 @@ document.addEventListener('DOMContentLoaded', function () {
     const lightboxDescription = document.getElementById('cs_lightbox_description');
     const lightboxOverlay = document.getElementById('cs_lightbox_overlay');
     const lightboxClose = document.getElementById('cs_lightbox_close');
+    const lightboxSubtotal = document.getElementById('cs_lightbox_subtotal');
+    const qtyInput = document.getElementById('cs_lightbox_qty');
 
     const designItems = document.querySelectorAll('.cs_design_item');
+    const gridContainer = document.getElementById('cs_design_grid');
+    const emptyState = document.getElementById('cs_no_results');
+    
     let currentIndex = 0;
     let isAnimating = false;
+    let currentBasePrice = 0;
+
+    // Recalculate Subtotal inside Modal
+    function updateSubtotal() {
+        if (!lightboxSubtotal || !qtyInput) return;
+        const qty = parseInt(qtyInput.value) || 1;
+        const symbol = window.__currency?.symbol || '$';
+        const rate = window.__currency?.rate || 1;
+        const total = (currentBasePrice * rate * qty).toFixed(2);
+        lightboxSubtotal.textContent = `Subtotal: ${symbol}${total}`;
+    }
 
     // Premium lightbox opening with smooth scaling
     function openLightbox(index) {
@@ -22,30 +38,47 @@ document.addEventListener('DOMContentLoaded', function () {
         isAnimating = true;
 
         const item = designItems[index];
+        if (!item) return;
+
         const img = item.querySelector('img');
         const title = item.querySelector('.cs_design_title');
-        const tag = item.querySelector('.cs_design_tag');
+        const tag = item.querySelector('.badge-tag-pill') || item.querySelector('.cs_design_tag');
 
-        lightboxImg.src = img.src;
+        lightboxImg.src = img ? img.src : item.getAttribute('data-src');
         lightboxImg.style.opacity = '0';
         lightboxImg.style.transform = 'scale(0.95) translateY(10px)';
 
         lightboxTitle.textContent = title ? title.textContent : '';
-        lightboxTag.textContent = tag ? tag.textContent : '';
+        lightboxTag.textContent = tag ? tag.textContent : (item.getAttribute('data-tag') || '');
 
         const priceEl = document.getElementById('cs_lightbox_price');
         const descEl = document.getElementById('cs_lightbox_description');
+
+        currentBasePrice = parseFloat(item.getAttribute('data-price')) || 0;
+        
         if (priceEl) {
-            const price = parseFloat(item.getAttribute('data-price')) || 0;
             const symbol = window.__currency?.symbol || '$';
             const rate = window.__currency?.rate || 1;
-            priceEl.innerHTML = `${symbol}${(price * rate).toFixed(2)} <span style="font-size: 14px; font-weight: 500; color: #888; text-decoration: line-through; opacity: 0.6;">Incl. GST</span>`;
-        }
-        if (descEl && item.getAttribute('data-description')) {
-            descEl.textContent = item.getAttribute('data-description');
+            const formattedPrice = (currentBasePrice * rate).toFixed(2);
+            priceEl.innerHTML = `${symbol}${formattedPrice} <span class="badge bg-light text-muted font-weight-normal border ms-2" style="font-size: 11px;">Incl. GST</span>`;
         }
 
-        // --- NEW: Populate Sizes and Cloth Types ---
+        if (descEl) {
+            const desc = item.getAttribute('data-description');
+            if (desc && desc.trim().length > 2) {
+                descEl.textContent = desc.trim();
+                descEl.style.display = 'block';
+            } else {
+                descEl.style.display = 'none';
+            }
+        }
+
+        if (qtyInput) {
+            qtyInput.value = 1;
+        }
+        updateSubtotal();
+
+        // Populate Sizes and Cloth Types
         const sizeContainer = document.getElementById('cs_lightbox_sizes');
         const clothSelect = document.getElementById('cs_lightbox_cloth');
         const selectedSizeInput = document.getElementById('selected_size');
@@ -65,6 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     btn.type = 'button';
                     btn.className = 'size-btn';
                     btn.textContent = s;
+                    btn.setAttribute('data-size', s);
                     btn.addEventListener('click', function () {
                         document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
                         this.classList.add('active');
@@ -103,13 +137,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 clothSection.style.display = 'none';
             }
         }
-        // --- END NEW ---
 
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
         currentIndex = index;
 
-        // Animate lightbox content with staggered entrance
         setTimeout(() => {
             lightboxImg.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
             lightboxImg.style.opacity = '1';
@@ -134,7 +166,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 400);
     }
 
-    // Make closeLightbox globally accessible for inline scripts
     window.closeLightboxGlobal = closeLightbox;
 
     // Event listeners for design items
@@ -142,11 +173,13 @@ document.addEventListener('DOMContentLoaded', function () {
         item.addEventListener('click', () => openLightbox(index));
     });
 
-    lightboxOverlay.addEventListener('click', closeLightbox);
-    lightboxClose.addEventListener('click', closeLightbox);
+    if (lightboxOverlay) lightboxOverlay.addEventListener('click', closeLightbox);
+    if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
 
-    // NOTE: Buy Now button handler is intentionally NOT set here.
-    // It is handled by inline script in own-design.blade.php with proper AJAX add-to-cart logic.
+    if (qtyInput) {
+        qtyInput.addEventListener('input', updateSubtotal);
+        qtyInput.addEventListener('change', updateSubtotal);
+    }
 
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -154,43 +187,98 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Escape') closeLightbox();
     });
 
-    // Premium filter functionality with staggered Isotope-like effect
-    const filterLinks = document.querySelectorAll('.cs_design_filters li a');
-    const galleryItems = document.querySelectorAll('.cs_design_item');
+    // ==========================================
+    // STUDIO TOOLBAR: FILTER, SEARCH, & SORT
+    // ==========================================
+    const filterPills = document.querySelectorAll('.cs_filter_pill_btn');
+    const searchInput = document.getElementById('cs_design_search');
+    const sortSelect = document.getElementById('cs_design_sort');
 
-    filterLinks.forEach(link => {
-        link.addEventListener('click', function (e) {
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    function applyFilterAndSearch() {
+        let visibleCount = 0;
+
+        designItems.forEach(item => {
+            const matchesFilter = (activeFilter === 'all') || item.classList.contains(activeFilter);
+            
+            const title = (item.getAttribute('data-title') || item.querySelector('.cs_design_title')?.textContent || '').toLowerCase();
+            const tag = (item.querySelector('.badge-tag-pill')?.textContent || '').toLowerCase();
+            const matchesSearch = !searchQuery || title.includes(searchQuery) || tag.includes(searchQuery);
+
+            if (matchesFilter && matchesSearch) {
+                item.style.display = 'flex';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0) scale(1)';
+                }, visibleCount * 40);
+                visibleCount++;
+            } else {
+                item.style.opacity = '0';
+                item.style.transform = 'scale(0.95) translateY(10px)';
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
+
+        if (emptyState) {
+            emptyState.style.display = (visibleCount === 0) ? 'block' : 'none';
+        }
+    }
+
+    // Category Pills Click
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', function (e) {
             e.preventDefault();
-
-            filterLinks.forEach(l => l.parentElement.classList.remove('active'));
+            filterPills.forEach(p => {
+                p.classList.remove('active');
+                p.parentElement.classList.remove('active');
+            });
+            this.classList.add('active');
             this.parentElement.classList.add('active');
 
-            const filterValue = this.getAttribute('href').substring(1);
-
-            let visibleIndex = 0;
-            galleryItems.forEach((item) => {
-                if (filterValue === 'all' || item.classList.contains(filterValue)) {
-                    item.style.display = 'block';
-                    setTimeout(() => {
-                        item.style.opacity = '1';
-                        item.style.transform = 'scale(1) translateY(0)';
-                    }, visibleIndex * 50);
-                    visibleIndex++;
-                } else {
-                    item.style.opacity = '0';
-                    item.style.transform = 'scale(0.9) translateY(20px)';
-                    setTimeout(() => {
-                        item.style.display = 'none';
-                    }, 400);
-                }
-            });
+            activeFilter = this.getAttribute('data-filter') || 'all';
+            applyFilterAndSearch();
         });
     });
 
-    // Initial entrance animations
+    // Search Input
+    if (searchInput) {
+        searchInput.addEventListener('input', function () {
+            searchQuery = this.value.trim().toLowerCase();
+            applyFilterAndSearch();
+        });
+    }
+
+    // Sorting Selection
+    if (sortSelect && gridContainer) {
+        sortSelect.addEventListener('change', function () {
+            const sortVal = this.value;
+            const itemsArray = Array.from(designItems);
+
+            itemsArray.sort((a, b) => {
+                const priceA = parseFloat(a.getAttribute('data-price')) || 0;
+                const priceB = parseFloat(b.getAttribute('data-price')) || 0;
+                const titleA = (a.querySelector('.cs_design_title')?.textContent || '').toLowerCase();
+                const titleB = (b.querySelector('.cs_design_title')?.textContent || '').toLowerCase();
+
+                if (sortVal === 'price-low') return priceA - priceB;
+                if (sortVal === 'price-high') return priceB - priceA;
+                if (sortVal === 'title-asc') return titleA.localeCompare(titleB);
+                return parseInt(a.getAttribute('data-id')) - parseInt(b.getAttribute('data-id'));
+            });
+
+            itemsArray.forEach(item => gridContainer.appendChild(item));
+            applyFilterAndSearch();
+        });
+    }
+
+    // Entrance animation observer
     const observerOptions = {
         threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        rootMargin: '0px 0px -40px 0px'
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -199,66 +287,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(() => {
                     entry.target.style.opacity = '1';
                     entry.target.style.transform = 'translateY(0) scale(1)';
-                }, index % 3 * 100); // Stagger based on column index approximation
+                }, (index % 3) * 80);
                 observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
-    galleryItems.forEach(item => {
+    designItems.forEach(item => {
         item.style.opacity = '0';
-        item.style.transform = 'translateY(40px) scale(0.95)';
-        item.style.transition = 'all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+        item.style.transform = 'translateY(30px) scale(0.96)';
+        item.style.transition = 'all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)';
         observer.observe(item);
     });
-
-    // Parallax effect for header
-    const pageHeading = document.querySelector('.cs_page_heading');
-    if (pageHeading) {
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const rate = scrolled * 0.4;
-            pageHeading.style.backgroundPosition = `center ${rate}px`;
-        });
-    }
-
-    // Hero Text Reveal Animation
-    const heroTitle = document.querySelector('.cs_page_heading h1');
-    if (heroTitle) {
-        const text = heroTitle.textContent;
-        heroTitle.innerHTML = '';
-        const wrapper = document.createElement('span');
-        wrapper.className = 'cs_hero_title_wrapper';
-
-        // Split text by words first to preserve spacing
-        const words = text.split(' ');
-        words.forEach((word, wordIndex) => {
-            const wordSpan = document.createElement('span');
-            wordSpan.style.display = 'inline-block';
-            wordSpan.style.whiteSpace = 'pre';
-
-            // Split word into characters
-            const chars = word.split('');
-            chars.forEach((char, charIndex) => {
-                const charSpan = document.createElement('span');
-                charSpan.className = 'cs_hero_title_char';
-                charSpan.textContent = char;
-                charSpan.style.animationDelay = `${(wordIndex * 100) + (charIndex * 50)}ms`;
-                wordSpan.appendChild(charSpan);
-            });
-
-            // Add space after word unless it's the last one
-            if (wordIndex < words.length - 1) {
-                const spaceSpan = document.createElement('span');
-                spaceSpan.className = 'cs_hero_title_char';
-                spaceSpan.innerHTML = '&nbsp;';
-                spaceSpan.style.animationDelay = `${(wordIndex * 100) + (chars.length * 50)}ms`;
-                wordSpan.appendChild(spaceSpan);
-            }
-
-            wrapper.appendChild(wordSpan);
-        });
-
-        heroTitle.appendChild(wrapper);
-    }
 });

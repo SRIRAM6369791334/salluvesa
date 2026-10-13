@@ -19,6 +19,21 @@ class Design extends Model {
         'description',
         'stocks',
         'size',
-        'cloth_types'
+        'cloth_types',
+        'gsm',
+        'colors',
+        'features',
+        'badge',
+        'badge_type',
+        'sort_order',
+        'is_active'
+    ];
+
+    protected $casts = [
+        'gsm' => 'array',
+        'colors' => 'array',
+        'features' => 'array',
+        'is_active' => 'integer',
+        'sort_order' => 'integer',
     ];
 }

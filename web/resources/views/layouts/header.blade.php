@@ -52,7 +52,7 @@
                 <li><a href="/about" @if(request()->is('about')) style="color: #5e5e5e;" @endif>{{ gt('About') }}</a></li>
                 <li><a href="/contact" @if(request()->is('contact')) style="color: #5e5e5e;" @endif>{{ gt('Contact') }}</a></li>
                 @if(Auth::check() && Auth::user()->hasPurchasedSample())
-                  <li><a href="/own-design" @if(request()->is('own-design')) style="color: #5e5e5e;" @endif>{{ gt('Own Design') }}</a></li>
+                  <li><a href="/own-design" @if(request()->is('own-design')) style="color: #5e5e5e;" @endif>{{ gt('Our Design') }}</a></li>
                   <li><a href="{{ route('bulk.order') }}" @if(request()->is('bulk-order')) style="color: #5e5e5e;" @endif>{{ gt('Bulk Order') }}</a></li>
                   <li class="desktop-only-nav-item"><a href="/customize-products" @if(request()->is('customize-products')) style="color: #5e5e5e;" @endif>{{ gt('Place Your Design') }}</a></li>
                 @endif
@@ -104,12 +104,31 @@
             </div>
           </div>
           <div class="cs_main_header_right">
+            @php
+              $headerCartCount = 0;
+              if (Auth::check()) {
+                  $headerCartCount = \App\Models\Cart::where('user_id', Auth::user()->user_id)->count();
+              } else {
+                  $headerCartCount = \App\Models\Cart::where('session_id', session()->getId())->count();
+              }
+            @endphp
             <div class="cs_header_action">
-              <a href="{{ Auth::check() ? route('myaccount') : route('login') }}" class="cs_action_icon cs_modal_btn @if(Auth::check()) auth-hover @endif" title="{{ gt('My Account') }}">
-                <i class="fa-regular fa-circle-user"></i>
+              <a href="{{ Auth::check() ? route('myaccount') : route('login') }}" class="cs_action_item cs_modal_btn @if(Auth::check()) auth-hover @endif">
+                <div class="cs_action_icon_wrapper">
+                  <i class="fa-regular fa-circle-user"></i>
+                </div>
+                <span class="cs_action_label">{{ Auth::check() ? gt('ACCOUNT') : gt('LOGIN') }}</span>
               </a>
-              <a href="{{ Auth::check() ? '/cart' : route('login') }}" class="cs_action_icon" title="{{ gt('Cart') }}">
-                <i class="fa-solid fa-cart-shopping"></i>
+              <a href="{{ Auth::check() ? '/cart' : route('login') }}" class="cs_action_item">
+                <div class="cs_action_icon_wrapper">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                  @if($headerCartCount > 0)
+                    <span class="cs_cart_count">{{ $headerCartCount }}</span>
+                  @else
+                    <span class="cs_cart_count" style="display: none;">0</span>
+                  @endif
+                </div>
+                <span class="cs_action_label">{{ gt('CART') }}</span>
               </a>
               <button type="button" class="cs_action_icon cs_mobile_menu_btn d-lg-none" id="mobile-menu-toggle-btn" aria-label="{{ gt('Toggle Menu') }}">
                 <i class="fa-solid fa-bars"></i>
@@ -179,6 +198,7 @@
       padding: 0 !important;
     }
     .cs_header_action .cs_action_icon {
+      position: relative !important;
       display: inline-flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -204,12 +224,103 @@
       margin: 0 !important;
       padding: 0 !important;
     }
+    .cs_header_action .cs_action_icon .cs_cart_count {
+      position: absolute !important;
+      top: -4px !important;
+      right: -4px !important;
+      background: #1C30A3 !important;
+      color: #ffffff !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      min-width: 18px !important;
+      height: 18px !important;
+      line-height: 14px !important;
+      border-radius: 999px !important;
+      text-align: center !important;
+      padding: 0 4px !important;
+      border: 2px solid #ffffff !important;
+      box-shadow: 0 2px 6px rgba(28, 48, 163, 0.35) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+      z-index: 2 !important;
+      transition: transform 0.2s ease !important;
+    }
     .cs_header_action .cs_action_icon:hover {
       background: #1C30A3 !important;
       color: #ffffff !important;
       border-color: #1C30A3 !important;
       transform: translateY(-2px) !important;
       box-shadow: 0 6px 18px rgba(28, 48, 163, 0.25) !important;
+    }
+    .cs_header_action .cs_action_icon:hover .cs_cart_count {
+      background: #ffffff !important;
+      color: #1C30A3 !important;
+      border-color: #1C30A3 !important;
+    }
+
+    /* Action Items with Text Labels */
+    .cs_header_action .cs_action_item {
+      display: inline-flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+      color: #1e293b !important;
+      text-decoration: none !important;
+      transition: all 0.25s ease !important;
+      gap: 5px !important;
+      background: transparent !important;
+      border: none !important;
+      margin: 0 4px !important;
+    }
+    .cs_header_action .cs_action_item .cs_action_icon_wrapper {
+      position: relative !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .cs_header_action .cs_action_item i {
+      font-size: 24px !important;
+      line-height: 1 !important;
+    }
+    .cs_header_action .cs_action_item .cs_action_label {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
+      line-height: 1 !important;
+    }
+    .cs_header_action .cs_action_item:hover {
+      color: #1C30A3 !important;
+      transform: translateY(-2px) !important;
+    }
+    .cs_header_action .cs_action_item .cs_cart_count {
+      position: absolute !important;
+      top: -8px !important;
+      right: -10px !important;
+      background: #1C30A3 !important;
+      color: #ffffff !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      min-width: 18px !important;
+      height: 18px !important;
+      line-height: 14px !important;
+      border-radius: 999px !important;
+      text-align: center !important;
+      padding: 0 4px !important;
+      border: 2px solid #ffffff !important;
+      box-shadow: 0 2px 6px rgba(28, 48, 163, 0.35) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+      z-index: 2 !important;
+    }
+    .cs_header_action .cs_action_item:hover .cs_cart_count {
+      background: #ffffff !important;
+      color: #1C30A3 !important;
+      border-color: #1C30A3 !important;
     }
 
     /* Page Top Spacer */

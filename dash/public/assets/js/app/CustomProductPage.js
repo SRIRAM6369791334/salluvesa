@@ -9,6 +9,7 @@ const gridNew = new gridjs.Grid({
         "Status",
         {
             name: "Action",
+            width: "230px",
             sort: false,
         },
     ],
@@ -25,7 +26,7 @@ const gridNew = new gridjs.Grid({
             product.product_type,
             gridjs.html(
                 `
-                <div style="display: flex; gap: 5px;">
+                <div style="display: flex; gap: 5px; justify-content: center; align-items: center;">
                     <img src="${product.front_mockup}" alt="Front" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ccc;">
                     <img src="${product.back_mockup ? product.back_mockup : ''}" alt="Back" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ccc; display: ${product.back_mockup ? 'block' : 'none'};">
                 </div>
@@ -33,10 +34,10 @@ const gridNew = new gridjs.Grid({
             ),
             product.status,
             gridjs.html(
-                `<div style="display: flex; gap: 4px; justify-content: center;">
-                    <button class="btn btn-secondary btn-sm edit_btn" data-id="${product.id}">Edit</button>
-                    <button class="btn btn-info btn-sm placement_btn" data-id="${product.id}" style="background-color: #038edc; border-color: #038edc; color: #fff;">🎯 Placement</button>
-                    <button class="btn btn-danger btn-sm delete_btn" data-id="${product.id}">Delete</button>
+                `<div style="display: flex; gap: 5px; justify-content: center; align-items: center; white-space: nowrap;">
+                    <button class="btn btn-secondary btn-sm edit_btn" data-id="${product.id}" style="white-space: nowrap;">Edit</button>
+                    <button class="btn btn-info btn-sm placement_btn" onclick="openPlacementStudio(${product.id})" data-id="${product.id}" style="background-color: #038edc; border-color: #038edc; color: #fff; white-space: nowrap;">🎯 Placement</button>
+                    <button class="btn btn-danger btn-sm delete_btn" data-id="${product.id}" style="white-space: nowrap;">Delete</button>
                 </div>`
             ),
         ];
@@ -73,7 +74,7 @@ function gridjsReRender(products) {
                 product.product_type,
                 gridjs.html(
                     `
-                    <div style="display: flex; gap: 5px;">
+                    <div style="display: flex; gap: 5px; justify-content: center; align-items: center;">
                         <img src="${product.front_mockup}" alt="Front" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ccc;">
                         <img src="${product.back_mockup ? product.back_mockup : ''}" alt="Back" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #ccc; display: ${product.back_mockup ? 'block' : 'none'};">
                     </div>
@@ -81,10 +82,10 @@ function gridjsReRender(products) {
                 ),
                 product.status,
                 gridjs.html(
-                    `<div style="display: flex; gap: 4px; justify-content: center;">
-                        <button class="btn btn-secondary btn-sm edit_btn" data-id="${product.id}">Edit</button>
-                        <button class="btn btn-info btn-sm placement_btn" onclick="openPlacementStudio(${product.id})" data-id="${product.id}" style="background-color: #038edc; border-color: #038edc; color: #fff;">🎯 Placement</button>
-                        <button class="btn btn-danger btn-sm delete_btn" data-id="${product.id}">Delete</button>
+                    `<div style="display: flex; gap: 5px; justify-content: center; align-items: center; white-space: nowrap;">
+                        <button class="btn btn-secondary btn-sm edit_btn" data-id="${product.id}" style="white-space: nowrap;">Edit</button>
+                        <button class="btn btn-info btn-sm placement_btn" onclick="openPlacementStudio(${product.id})" data-id="${product.id}" style="background-color: #038edc; border-color: #038edc; color: #fff; white-space: nowrap;">🎯 Placement</button>
+                        <button class="btn btn-danger btn-sm delete_btn" data-id="${product.id}" style="white-space: nowrap;">Delete</button>
                     </div>`
                 ),
             ];
@@ -188,22 +189,47 @@ document.addEventListener('click', function (e) {
                     document.getElementById('edit_description').value = product.description;
                     document.getElementById('edit_product_type').value = product.product_type;
 
-                    // Populate Colors
+                    if (document.getElementById('edit_badge')) document.getElementById('edit_badge').value = product.badge || '';
+                    if (document.getElementById('edit_badge_type')) document.getElementById('edit_badge_type').value = product.badge_type || '';
+                    if (document.getElementById('edit_cloth_types')) document.getElementById('edit_cloth_types').value = product.cloth_types || '';
+                    if (document.getElementById('edit_sort_order')) document.getElementById('edit_sort_order').value = product.sort_order !== undefined ? product.sort_order : 0;
+                    if (document.getElementById('edit_is_active')) document.getElementById('edit_is_active').value = product.is_active !== undefined ? product.is_active : 1;
+
+                    let sizes = product.sizes;
+                    if (typeof sizes === 'string') { try { sizes = JSON.parse(sizes); } catch (e) {} }
+                    if (document.getElementById('edit_sizes')) document.getElementById('edit_sizes').value = Array.isArray(sizes) ? sizes.join(',') : (sizes || '');
+
+                    let gsm = product.gsm;
+                    if (typeof gsm === 'string') { try { gsm = JSON.parse(gsm); } catch (e) {} }
+                    if (document.getElementById('edit_gsm')) document.getElementById('edit_gsm').value = Array.isArray(gsm) ? gsm.join(',') : (gsm || '');
+
+                    let features = product.features;
+                    if (typeof features === 'string') { try { features = JSON.parse(features); } catch (e) {} }
+                    if (document.getElementById('edit_features')) document.getElementById('edit_features').value = Array.isArray(features) ? features.join(',') : (features || '');
+
+                    // Populate Colors (Variants if any)
                     if (editColorsContainer) {
                         editColorsContainer.innerHTML = '';
                         editColorIndex = 0;
 
                         if (product.colors && product.colors.length > 0) {
                             product.colors.forEach(color => {
-                                let formattedViews = {};
-                                if (color.images) {
-                                    color.images.forEach(img => {
-                                        formattedViews[img.view_type] = '/' + img.image_path;
-                                    });
+                                if (typeof color === 'string') {
+                                    addEditColorRow({ color_name: color, color_code: '#000000', views: {} });
+                                } else {
+                                    let formattedViews = {};
+                                    if (color.images) {
+                                        color.images.forEach(img => {
+                                            formattedViews[img.view_type] = '/' + img.image_path;
+                                        });
+                                    }
+                                    color.views = formattedViews;
+                                    addEditColorRow(color);
                                 }
-                                color.views = formattedViews;
-                                addEditColorRow(color);
                             });
+                        } else {
+                            // If no colors, add at least one empty row
+                            addEditColorRow();
                         }
                     }
 
@@ -325,15 +351,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
                 }
             })
-                .then(response => response.json())
+                .then(async response => {
+                    const isJson = response.headers.get('content-type')?.includes('application/json');
+                    const data = isJson ? await response.json() : null;
+                    if (!response.ok) {
+                        let msg = (data && data.message) ? data.message : "Error submitting data";
+                        if (data && data.errors) {
+                            msg = Object.values(data.errors).flat().join('<br>');
+                        }
+                        throw new Error(msg);
+                    }
+                    return data;
+                })
                 .then(data => {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = 'Save Product';
                     if (data.success) {
-                        Swal.fire("Success!", "Product created successfully.", "success");
                         addForm.reset();
                         if (document.getElementById('colors_container')) {
                             document.getElementById('colors_container').innerHTML = '';
@@ -341,6 +378,23 @@ document.addEventListener('DOMContentLoaded', function () {
                         colorIndex = 0;
                         gridjsReRender(data.products);
                         closeModal('addCustomProductModal');
+
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Product created successfully. Do you want to set logo placement now?",
+                            icon: "success",
+                            showCancelButton: true,
+                            confirmButtonColor: "#038edc",
+                            cancelButtonColor: "#74788d",
+                            confirmButtonText: "🎯 Set Placement Now",
+                            cancelButtonText: "Later"
+                        }).then((result) => {
+                            if (result.isConfirmed && data.product_id) {
+                                if (typeof openPlacementStudio === 'function') {
+                                    openPlacementStudio(data.product_id);
+                                }
+                            }
+                        });
                     } else {
                         Swal.fire("Error!", data.message || "Failed to create product.", "error");
                     }
@@ -349,6 +403,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = 'Save Product';
                     console.error('Error:', error);
+                    Swal.fire({
+                        title: "Validation Error!",
+                        html: error.message,
+                        icon: "error"
+                    });
                 });
         });
     }
@@ -368,10 +427,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json'
                 }
             })
-                .then(response => response.json())
+                .then(async response => {
+                    const isJson = response.headers.get('content-type')?.includes('application/json');
+                    const data = isJson ? await response.json() : null;
+                    if (!response.ok) {
+                        let msg = (data && data.message) ? data.message : "Error updating product";
+                        if (data && data.errors) {
+                            msg = Object.values(data.errors).flat().join('<br>');
+                        }
+                        throw new Error(msg);
+                    }
+                    return data;
+                })
                 .then(data => {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = 'Save Product';
@@ -383,6 +454,16 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire("Error!", data.message || "Failed to update product.", "error");
                     }
                 })
+                .catch(error => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Save Product';
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "Validation Error!",
+                        html: error.message,
+                        icon: "error"
+                    });
+                });
         });
     }
 
@@ -702,4 +783,44 @@ document.addEventListener('DOMContentLoaded', function () {
             Swal.fire("Error!", "Error saving placement settings.", "error");
         });
     });
+});
+
+// --- Dynamic Color Row Management ---
+function appendColorRow(container, value = "#000000") {
+    const isHex = /^#([0-9A-F]{3}){1,2}$/i.test(value);
+    const pickerValue = isHex ? value : "#000000";
+    
+    const row = `
+        <div class="d-flex align-items-center gap-2 mb-2 color-row">
+            <input type="color" class="form-control form-control-color color-picker-tool" value="${pickerValue}" title="Choose color" style="width: 60px; height: 38px; padding: 0;">
+            <input type="text" class="form-control color-input-value" name="colors[]" value="${value}" placeholder="Color Hex/Name">
+            <button type="button" class="btn btn-danger remove-color">Delete</button>
+        </div>
+    `;
+    if ($(container).length) {
+        $(container).append(row);
+    }
+}
+
+$(document).on("click", ".add-color-btn", function () {
+    const target = $(this).data("target");
+    appendColorRow($("#" + target));
+});
+
+$(document).on("click", ".remove-color", function () {
+    const container = $(this).closest('.color-row').parent();
+    if (container.find('.color-row').length > 1) {
+        $(this).closest(".color-row").remove();
+    }
+});
+
+$(document).on("input", ".color-picker-tool", function () {
+    $(this).next(".color-input-value").val($(this).val());
+});
+
+$(document).on("input", ".color-input-value", function () {
+    const val = $(this).val();
+    if (/^#([0-9A-F]{3}){1,2}$/i.test(val)) {
+        $(this).prev(".color-picker-tool").val(val);
+    }
 });

@@ -701,32 +701,74 @@ class ProductController extends Controller
             $order->payment_status = null;
             $order->discount_amount = 0;
             
+            $user = \App\Models\User::where('email', $bulkOrder->email)->first();
+            $phone = $user ? $user->phone_number : 'N/A';
+            $address = null;
+            if ($user) {
+                if ($user->user_default_address_id) {
+                    $address = \App\Models\UserAddress::find($user->user_default_address_id);
+                }
+                if (!$address) {
+                    $address = \App\Models\UserAddress::where('user_id', $user->user_id)->orWhere('user_id', $user->id)->latest()->first();
+                }
+            }
+
             $order->customer = new \stdClass();
             $order->customer->name = $bulkOrder->name;
-            $order->customer->mobile = 'N/A';
+            $order->customer->mobile = $phone;
             $order->customer->email = $bulkOrder->email;
-            $order->customer->user_addresses = collect([]);
+            $order->customer->user_addresses = collect($address ? [$address] : []);
 
             $order->orderAddress = new \stdClass();
             $order->orderAddress->address_username = $bulkOrder->name;
-            $order->orderAddress->address_line_one = 'N/A';
-            $order->orderAddress->address_line_two = '';
-            $order->orderAddress->city = '';
-            $order->orderAddress->pincode = '';
-            $order->orderAddress->address_phone_number = 'N/A';
+            $order->orderAddress->address_line_one = $address ? $address->address_line_one : 'N/A';
+            $order->orderAddress->address_line_two = $address ? $address->address_line_two : '';
+            $order->orderAddress->city = $address ? $address->city : '';
+            $order->orderAddress->pincode = $address ? $address->pincode : '';
+            $order->orderAddress->address_phone_number = $address ? ($address->address_phone_number ?? $phone) : 'N/A';
             $order->orderAddress->state = new \stdClass();
-            $order->orderAddress->state->state_name = '';
+            $order->orderAddress->state->state_name = $address ? $address->state : '';
 
             $item = new \stdClass();
             $item->productOrder = clone $order;
             $item->product = clone $order;
-            $item->product->product_name = 'Bulk Order - ' . str_replace('_', ' ', $bulkOrder->product_type);
+            $productName = 'Bulk Order - ' . str_replace('_', ' ', $bulkOrder->product_type);
+            $productImage = $bulkOrder->custom_image;
+
+            if ($bulkOrder->product_type === 'own_design' && $bulkOrder->product_id) {
+                $design = \App\Models\Design::find($bulkOrder->product_id);
+                if ($design) {
+                    $productName = 'Bulk Order - ' . $design->title;
+                    $productImage = $design->image;
+                }
+            } elseif ($bulkOrder->product_type === 'custom_design' && $bulkOrder->product_id) {
+                // Models may be in web namespace if not present in dash, but let's try assuming they are accessible or fully qualified.
+                // It looks like CustomproductDesign is in \App\Models\CustomproductDesign based on web, but might need to be verified if dash has it.
+                // We'll use DB query to be safe if model doesn't exist in dash app.
+                $custom = \Illuminate\Support\Facades\DB::table('customproduct_designs')->where('id', $bulkOrder->product_id)->first();
+                if ($custom) {
+                    $cProduct = \Illuminate\Support\Facades\DB::table('customproducts')->where('id', $custom->customproduct_id)->first();
+                    $cName = $cProduct ? $cProduct->name : 'Custom Design';
+                    $productName = 'Bulk Order - ' . $cName;
+                    $productImage = $custom->thumbnail_path ?? $custom->preview_image_front;
+                }
+            }
+            $item->product_name = $productName;
+            $item->product->product_name = $productName;
             $item->productVarient = clone $item->product;
             $item->productVarient->varient = 5;
-            $item->productVarient->offer_price = 0;
+            $item->productVarient->offer_price = $bulkOrder->final_rate ?? 0;
             $item->productVarient->product_quantity = '';
-            $item->quantity = $bulkOrder->quantity;
-            $item->product_rate = 0;
+            $item->product_image = $productImage;
+            
+            $finalQty = $bulkOrder->final_qty ?? $bulkOrder->quantity;
+            $finalRate = $bulkOrder->final_rate ?? 0;
+            
+            $item->size_value = $bulkOrder->final_size ?: 'N/A (Bulk)';
+            $item->color_value = $bulkOrder->final_color ?: 'N/A (Bulk)';
+            $item->quantity = $finalQty;
+            $item->product_rate = $finalRate;
+            $item->product_total = $finalQty * $finalRate;
             $item->shipping = 0;
             $item->discount = 0;
             $item->order_id = $orderId;
@@ -752,74 +794,14 @@ class ProductController extends Controller
     {
         $orderId = $request->input('order_id');
         $invoiceType = $request->input('type', 'commercial'); // 'commercial' or 'proforma'
-        $invoiceData = $request->except(['order_id', 'type', 'download', 'view']);
+        $invoiceData = $request->except(['order_id', 'type', 'download', 'view', 'lang']);
 
-        $locale = \Illuminate\Support\Facades\Session::get('lang', 'en');
+        $locale = $request->input('lang') ?? \Illuminate\Support\Facades\Session::get('lang', 'en');
 
-        // Static labels for Commercial Invoice
-        $labels = [
-            'commercial_invoice'          => 'COMMERCIAL INVOICE',
-            'proforma_invoice'            => 'PROFORMA INVOICE',
-            'date'                        => 'Date',
-            'invoice_number'              => 'Invoice Number',
-            'air_waybill_number'          => 'Air Waybill Number',
-            'general_information'         => 'General Information',
-            'sender_details'              => 'Sender Details',
-            'shipment_details'            => 'Shipment Details',
-            'name'                        => 'Name',
-            'address'                     => 'Address',
-            'contact_number'              => 'Contact Number',
-            'email'                       => 'Email',
-            'tax_id_no'                   => 'Tax ID No.',
-            'shipment_ref_no'             => 'Shipment Reference No.',
-            'reason_for_export'           => 'Reason for Export',
-            'type_of_export'              => 'Type of Export',
-            'export_license_no'           => 'Export License No.',
-            'import_license_no'           => 'Import License No.',
-            'incoterms'                   => 'INCOTERMS',
-            'currency_code'               => 'Currency Code',
-            'payment_method'              => 'Payment Method',
-            'printing_method'             => 'Printing Method',
-            'receiver_details'            => 'Receiver Details',
-            'importer_of_record_details'  => 'Importer of Record Details',
-            'no'                          => 'No.',
-            'item_description'            => 'Item Description',
-            'hs_code'                     => 'HS Code',
-            'country_of_origin'           => 'Country of Origin',
-            'qty_uom'                     => 'Qty UOM',
-            'unit_value'                  => 'Unit Value',
-            'sub_total_value'             => 'Sub-Total Value',
-            'unit_net_weight'             => 'Unit Net Weight',
-            'other_info'                  => 'OTHER INFORMATION AND COMPLIANCE DETAILS',
-            'no_of_packages'              => 'No. of Packages',
-            'total_goods_value'           => 'Total Goods Value',
-            'total_weight'                => 'Total Weight',
-            'certify_text'                => 'I/We certify the information on this invoice is true and correct and that the contents of this shipment are as stated above.',
-            'signature'                   => 'Signature',
-            'designation_title'           => 'Designation/Title',
-        ];
+        $labels = $this->getExportTranslations($locale);
 
-        if ($locale && $locale !== 'en') {
-            try {
-                $tr = new \Stichoza\GoogleTranslate\GoogleTranslate($locale);
-                $tr->setSource('en');
-                // Translate dynamic invoice data
-                foreach ($invoiceData as $key => $value) {
-                    if (is_string($value) && !empty(trim($value))) {
-                        $invoiceData[$key] = $tr->translate($value);
-                    }
-                }
-                // Translate static labels
-                foreach ($labels as $key => $value) {
-                    $labels[$key] = $tr->translate($value);
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("Translation failed: " . $e->getMessage());
-            }
-        }
-
-        if (str_starts_with($orderId, 'B-') || str_starts_with($orderId, 'ORD-SAA-BULK-')) {
-            if (str_starts_with($orderId, 'B-')) {
+        if (str_starts_with((string)$orderId, 'B-') || str_starts_with((string)$orderId, 'ORD-SAA-BULK-')) {
+            if (str_starts_with((string)$orderId, 'B-')) {
                 $bulkId = str_replace('B-', '', $orderId);
                 $bulkOrder = \App\Models\BulkOrder::with('product')->find($bulkId);
             } else {
@@ -854,27 +836,58 @@ class ProductController extends Controller
         } else {
             $order = ProductOrder::query()->with(['customer', 'orderAddress.state'])->where("order_id", $orderId)->orWhere('id', $orderId)->first();
             if (!$order) {
-                return back()->with('error', 'Order not found.');
-            }
-            if ($order->user_id && !$order->customer) {
+                $order = new \stdClass();
+                $order->id = 1;
+                $order->order_id = $orderId ?? 'ORD-EXPORT';
+                $order->created_at = now();
+                $order->customer = new \stdClass();
+                $order->customer->name = 'Customer';
+                $order->customer->email = 'info@example.com';
+                $order->orderAddress = new \stdClass();
+            } elseif ($order->user_id && !$order->customer) {
                 $order->customer = \App\Models\User::where('user_id', $order->user_id)->first();
             }
             
-            $products = ProductSlot::query()->whereIn("order_id", [$order->id, (string)$order->order_id])
-                ->where(function($q) { $q->where('is_cancelled', '!=', 1)->orWhereNull('is_cancelled'); })
-                ->with("productVarient", "productOrder.customer.user_addresses", "productOrder.orderAddress", "product.productvari", 'productOrder.orderAddress.state', 'product.category')
-                ->get();
-                
-            if ($products->isEmpty()) {
-                return back()->with('error', 'No valid products found for this order.');
+            if ($order instanceof ProductOrder) {
+                $products = ProductSlot::query()->whereIn("order_id", [$order->id, (string)$order->order_id])
+                    ->where(function($q) { $q->where('is_cancelled', '!=', 1)->orWhereNull('is_cancelled'); })
+                    ->with("productVarient", "productOrder.customer.user_addresses", "productOrder.orderAddress", "product.productvari", 'productOrder.orderAddress.state', 'product.category')
+                    ->get();
+            } else {
+                $products = collect();
             }
         }
 
-        // Generate Invoice Number on the fly
-        $prefix = ($invoiceType === 'proforma') ? 'PRO-' : 'INV-';
-        $datePart = \Carbon\Carbon::parse($order->created_at)->format('Ym');
-        $incrementPart = str_pad($order->id, 4, '0', STR_PAD_LEFT);
-        $invoiceNumber = $prefix . $datePart . '-' . $incrementPart;
+        // If custom products are submitted from the form, override products
+        if ($request->has('custom_products') && is_array($request->input('custom_products')) && count($request->input('custom_products')) > 0) {
+            $products = collect();
+            foreach ($request->input('custom_products') as $pIndex => $pItem) {
+                if (empty(trim($pItem['name'] ?? ''))) continue;
+                $pObj = new \stdClass();
+                $pObj->id = $pItem['id'] ?? ('p_' . $pIndex);
+                $pObj->product_name = $pItem['name'];
+                $pObj->quantity = (float)($pItem['quantity'] ?? 1);
+                $pObj->product_rate = (float)($pItem['price'] ?? 0);
+                $pObj->product = (object) ['product_name' => $pItem['name']];
+                $pObj->productVarient = (object) ['offer_price' => (float)($pItem['price'] ?? 0), 'product_quantity' => ''];
+                $products->push($pObj);
+            }
+        }
+
+        if ($products->isEmpty()) {
+            return back()->with('error', 'No valid products found for this order.');
+        }
+
+        // Custom Invoice Number or generate on the fly
+        $customInvoiceNo = $request->input('doc_invoice_no') ?? ($request->input('invoice_number') ?? $request->input('invoice_no'));
+        if (!empty(trim((string)$customInvoiceNo))) {
+            $invoiceNumber = trim((string)$customInvoiceNo);
+        } else {
+            $prefix = ($invoiceType === 'proforma') ? 'PRO-' : 'INV-';
+            $datePart = \Carbon\Carbon::parse($order->created_at ?? now())->format('Ym');
+            $incrementPart = str_pad($order->id ?? 1, 4, '0', STR_PAD_LEFT);
+            $invoiceNumber = $prefix . $datePart . '-' . $incrementPart;
+        }
 
         return view('invoicePages.export_commercial_invoice', compact('products', 'order', 'invoiceData', 'invoiceType', 'invoiceNumber', 'labels'));
     }
@@ -882,57 +895,14 @@ class ProductController extends Controller
     public function exportPackingList(Request $request)
     {
         $orderId = $request->input('order_id');
-        $invoiceData = $request->except(['order_id']);
+        $invoiceData = $request->except(['order_id', 'download', 'view', 'lang']);
 
-        $locale = \Illuminate\Support\Facades\Session::get('lang', 'en');
+        $locale = $request->input('lang') ?? \Illuminate\Support\Facades\Session::get('lang', 'en');
 
-        // Static labels for Packing List
-        $labels = [
-            'packing_list'        => 'PACKING LIST',
-            'date'                => 'Date',
-            'invoice_number'      => 'Invoice Number',
-            'air_waybill_number'  => 'Air Waybill Number',
-            'sender_details'      => 'Sender Details',
-            'receiver_details'    => 'Receiver Details',
-            'name'                => 'Name',
-            'address'             => 'Address',
-            'contact_number'      => 'Contact Number',
-            'email'               => 'Email',
-            'tax_id_no'           => 'Tax ID No.',
-            'no'                  => 'No.',
-            'item_description'    => 'Item Description',
-            'hs_code'             => 'HS Code',
-            'country_of_origin'   => 'Country of Origin',
-            'qty'                 => 'Qty',
-            'uom'                 => 'UOM',
-            'net_weight'          => 'Net Weight',
-            'gross_weight'        => 'Gross Weight',
-            'no_of_packages'      => 'No. of Packages',
-            'total_weight'        => 'Total Weight',
-            'certify_text'        => 'I/We certify the information on this packing list is true and correct.',
-            'signature'           => 'Signature',
-            'designation_title'   => 'Designation/Title',
-        ];
+        $labels = $this->getExportTranslations($locale);
 
-        if ($locale && $locale !== 'en') {
-            try {
-                $tr = new \Stichoza\GoogleTranslate\GoogleTranslate($locale);
-                $tr->setSource('en');
-                foreach ($invoiceData as $key => $value) {
-                    if (is_string($value) && !empty(trim($value))) {
-                        $invoiceData[$key] = $tr->translate($value);
-                    }
-                }
-                foreach ($labels as $key => $value) {
-                    $labels[$key] = $tr->translate($value);
-                }
-            } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error("Translation failed: " . $e->getMessage());
-            }
-        }
-
-        if (str_starts_with($orderId, 'B-') || str_starts_with($orderId, 'ORD-SAA-BULK-')) {
-            if (str_starts_with($orderId, 'B-')) {
+        if (str_starts_with((string)$orderId, 'B-') || str_starts_with((string)$orderId, 'ORD-SAA-BULK-')) {
+            if (str_starts_with((string)$orderId, 'B-')) {
                 $bulkId = str_replace('B-', '', $orderId);
                 $bulkOrder = \App\Models\BulkOrder::with('product')->find($bulkId);
             } else {
@@ -965,26 +935,325 @@ class ProductController extends Controller
         } else {
             $order = ProductOrder::query()->with(['customer', 'orderAddress.state'])->where("order_id", $orderId)->orWhere('id', $orderId)->first();
             if (!$order) {
-                return back()->with('error', 'Order not found.');
-            }
-            if ($order->user_id && !$order->customer) {
+                $order = new \stdClass();
+                $order->id = 1;
+                $order->order_id = $orderId ?? 'ORD-EXPORT';
+                $order->customer = new \stdClass();
+                $order->customer->name = 'Customer';
+                $order->customer->email = 'info@example.com';
+                $order->orderAddress = new \stdClass();
+            } elseif ($order->user_id && !$order->customer) {
                 $order->customer = \App\Models\User::where('user_id', $order->user_id)->first();
             }
             
-            $products = ProductSlot::query()->whereIn("order_id", [$order->id, (string)$order->order_id])
-                ->where(function($q) { $q->where('is_cancelled', '!=', 1)->orWhereNull('is_cancelled'); })
-                ->with("productVarient", "productOrder.customer.user_addresses", "productOrder.orderAddress", "product.productvari", 'productOrder.orderAddress.state')
-                ->get();
-                
-            if ($products->isEmpty()) {
-                return back()->with('error', 'No valid products found for this order.');
+            if ($order instanceof ProductOrder) {
+                $products = ProductSlot::query()->whereIn("order_id", [$order->id, (string)$order->order_id])
+                    ->where(function($q) { $q->where('is_cancelled', '!=', 1)->orWhereNull('is_cancelled'); })
+                    ->with("productVarient", "productOrder.customer.user_addresses", "productOrder.orderAddress", "product.productvari", 'productOrder.orderAddress.state')
+                    ->get();
+            } else {
+                $products = collect();
             }
         }
 
-        return view('invoicePages.export_packing_list', compact('products', 'order', 'invoiceData', 'labels'));
+        if ($request->has('custom_products') && is_array($request->input('custom_products')) && count($request->input('custom_products')) > 0) {
+            $products = collect();
+            foreach ($request->input('custom_products') as $pIndex => $pItem) {
+                if (empty(trim($pItem['name'] ?? ''))) continue;
+                $pObj = new \stdClass();
+                $pObj->id = $pItem['id'] ?? ('p_' . $pIndex);
+                $pObj->product_name = $pItem['name'];
+                $pObj->quantity = (float)($pItem['quantity'] ?? 1);
+                $pObj->product_rate = (float)($pItem['price'] ?? 0);
+                $pObj->product = (object) ['product_name' => $pItem['name']];
+                $pObj->productVarient = (object) ['offer_price' => (float)($pItem['price'] ?? 0), 'product_quantity' => ''];
+                $products->push($pObj);
+            }
+        }
+
+        if ($products->isEmpty()) {
+            return back()->with('error', 'No valid products found for this order.');
+        }
+
+        // Custom Invoice Number or generate on the fly
+        $customInvoiceNo = $request->input('doc_invoice_no') ?? ($request->input('invoice_number') ?? $request->input('invoice_no'));
+        if (!empty(trim((string)$customInvoiceNo))) {
+            $invoiceNumber = trim((string)$customInvoiceNo);
+        } else {
+            $datePart = \Carbon\Carbon::parse($order->created_at ?? now())->format('Ym');
+            $incrementPart = str_pad($order->id ?? 1, 4, '0', STR_PAD_LEFT);
+            $invoiceNumber = 'INV-' . $datePart . '-' . $incrementPart;
+        }
+
+        return view('invoicePages.export_packing_list', compact('products', 'order', 'invoiceData', 'invoiceNumber', 'labels'));
     }
 
+    private function getExportTranslations($locale = 'en')
+    {
+        $translations = [
+            'en' => [
+                'commercial_invoice'          => 'COMMERCIAL INVOICE',
+                'proforma_invoice'            => 'PROFORMA INVOICE',
+                'packing_list'                => 'PACKING LIST',
+                'date'                        => 'Date',
+                'invoice_number'              => 'Invoice Number',
+                'air_waybill_number'          => 'Air Waybill Number',
+                'general_information'         => 'General Information',
+                'sender_details'              => 'Sender Details',
+                'shipment_details'            => 'Shipment Details',
+                'name'                        => 'Name',
+                'address'                     => 'Address',
+                'contact_number'              => 'Contact Number',
+                'email'                       => 'Email',
+                'tax_id_no'                   => 'Tax ID No.',
+                'shipment_date'               => 'SHIPMENT DATE',
+                'shipment_ref_no'             => 'Shipment Reference No.',
+                'reason_for_export'           => 'Reason for Export',
+                'type_of_export'              => 'Type of Export',
+                'export_license_no'           => 'Export License No.',
+                'import_license_no'           => 'Import License No.',
+                'incoterms'                   => 'INCOTERMS',
+                'currency_code'               => 'Currency Code',
+                'payment_method'              => 'Payment Method',
+                'printing_method'             => 'Printing Method',
+                'receiver_details'            => 'Receiver Details',
+                'importer_of_record_details'  => 'Importer of Record Details',
+                'no'                          => 'No.',
+                'item_description'            => 'Item Description',
+                'hs_code'                     => 'HS Code',
+                'country_of_origin'           => 'Country of Origin',
+                'qty_uom'                     => 'Qty UOM',
+                'unit_value'                  => 'Unit Value',
+                'sub_total_value'             => 'Sub-Total Value',
+                'unit_net_weight'             => 'Unit Net Weight',
+                'other_info'                  => 'OTHER INFORMATION AND COMPLIANCE DETAILS',
+                'no_of_packages'              => 'No. of Packages',
+                'total_goods_value'           => 'Total Goods Value',
+                'total_weight'                => 'TOTAL GROSS WEIGHT',
+                'certify_text'                => 'I/We certify the information on this invoice is true and correct and that the contents of this shipment are as stated above.',
+                'signature'                   => 'Signature',
+                'designation_title'           => 'Designation/Title',
+            ],
+            'ta' => [
+                'commercial_invoice'          => 'வணிக விலைப்பட்டியல் (COMMERCIAL INVOICE)',
+                'proforma_invoice'            => 'புரோஃபார்மா விலைப்பட்டியல் (PROFORMA INVOICE)',
+                'packing_list'                => 'பேக்கிங் பட்டியல் (PACKING LIST)',
+                'date'                        => 'தேதி (Date)',
+                'invoice_number'              => 'விலைப்பட்டியல் எண் (Invoice No)',
+                'air_waybill_number'          => 'ஏர் வேபில் எண் (Air Waybill No)',
+                'general_information'         => 'பொதுவான தகவல்கள் (General Information)',
+                'sender_details'              => 'அனுப்புநர் விபரம் (Sender Details)',
+                'shipment_details'            => 'ஏற்றுமதி விபரம் (Shipment Details)',
+                'name'                        => 'பெயர் (Name)',
+                'address'                     => 'முகவரி (Address)',
+                'contact_number'              => 'தொடர்பு எண் (Contact No)',
+                'email'                       => 'மின்னஞ்சல் (Email)',
+                'tax_id_no'                   => 'வரி ஐடி எண் (Tax ID No)',
+                'shipment_date'               => 'ஏற்றுமதி தேதி (Shipment Date)',
+                'shipment_ref_no'             => 'ஏற்றுமதி குறிப்பு எண் (Shipment Ref No)',
+                'reason_for_export'           => 'ஏற்றுமதிக்கான காரணம் (Reason for Export)',
+                'type_of_export'              => 'ஏற்றுமதி வகை (Type of Export)',
+                'export_license_no'           => 'ஏற்றுமதி உரிம எண் (Export License No)',
+                'import_license_no'           => 'இறக்குமதி உரிம எண் (Import License No)',
+                'incoterms'                   => 'இன்கோடெர்ம்ஸ் (INCOTERMS)',
+                'currency_code'               => 'நாணயக் குறியீடு (Currency Code)',
+                'payment_method'              => 'பணம் செலுத்தும் முறை (Payment Method)',
+                'printing_method'             => 'அச்சிடும் முறை (Printing Method)',
+                'receiver_details'            => 'பெறுநர் விபரம் (Receiver Details)',
+                'importer_of_record_details'  => 'இறக்குமதியாளர் விபரம் (Importer Details)',
+                'no'                          => 'எண் (No.)',
+                'item_description'            => 'பொருள் விளக்கம் (Item Description)',
+                'hs_code'                     => 'HS குறியீடு (HS Code)',
+                'country_of_origin'           => 'உற்பத்தி நாடு (Country of Origin)',
+                'qty_uom'                     => 'அளவு (Qty UOM)',
+                'unit_value'                  => 'யூனிட் விலை (Unit Value)',
+                'sub_total_value'             => 'மொத்த மதிப்பு (Sub-Total Value)',
+                'unit_net_weight'             => 'யூனிட் நிகர எடை (Unit Net Wt)',
+                'other_info'                  => 'இதர தகவல்கள் மற்றும் சான்றிதழ் விபரங்கள் (OTHER INFORMATION AND COMPLIANCE DETAILS)',
+                'no_of_packages'              => 'தொகுப்புகளின் எண்ணிக்கை (No. of Packages)',
+                'total_goods_value'           => 'பொருட்களின் மொத்த மதிப்பு (Total Goods Value)',
+                'total_weight'                => 'மொத்த எடை (TOTAL GROSS WEIGHT)',
+                'certify_text'                => 'இந்த விலைப்பட்டியலில் உள்ள தகவல்கள் உண்மை மற்றும் துல்லியமானவை என சான்றளிக்கிறேன்.',
+                'signature'                   => 'கையொப்பம் (Signature)',
+                'designation_title'           => 'பதவி / பொறுப்பு (Designation/Title)',
+            ],
+            'de' => [
+                'commercial_invoice'          => 'HANDELSRECHNUNG (COMMERCIAL INVOICE)',
+                'proforma_invoice'            => 'PROFORMA-RECHNUNG (PROFORMA INVOICE)',
+                'packing_list'                => 'PACKLISTE (PACKING LIST)',
+                'date'                        => 'Datum',
+                'invoice_number'              => 'Rechnungsnummer',
+                'air_waybill_number'          => 'Luftfrachtbriefnummer',
+                'general_information'         => 'Allgemeine Informationen',
+                'sender_details'              => 'Absenderangaben',
+                'shipment_details'            => 'Versanddetails',
+                'name'                        => 'Name',
+                'address'                     => 'Adresse',
+                'contact_number'              => 'Kontaktnummer',
+                'email'                       => 'E-Mail',
+                'tax_id_no'                   => 'Steuer-ID-Nr.',
+                'shipment_date'               => 'VERSANDDATUM',
+                'shipment_ref_no'             => 'Sendungsreferenznummer',
+                'reason_for_export'           => 'Ausfuhrgrund',
+                'type_of_export'              => 'Exportart',
+                'export_license_no'           => 'Ausfuhrlizenznummer',
+                'import_license_no'           => 'Einfuhrlizenznummer',
+                'incoterms'                   => 'INCOTERMS',
+                'currency_code'               => 'Währungscode',
+                'payment_method'              => 'Zahlungsmethode',
+                'receiver_details'            => 'Empfängerangaben',
+                'importer_of_record_details'  => 'Importeurangaben',
+                'no'                          => 'Nr.',
+                'item_description'            => 'Warenbezeichnung',
+                'hs_code'                     => 'HS-Code',
+                'country_of_origin'           => 'Ursprungsland',
+                'qty_uom'                     => 'Menge / ME',
+                'unit_value'                  => 'Einzelpreis',
+                'sub_total_value'             => 'Zwischensumme',
+                'unit_net_weight'             => 'Nettoeinzelfr.',
+                'other_info'                  => 'SONSTIGE ANGABEN UND COMPLIANCE-DETAILS',
+                'no_of_packages'              => 'Anzahl der Packstücke',
+                'total_goods_value'           => 'Warenwert gesamt',
+                'total_weight'                => 'BRUTTOGESAMTGEWICHT',
+                'certify_text'                => 'Ich/Wir bestätigen, dass die Angaben auf dieser Rechnung wahrheitsgemäß und korrekt sind.',
+                'signature'                   => 'Unterschrift',
+                'designation_title'           => 'Bezeichnung / Titel',
+            ],
+            'fr' => [
+                'commercial_invoice'          => 'FACTURE COMMERCIALE',
+                'proforma_invoice'            => 'FACTURE PROFORMA',
+                'packing_list'                => 'LISTE DE COLISAGE',
+                'date'                        => 'Date',
+                'invoice_number'              => 'Numéro de facture',
+                'air_waybill_number'          => 'Numéro de lettre de transport aérien',
+                'general_information'         => 'Informations Générales',
+                'sender_details'              => 'Détails de l\'expéditeur',
+                'shipment_details'            => 'Détails de l\'expédition',
+                'name'                        => 'Nom',
+                'address'                     => 'Adresse',
+                'contact_number'              => 'Numéro de contact',
+                'email'                       => 'E-mail',
+                'tax_id_no'                   => 'N° d\'identification fiscale',
+                'shipment_date'               => 'DATE D\'EXPÉDITION',
+                'shipment_ref_no'             => 'N° de référence de l\'expédition',
+                'reason_for_export'           => 'Raison de l\'exportation',
+                'type_of_export'              => 'Type d\'exportation',
+                'export_license_no'           => 'N° de licence d\'exportation',
+                'import_license_no'           => 'N° de licence d\'importation',
+                'incoterms'                   => 'INCOTERMS',
+                'currency_code'               => 'Code devise',
+                'payment_method'              => 'Mode de paiement',
+                'receiver_details'            => 'Détails du destinataire',
+                'importer_of_record_details'  => 'Détails de l\'importateur',
+                'no'                          => 'N°',
+                'item_description'            => 'Description de l\'article',
+                'hs_code'                     => 'Code SH',
+                'country_of_origin'           => 'Pays d\'origine',
+                'qty_uom'                     => 'Qté UDM',
+                'unit_value'                  => 'Valeur unitaire',
+                'sub_total_value'             => 'Valeur sous-totale',
+                'unit_net_weight'             => 'Poids net unitaire',
+                'other_info'                  => 'AUTRES INFORMATIONS ET DÉTAILS DE CONFORMITÉ',
+                'no_of_packages'              => 'Nombre de colis',
+                'total_goods_value'           => 'Valeur totale des marchandises',
+                'total_weight'                => 'POIDS BRUT TOTAL',
+                'certify_text'                => 'Je/Nous certifions que les informations sur cette facture sont véridiques et exactes.',
+                'signature'                   => 'Signature',
+                'designation_title'           => 'Désignation / Titre',
+            ],
+            'es' => [
+                'commercial_invoice'          => 'FACTURA COMERCIAL',
+                'proforma_invoice'            => 'FACTURA PROFORMA',
+                'packing_list'                => 'LISTA DE EMPAQUE',
+                'date'                        => 'Fecha',
+                'invoice_number'              => 'Número de Factura',
+                'air_waybill_number'          => 'Número de Guía Aérea',
+                'general_information'         => 'Información General',
+                'sender_details'              => 'Detalles del Remitente',
+                'shipment_details'            => 'Detalles del Envío',
+                'name'                        => 'Nombre',
+                'address'                     => 'Dirección',
+                'contact_number'              => 'Número de Contacto',
+                'email'                       => 'Correo Electrónico',
+                'tax_id_no'                   => 'N° de Identificación Fiscal',
+                'shipment_date'               => 'FECHA DE ENVÍO',
+                'shipment_ref_no'             => 'N° de Referencia de Envío',
+                'reason_for_export'           => 'Motivo de Exportación',
+                'type_of_export'              => 'Tipo de Exportación',
+                'export_license_no'           => 'N° de Licencia de Exportación',
+                'import_license_no'           => 'N° de Licencia de Importación',
+                'incoterms'                   => 'INCOTERMS',
+                'currency_code'               => 'Código de Moneda',
+                'payment_method'              => 'Método de Pago',
+                'receiver_details'            => 'Detalles del Receptor',
+                'importer_of_record_details'  => 'Detalles del Importador',
+                'no'                          => 'N°',
+                'item_description'            => 'Descripción del Artículo',
+                'hs_code'                     => 'Código SA',
+                'country_of_origin'           => 'País de Origen',
+                'qty_uom'                     => 'Cant. UDM',
+                'unit_value'                  => 'Valor Unitario',
+                'sub_total_value'             => 'Valor Subtotal',
+                'unit_net_weight'             => 'Peso Neto Unit.',
+                'other_info'                  => 'OTRA INFORMACIÓN Y DETALLES DE CUMPLIMIENTO',
+                'no_of_packages'              => 'Número de Paquetes',
+                'total_goods_value'           => 'Valor Total de Mercancías',
+                'total_weight'                => 'PESO BRUTO TOTAL',
+                'certify_text'                => 'Certifico/Certificamos que la información en esta factura es verídica y correcta.',
+                'signature'                   => 'Firma',
+                'designation_title'           => 'Designación / Título',
+            ],
+            'ar' => [
+                'commercial_invoice'          => 'الفاتورة التجارية (COMMERCIAL INVOICE)',
+                'proforma_invoice'            => 'فاتورة شكلية (PROFORMA INVOICE)',
+                'packing_list'                => 'قائمة التعبئة (PACKING LIST)',
+                'date'                        => 'التاريخ',
+                'invoice_number'              => 'رقم الفاتورة',
+                'air_waybill_number'          => 'رقم بوليصة الشحن الجوي',
+                'general_information'         => 'معلومات عامة',
+                'sender_details'              => 'تفاصيل المرسل',
+                'shipment_details'            => 'تفاصيل الشحنة',
+                'name'                        => 'الاسم',
+                'address'                     => 'العنوان',
+                'contact_number'              => 'رقم الاتصال',
+                'email'                       => 'البريد الإلكتروني',
+                'tax_id_no'                   => 'الرقم الضريبي',
+                'shipment_date'               => 'تاريخ الشحن',
+                'shipment_ref_no'             => 'رقم مرجع الشحنة',
+                'reason_for_export'           => 'سبب التصدير',
+                'type_of_export'              => 'نوع التصدير',
+                'export_license_no'           => 'رقم ترخيص التصدير',
+                'import_license_no'           => 'رقم ترخيص الاستيراد',
+                'incoterms'                   => 'شروط التجارة الدولية (INCOTERMS)',
+                'currency_code'               => 'رمز العملة',
+                'payment_method'              => 'طريقة الدفع',
+                'receiver_details'            => 'تفاصيل المستلم',
+                'importer_of_record_details'  => 'تفاصيل المستورد',
+                'no'                          => 'الرقم',
+                'item_description'            => 'وصف الصنف',
+                'hs_code'                     => 'رمز النظام المنسق',
+                'country_of_origin'           => 'بلد المنشأ',
+                'qty_uom'                     => 'الكمية / الوحدة',
+                'unit_value'                  => 'سعر الوحدة',
+                'sub_total_value'             => 'القيمة الفرعية',
+                'unit_net_weight'             => 'صافي وزن الوحدة',
+                'other_info'                  => 'معلومات أخرى وتفاصيل الامتثال',
+                'no_of_packages'              => 'عدد الطرود',
+                'total_goods_value'           => 'إجمالي قيمة البضائع',
+                'total_weight'                => 'إجمالي الوزن الإجمالي',
+                'certify_text'                => 'أشهد / نشهد بأن المعلومات الواردة في هذه الفاتورة صحيحة ودقيقة.',
+                'signature'                   => 'التوقيع',
+                'designation_title'           => 'المسمى الوظيفي / الصفة',
+            ],
+        ];
 
+        $lang = strtolower($locale);
+        $base = $translations['en'];
+        if (isset($translations[$lang])) {
+            return array_merge($base, $translations[$lang]);
+        }
+        return $base;
+    }
 
     public function getOrderProductsForExport($orderId = null)
     {
@@ -1002,7 +1271,9 @@ class ProductController extends Controller
             return response()->json([
                 [
                     'id' => 'bulk',
-                    'name' => 'Bulk Order - ' . str_replace('_', ' ', $bulkOrder->product_type)
+                    'name' => 'Bulk Order - ' . str_replace('_', ' ', $bulkOrder->product_type),
+                    'quantity' => $bulkOrder->quantity ?? 1,
+                    'price' => 0
                 ]
             ]);
         } else {
@@ -1013,15 +1284,18 @@ class ProductController extends Controller
             
             $products = \App\Models\ProductSlot::query()->whereIn("order_id", [$order->id, (string)$order->order_id])
                 ->where(function($q) { $q->where('is_cancelled', '!=', 1)->orWhereNull('is_cancelled'); })
-                ->with("product")
+                ->with(["product", "productVarient"])
                 ->get();
                 
             $result = [];
             foreach($products as $p) {
                 $name = $p->product_name ?? ($p->product->product_name ?? 'Item');
+                $price = $p->product_rate ?? ($p->productVarient->offer_price ?? ($p->product->product_price ?? 0));
                 $result[] = [
                     'id' => $p->id,
-                    'name' => $name
+                    'name' => $name,
+                    'quantity' => (float)($p->quantity ?? 1),
+                    'price' => (float)$price
                 ];
             }
             return response()->json($result);
@@ -1373,9 +1647,67 @@ class ProductController extends Controller
     public function getExportFormData($orderId)
     {
         $exportData = \App\Models\OrderExportData::where('order_id', $orderId)->first();
-        if ($exportData) {
-            return response()->json(['success' => true, 'data' => $exportData->form_data]);
+        $savedData = $exportData ? ($exportData->form_data ?? []) : [];
+
+        $defaultData = [];
+        if (str_starts_with((string)$orderId, 'B-') || str_starts_with((string)$orderId, 'ORD-SAA-BULK-')) {
+            if (str_starts_with((string)$orderId, 'B-')) {
+                $bulkId = str_replace('B-', '', $orderId);
+                $bulkOrder = \App\Models\BulkOrder::find($bulkId);
+            } else {
+                $bulkOrder = \App\Models\BulkOrder::where('order_id', $orderId)->first();
+            }
+            if ($bulkOrder) {
+                $defaultData = [
+                    'receiver_name'    => $bulkOrder->name ?? '',
+                    'receiver_email'   => $bulkOrder->email ?? '',
+                    'receiver_address' => $bulkOrder->address ?? 'N/A',
+                    'receiver_contact' => $bulkOrder->phone ?? ($bulkOrder->mobile ?? 'N/A'),
+                    'receiver_tax_id'  => 'N/A',
+                ];
+            }
+        } else {
+            $order = \App\Models\ProductOrder::with(['customer', 'orderAddress.state'])->where('order_id', $orderId)->orWhere('id', $orderId)->first();
+            if ($order) {
+                $addr = $order->orderAddress;
+                $userId = $order->user_id ?? ($addr->user_id ?? null);
+                $user = $order->customer ?? ($userId ? \App\Models\User::where('user_id', $userId)->orWhere('id', $userId)->first() : null);
+
+                $receiverName = $addr->address_username ?? ($user->name ?? '');
+                $receiverEmail = $user->email ?? '';
+                $receiverContact = $addr->address_phone_number ?? ($addr->address_phone ?? ($user->phone_number ?? ($user->mobile ?? '')));
+
+                $addrParts = [];
+                if (!empty($addr->address_line_one)) $addrParts[] = $addr->address_line_one;
+                if (!empty($addr->address_line_two)) $addrParts[] = $addr->address_line_two;
+                if (!empty($addr->landmark)) $addrParts[] = $addr->landmark;
+                if (!empty($addr->city)) $addrParts[] = $addr->city;
+                if (!empty($addr->state->state_name)) $addrParts[] = $addr->state->state_name;
+                elseif (!empty($addr->state)) $addrParts[] = $addr->state;
+                if (!empty($addr->pincode)) $addrParts[] = '- ' . $addr->pincode;
+                if (!empty($addr->country)) $addrParts[] = $addr->country;
+
+                $receiverAddress = !empty($addrParts) ? implode(", ", $addrParts) : 'N/A';
+
+                $defaultData = [
+                    'receiver_name'    => $receiverName,
+                    'receiver_email'   => $receiverEmail,
+                    'receiver_address' => $receiverAddress,
+                    'receiver_contact' => $receiverContact,
+                    'receiver_tax_id'  => $user->gst_number ?? ($user->gstin ?? ($user->tax_id ?? 'N/A')),
+                ];
+            }
         }
-        return response()->json(['success' => false, 'data' => null]);
+
+        $finalData = $defaultData;
+        foreach ($savedData as $k => $v) {
+            if ($v !== null && $v !== '') {
+                $finalData[$k] = $v;
+            } elseif (!array_key_exists($k, $finalData)) {
+                $finalData[$k] = $v;
+            }
+        }
+
+        return response()->json(['success' => true, 'data' => $finalData]);
     }
 }

@@ -252,11 +252,15 @@ class ProductOrdersController extends Controller
             public_path('uploads/' . $cleanPath),
             public_path('uploads/' . $relPath),
             public_path('uploads/' . $filename),
+            public_path('uploads/user_uploads/' . $filename),
+            public_path('user_uploads/' . $filename),
             base_path('../web/public/' . $cleanPath),
             base_path('../web/public/' . $relPath),
             base_path('../web/public/uploads/' . $cleanPath),
             base_path('../web/public/uploads/' . $relPath),
             base_path('../web/public/uploads/' . $filename),
+            base_path('../web/public/uploads/user_uploads/' . $filename),
+            base_path('../web/public/user_uploads/' . $filename),
             storage_path('app/public/' . $cleanPath),
             storage_path('app/' . $cleanPath)
         ]);
@@ -270,13 +274,14 @@ class ProductOrdersController extends Controller
         }
 
         // HTTP Fallback via MAIN_URL and candidate URLs
-        $mainUrl = 'http://127.0.0.1:8000/';
+        $mainUrl = rtrim(env('MAIN_URL', url('/')), '/') . '/';
         $httpCandidates = array_unique([
             str_starts_with($url, 'http') ? $url : null,
             $mainUrl . $cleanPath,
             $mainUrl . $relPath,
             $mainUrl . 'uploads/' . $filename,
             $mainUrl . 'uploads/' . $cleanPath,
+            $mainUrl . 'uploads/user_uploads/' . $filename,
         ]);
 
         foreach ($httpCandidates as $httpUrl) {
@@ -333,6 +338,26 @@ class ProductOrdersController extends Controller
             $added = $this->addFileOrDownloadToZip($zip, $slot->custom_logo_url, '1_Original_Customer_Logo.' . $ext);
             if (!$added) {
                 $zip->addFromString('1_Original_Customer_Logo_MISSING.txt', "Customer uploaded logo URL: " . $slot->custom_logo_url . "\nFile was not found on local disk or via HTTP.");
+            }
+        }
+
+        // Add Design Studio uploaded image layers (e.g. pasted logo / dog image)
+        if (!empty($slot->design_id)) {
+            $layers = DB::table('design_layers')
+                ->where('design_id', $slot->design_id)
+                ->whereNotNull('source_path')
+                ->get();
+
+            $layerIdx = 1;
+            foreach ($layers as $layer) {
+                if (empty($layer->source_path) || str_starts_with($layer->source_path, 'emoji:')) {
+                    continue;
+                }
+                $ext = pathinfo(parse_url($layer->source_path, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'png';
+                $layerTitle = !empty($layer->layer_name) ? preg_replace('/[^A-Za-z0-9_]/', '_', $layer->layer_name) : 'User_Logo_' . $layerIdx;
+                $zipName = '1_Uploaded_Logo_' . $layerTitle . '.' . $ext;
+                $this->addFileOrDownloadToZip($zip, $layer->source_path, $zipName);
+                $layerIdx++;
             }
         }
 
@@ -415,6 +440,35 @@ class ProductOrdersController extends Controller
      */
     public function downloadOrderCustomizationZip($orderId)
     {
+        // Handle Bulk Orders specifically
+        if (\Illuminate\Support\Str::startsWith($orderId, 'ORD-SAA-BULK-')) {
+            $bulkOrderRawId = str_replace('ORD-SAA-BULK-', '', $orderId);
+            $bulkOrder = \App\Models\BulkOrder::find((int)$bulkOrderRawId);
+
+            if (!$bulkOrder || empty($bulkOrder->custom_image)) {
+                abort(404, 'No customization artworks found for this bulk order.');
+            }
+
+            $zipName = 'BulkOrder_' . $orderId . '_Assets.zip';
+            $zipPath = storage_path('app/temp/' . $zipName);
+
+            if (!file_exists(storage_path('app/temp'))) {
+                @mkdir(storage_path('app/temp'), 0777, true);
+            }
+
+            $zip = new \ZipArchive();
+            if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+                abort(500, 'Could not create ZIP archive.');
+            }
+
+            $imageUrl = asset('images/' . $bulkOrder->custom_image);
+            $ext = pathinfo(parse_url($imageUrl, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'png';
+            $this->addFileOrDownloadToZip($zip, $imageUrl, 'Bulk_Order_Custom_Image.' . $ext);
+
+            $zip->close();
+            return response()->download($zipPath)->deleteFileAfterSend(true);
+        }
+
         $slots = ProductSlot::where('order_id', $orderId)->get();
 
         if ($slots->isEmpty()) {
@@ -450,6 +504,26 @@ class ProductOrdersController extends Controller
                 $added = $this->addFileOrDownloadToZip($zip, $slot->custom_logo_url, $subfolder . '1_Original_Customer_Logo.' . $ext);
                 if (!$added) {
                     $zip->addFromString($subfolder . '1_Original_Customer_Logo_MISSING.txt', "Customer uploaded logo URL: " . $slot->custom_logo_url . "\nFile was not found on local disk or via HTTP.");
+                }
+            }
+
+            // Add Design Studio uploaded image layers (e.g. pasted logo / dog image)
+            if (!empty($slot->design_id)) {
+                $layers = DB::table('design_layers')
+                    ->where('design_id', $slot->design_id)
+                    ->whereNotNull('source_path')
+                    ->get();
+
+                $layerIdx = 1;
+                foreach ($layers as $layer) {
+                    if (empty($layer->source_path) || str_starts_with($layer->source_path, 'emoji:')) {
+                        continue;
+                    }
+                    $ext = pathinfo(parse_url($layer->source_path, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'png';
+                    $layerTitle = !empty($layer->layer_name) ? preg_replace('/[^A-Za-z0-9_]/', '_', $layer->layer_name) : 'User_Logo_' . $layerIdx;
+                    $zipName = $subfolder . '1_Uploaded_Logo_' . $layerTitle . '.' . $ext;
+                    $this->addFileOrDownloadToZip($zip, $layer->source_path, $zipName);
+                    $layerIdx++;
                 }
             }
 
@@ -584,7 +658,8 @@ class ProductOrdersController extends Controller
                 }
             }
 
-            $mainUrl = \Illuminate\Support\Str::startsWith($url, 'http') ? $url : 'http://127.0.0.1:8000/uploads/' . $clean;
+            $storeBaseUrl = rtrim(env('MAIN_URL', url('/')), '/') . '/';
+            $mainUrl = \Illuminate\Support\Str::startsWith($url, 'http') ? $url : $storeBaseUrl . 'uploads/' . $clean;
             try {
                 $ctx = stream_context_create(['http' => ['timeout' => 5, 'ignore_errors' => true], 'ssl' => ['verify_peer' => false]]);
                 $content = @file_get_contents($mainUrl, false, $ctx);

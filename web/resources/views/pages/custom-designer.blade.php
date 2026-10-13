@@ -235,18 +235,18 @@
                     <i class="fas fa-upload"></i>
                     <span>{{ gt('Upload') }}</span>
                 </button>
-                <button class="cs_sidebar_tab" data-tool="text" data-title="{{ gt('Edit Text') }}">
+                <!-- <button class="cs_sidebar_tab" data-tool="text" data-title="{{ gt('Edit Text') }}">
                     <i class="fas fa-font"></i>
                     <span>{{ gt('Add Text') }}</span>
-                </button>
+                </button> -->
                 <button class="cs_sidebar_tab" data-tool="clipart" data-title="{{ gt('Add Art') }}" style="display: none !important;">
                     <i class="fas fa-shapes"></i>
                     <span>{{ gt('Add Art') }}</span>
                 </button>
-                <button class="cs_sidebar_tab" data-tool="product" data-title="{{ gt('Product Options') }}">
+                <!-- <button class="cs_sidebar_tab" data-tool="product" data-title="{{ gt('Product Options') }}">
                     <i class="fas fa-tshirt"></i>
                     <span>{{ gt('Product') }}</span>
-                </button>
+                </button> -->
                 <!-- <button class="cs_sidebar_tab" data-tool="names-numbers" data-title="{{ gt('Personalize Team') }}">
                     <i class="fas fa-users-cog"></i>
                     <span>{{ gt('Personalize') }}</span>
@@ -311,7 +311,7 @@
                 </div>
 
                 {{-- ── 3. Add & Edit Text Panel ────────────────────────────────────────── --}}
-                <div class="cs_tool_panel active" id="tool-panel-text">
+                <!-- <div class="cs_tool_panel active" id="tool-panel-text">
                     <div style="font-size: 13px; font-weight: 700; color: #1C30A3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                         <i class="fas fa-font"></i> 3. {{ gt('Add & Edit Text') }}
                     </div>
@@ -405,7 +405,7 @@
                             <button class="cs_btn_outline" data-align="bottom" title="{{ gt('Align Bottom') }}"> <i class="fas fa-arrow-down"></i></button>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 {{-- ── Art / Clipart Panel ────────────────────────────────── --}}
                 <div class="cs_tool_panel" id="tool-panel-clipart">

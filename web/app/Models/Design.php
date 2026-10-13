@@ -16,9 +16,21 @@ class Design extends Model
         'stocks',
         'size',
         'cloth_types',
+        'gsm',
+        'colors',
+        'features',
+        'badge',
+        'badge_type',
+        'sort_order',
+        'is_active',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
+        'gsm' => 'array',
+        'colors' => 'array',
+        'features' => 'array',
+        'is_active' => 'integer',
+        'sort_order' => 'integer',
     ];
 }

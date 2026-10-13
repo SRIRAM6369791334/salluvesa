@@ -35,7 +35,7 @@
         <h3 id="payment-method">{{ strtoupper($order->payment_method) }}</h3>
       </li>
       @if($order->printing_method)
-      <li>
+      <li style="display: none;">
         <p>{{ gt('Printing Method:') }}</p>
         <h3 id="printing-method">{{ $order->printing_method }}</h3>
       </li>

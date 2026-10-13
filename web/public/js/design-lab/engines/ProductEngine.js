@@ -344,7 +344,7 @@ class ProductEngine extends DesignLab.BaseEngine {
     _updatePrice() {
         if (!this.productData) return;
         const basePrice = parseFloat(this.productData.base_price) || 0;
-        const extraPrice = parseFloat(this.productData.extra_element_price) || 50;
+        const extraPrice = parseFloat(this.productData.extra_element_price) || 0;
         let totalObjs = 0;
 
         Object.values(this.canvasManager.canvases).forEach(canvas => {
@@ -373,7 +373,7 @@ class ProductEngine extends DesignLab.BaseEngine {
         return this.productData?.colors?.find(c => String(c.id) === String(this.activeColorId))?.color_name || 'Default';
     }
     getExtraPrice() {
-        const extraPrice = parseFloat(this.productData?.extra_element_price) || 50;
+        const extraPrice = parseFloat(this.productData?.extra_element_price) || 0;
         let totalObjs = 0;
         Object.values(this.canvasManager.canvases).forEach(canvas => {
             canvas.getObjects().forEach(o => {

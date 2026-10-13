@@ -37,53 +37,9 @@
         .text-right { text-align: right; }
         .bg-light { background-color: #f9f9f9; }
         .header-title { font-size: 18px; font-weight: bold; text-align: center; border: none; padding-bottom: 20px; }
-        .min-width-label { width: 130px; display: inline-block; font-weight: bold; }
-
-        /* Print and Toolbar Styles */
-        .no-print-bar {
-            background: #1a252f;
-            color: #ffffff;
-            padding: 12px 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: sticky;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 99999;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        .no-print-bar button {
-            background: #25d366;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(37,211,102,0.3);
-            transition: all 0.2s ease;
-        }
-        .no-print-bar button:hover {
-            background: #128c7e;
-            transform: translateY(-1px);
-        }
-        .no-print-bar .instructions {
-            font-size: 12px;
-            color: #e2e8f0;
-            line-height: 1.5;
-        }
         .editable-empty-row { border: 1px dashed #ccc; padding: 2px; }
         .no-print-dropdown::-ms-expand { display: none; }
         @media print {
-            .no-print-bar {
-                display: none !important;
-            }
             body {
                 margin: 0;
                 padding: 10px !important;
@@ -95,19 +51,6 @@
     </style>
 </head>
 <body>
-
-<div class="no-print-bar">
-    <div class="instructions">
-        <strong>💡 Chrome தமிழ் PDF அச்சிடும் வழிமுறை:</strong><br>
-        1. பக்கத்தில் எங்கு வேண்டுமானாலும் Right-Click செய்து <strong>"Translate to தமிழ்"</strong> (தமிழ் மொழியாக்கம்) செய்யவும்.<br>
-        2. பக்கம் தமிழில் மாறியவுடன், வலதுபுறம் உள்ள <strong>"📥 Direct Download"</strong> பொத்தானை அழுத்தவும். அது உடனடியாக தமிழ் PDF-ஐ டவுன்லோட் செய்யும்.
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <div id="google_translate_element"></div>
-        <button onclick="downloadPDF()" style="background: #007bff; box-shadow: 0 2px 5px rgba(0,123,255,0.3);">📥 Direct Download</button>
-        <button onclick="window.print()" style="background: #6c757d; box-shadow: 0 2px 5px rgba(108,117,125,0.3);">🖨️ Native Print</button>
-    </div>
-</div>
 
 <table class="no-border" style="margin-bottom: 10px;">
     <tr>
@@ -153,13 +96,13 @@
         <td style="width: 25%;"></td>
         <td colspan="2" style="text-align: right;">
             <p><b>Date:</b> {{ strtoupper(date('d-F-Y')) }}</p>
-            <p><b>Invoice Number:</b> {{ $invoiceData['invoice_number'] ?? 'INV-123' }}</p>
+            <p><b>Invoice Number:</b> {{ $invoiceNumber ?? ($invoiceData['doc_invoice_no'] ?? ($order->order_id ?? 'N/A')) }}</p>
             <p><b>SHIPMENT DATE:</b> <span contenteditable="true" class="editable-empty-row" style="min-width: 80px; display:inline-block;">{{ !empty($invoiceData['shipment_date']) ? strtoupper(\Carbon\Carbon::parse($invoiceData['shipment_date'])->format('d-F-Y')) : strtoupper(date('d-F-Y')) }}</span></p>
         </td>
     </tr>
     <tr>
         <td style="text-align: right;"><strong>Invoice No:</strong></td>
-        <td style="border-bottom: 1px solid #000; padding-left:5px;"> {{ $order->order_id ?? 'N/A' }}</td>
+        <td style="border-bottom: 1px solid #000; padding-left:5px;"> {{ $invoiceNumber ?? ($invoiceData['doc_invoice_no'] ?? ($order->order_id ?? 'N/A')) }}</td>
         <td style="text-align: right;"><strong>Invoice Date:</strong></td>
         <td style="border-bottom: 1px solid #000; padding-left:5px;"> {{ strtoupper(date('d-F-Y')) }}</td>
     </tr>
@@ -234,27 +177,55 @@
     </tr>
 </table>
 
+@php
+    $headerUnitLabel = 'Grams';
+    foreach($products as $pCheck) {
+        $pIdCheck = str_starts_with((string)($order->order_id ?? ''), 'B-') || str_starts_with((string)($order->order_id ?? ''), 'ORD-SAA-BULK-') ? 'bulk' : $pCheck->id;
+        $uCheck = strtolower($invoiceData['product_weight_unit_'.$pIdCheck] ?? 'g');
+        if (in_array($uCheck, ['kg', 'kilograms', 'kilogram'])) {
+            $headerUnitLabel = 'Kilograms';
+            break;
+        } elseif (in_array($uCheck, ['t', 'tons', 'ton', 'tonnes'])) {
+            $headerUnitLabel = 'Tons';
+            break;
+        }
+    }
+@endphp
 <table>
     <tr class="bg-light text-center">
         <th style="width: 5%;">NOs</th>
         <th style="width: 10%;">QUANTITY</th>
         <th style="width: 45%;">DESCRIPTION</th>
         <th style="width: 15%;">HSN CODE</th>
-        <th style="width: 15%;">NET WEIGHT IN GRAMS</th>
+        <th style="width: 15%;">Unit Net Weight In {{ $headerUnitLabel }}</th>
         <th style="width: 10%;">UNIT</th>
     </tr>
     @php 
         $totalWeight = 0;
         foreach($products as $p) {
             $pId = str_starts_with((string)($order->order_id ?? ''), 'B-') || str_starts_with((string)($order->order_id ?? ''), 'ORD-SAA-BULK-') ? 'bulk' : $p->id;
-            $prodWeight = (float)($invoiceData['product_weight_'.$pId] ?? 0);
-            $totalWeight += ($prodWeight * $p->quantity);
+            $rawW = (float)($invoiceData['product_weight_'.$pId] ?? 0);
+            $uW = strtolower($invoiceData['product_weight_unit_'.$pId] ?? 'g');
+            $wG = ($uW === 'kg' || $uW === 'kilogram') ? $rawW * 1000 : (($uW === 't' || $uW === 'ton') ? $rawW * 1000000 : $rawW);
+            $totalWeight += ($wG * $p->quantity);
         }
     @endphp
     @foreach($products as $index => $product)
     @php
         $pId = str_starts_with((string)($order->order_id ?? ''), 'B-') || str_starts_with((string)($order->order_id ?? ''), 'ORD-SAA-BULK-') ? 'bulk' : $product->id;
-        $prodWeight = (float)($invoiceData['product_weight_'.$pId] ?? 0);
+        $rawWeight = (float)($invoiceData['product_weight_'.$pId] ?? 0);
+        $weightUnit = strtolower($invoiceData['product_weight_unit_'.$pId] ?? 'g');
+
+        if ($weightUnit === 'kg' || $weightUnit === 'kilograms' || $weightUnit === 'kilogram') {
+            $cleanNum = rtrim(rtrim(number_format($rawWeight, 2, '.', ''), '0'), '.');
+            $formattedUnitWeight = $cleanNum . ' kg';
+        } elseif ($weightUnit === 't' || $weightUnit === 'tons' || $weightUnit === 'ton' || $weightUnit === 'tonnes') {
+            $cleanNum = rtrim(rtrim(number_format($rawWeight, 4, '.', ''), '0'), '.');
+            $formattedUnitWeight = $cleanNum . ' t';
+        } else {
+            $cleanNum = rtrim(rtrim(number_format($rawWeight, 2, '.', ''), '0'), '.');
+            $formattedUnitWeight = $cleanNum . ' g';
+        }
     @endphp
     <tr>
         <td align="center">{{ $index + 1 }}</td>
@@ -268,7 +239,7 @@
             </small>
         </td>
         <td align="center">{{ $invoiceData['hs_code'] ?? '84433210' }}</td>
-        <td align="center">{{ number_format($prodWeight, 2) }}</td>
+        <td align="center">{{ $formattedUnitWeight }}</td>
         <td align="center">PCS</td>
     </tr>
     @endforeach
@@ -278,6 +249,21 @@
     @endfor
 </table>
 
+@php
+    $netWeightKgs = $totalWeight / 1000;
+    $netWeightLbs = $netWeightKgs * 2.20462;
+    $formattedNetKgs = rtrim(rtrim(number_format($netWeightKgs, 2, '.', ''), '0'), '.');
+    $formattedNetLbs = rtrim(rtrim(number_format($netWeightLbs, 2, '.', ''), '0'), '.');
+
+    $selectedGrossUnit = strtoupper($invoiceData['gross_weight_unit'] ?? 'GRAMS');
+    if ($selectedGrossUnit === 'KILOGRAMS' || $selectedGrossUnit === 'KG') {
+        $totalGrossFormatted = rtrim(rtrim(number_format($totalWeight / 1000, 2, '.', ''), '0'), '.');
+    } elseif ($selectedGrossUnit === 'TONNES' || $selectedGrossUnit === 'TONS' || $selectedGrossUnit === 'T') {
+        $totalGrossFormatted = rtrim(rtrim(number_format($totalWeight / 1000000, 4, '.', ''), '0'), '.');
+    } else {
+        $totalGrossFormatted = rtrim(rtrim(number_format($totalWeight, 2, '.', ''), '0'), '.');
+    }
+@endphp
 <table class="no-border" style="width: 60%; float: right;">
     <tr>
         <td colspan="4" class="text-right"><strong>TOTAL:</strong></td>
@@ -297,9 +283,9 @@
     </tr>
     <tr>
         <td style="border: 1px solid #000; text-align: center;">{{ $invoiceData['number_of_packages'] ?? '1' }}</td>
-        <td style="border: 1px solid #000; text-align: center;">{{ $totalWeight }}</td>
-        <td style="border: 1px solid #000; text-align: center;"></td>
-        <td style="border: 1px solid #000; text-align: center;">{{ $totalWeight }}</td>
+        <td id="total_gross_weight_cell" style="border: 1px solid #000; text-align: center;" data-total-grams="{{ $totalWeight }}">{{ $totalGrossFormatted }}</td>
+        <td style="border: 1px solid #000; text-align: center;">{{ $formattedNetLbs }}</td>
+        <td style="border: 1px solid #000; text-align: center;">{{ $formattedNetKgs }}</td>
     </tr>
 </table>
 <div style="clear: both; margin-top: 15px;">
@@ -363,6 +349,25 @@
             }
         });
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const unitSelect = document.getElementById('weight_unit');
+        if (unitSelect) {
+            unitSelect.addEventListener('change', function() {
+                const unit = this.value;
+                const cell = document.getElementById('total_gross_weight_cell');
+                if (!cell) return;
+                const totalGrams = parseFloat(cell.getAttribute('data-total-grams') || '0');
+                if (unit === 'KILOGRAMS') {
+                    cell.innerText = (totalGrams / 1000).toFixed(2);
+                } else if (unit === 'TONNES') {
+                    cell.innerText = (totalGrams / 1000000).toFixed(4);
+                } else {
+                    cell.innerText = totalGrams.toFixed(2);
+                }
+            });
+        }
+    });
 </script>
 <script type="text/javascript">
 function googleTranslateElementInit() {

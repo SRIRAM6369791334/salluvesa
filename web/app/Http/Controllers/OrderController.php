@@ -780,7 +780,7 @@ class OrderController extends Controller
                 $country = $order->bank_country;
                 if (!$country) {
                     $fullDetail = SampleOrderFullDetail::where('order_primary_id', $order->id)->first();
-                    $country = $fullDetail ? $fullDetail->country : null;
+                    $country = $fullDetail ? ($fullDetail->bank_country ?? $fullDetail->country) : null;
                 }
 
                 if ($country) {
@@ -943,8 +943,12 @@ class OrderController extends Controller
 
         // Add dynamic bank details for bank transfer context
         $bankDetails = null;
-        if ($fullDetail && $fullDetail->country) {
-            $country = trim($fullDetail->country);
+        $country = $order->bank_country;
+        if (!$country && $fullDetail) {
+            $country = $fullDetail->bank_country ?? $fullDetail->country;
+        }
+        if ($country) {
+            $country = trim($country);
             $bankDetails = \App\Models\BankDetails::where('bank_country', 'LIKE', "%{$country}%")->first();
         }
         if (!$bankDetails) {
@@ -1159,7 +1163,7 @@ class OrderController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Payment proof uploaded successfully!',
-                    'proof_url' => rtrim(env('UPLOAD_URL'), '/') . '/proof/' . $filename
+                    'proof_url' => rtrim(env('MAIN_URL'), '/') . '/uploads/proof/' . $filename
                 ]);
             }
 

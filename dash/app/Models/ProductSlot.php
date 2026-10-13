@@ -37,6 +37,8 @@ class ProductSlot extends Model
         'customization_price',
         'preview_screenshot_url',
         'sample_variant_id',
+        'gsm',
+        'cloth_type',
         'created_at',
         'updated_at'
     ];

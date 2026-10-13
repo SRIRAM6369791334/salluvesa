@@ -35,10 +35,10 @@
                                 <span class="d-block text-uppercase text-muted fs-12 fw-bold mb-1">{{ gt('Order Reference') }}</span>
                                 <span class="fs-20 fw-bold text-primary">#{{ $order->order_id }}</span>
                             </div>
-                            <div class="text-center px-4">
+                            <!-- <div class="text-center px-4">
                                 <span class="d-block text-uppercase text-muted fs-12 fw-bold mb-1">{{ gt('Printing Method') }}</span>
                                 <span class="fs-20 fw-bold text-primary">{{ $order->printing_method ?? 'CTF' }}</span>
-                            </div>
+                            </div> -->
                             <div class="text-end">
                                 <span class="d-block text-uppercase text-muted fs-12 fw-bold mb-1">{{ gt('Total Amount to Pay') }}</span>
                                 <span class="fs-24 fw-bold text-dark">{{ format_currency($order->grand_total_amount) }}</span>
@@ -93,11 +93,16 @@
                                     </div>
                                 </form>
                                 <div id="proof-preview-container" class="mt-3 {{ $order->payment_proof ? '' : 'd-none' }}">
-                                    <label class="text-muted small d-block mb-2">{{ gt('Already Uploaded:') }}</label>
-                                    <img src="{{ $order->payment_proof ? env('MAIN_URL').'uploads/proof/'.$order->payment_proof : '' }}" 
-                                         id="proof-preview" 
-                                         style="max-width: 150px; border-radius: 8px; border: 1px solid #ddd;" 
-                                         alt="Proof">
+                                    <label class="text-muted small d-block mb-2">{{ gt('Uploaded Proof:') }}</label>
+                                    <div class="position-relative d-inline-block">
+                                        <img src="{{ $order->payment_proof ? rtrim(env('MAIN_URL'), '/').'/uploads/proof/'.$order->payment_proof : '' }}" 
+                                             id="proof-preview" 
+                                             style="max-width: 180px; border-radius: 10px; border: 1px solid #E2E8F0;" 
+                                             alt="Proof">
+                                        <div class="mt-2">
+                                            <span class="badge bg-success"><i class="fa-solid fa-check me-1"></i> {{ gt('Submitted') }}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         @endif
@@ -244,7 +249,9 @@
 .fs-20 { font-size: 20px; }
 .fs-24 { font-size: 24px; }
 </style>
+@endsection
 
+@push('scripts')
 <script>
 function copyText(text) {
     if(!text) return;
@@ -281,28 +288,28 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 // Payment Proof Upload Handling
-document.addEventListener('DOMContentLoaded', function() {
-    const uploadForm = document.getElementById('proof-upload-form');
-    if (uploadForm) {
-        uploadForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const btn = document.getElementById('upload-btn');
-            const originalText = btn.innerText;
+$(document).ready(function() {
+    $('#proof-upload-form').on('submit', function(e) {
+        e.preventDefault();
+        const form = $(this)[0];
+        const formData = new FormData(form);
+        const btn = $('#upload-btn');
+        const originalText = btn.text();
 
-            btn.disabled = true;
-            btn.innerText = "{{ gt('Uploading...') }}";
-            showLoader("{{ gt('Uploading payment proof...') }}");
+        btn.prop('disabled', true).text("{{ gt('Uploading...') }}");
+        showLoader("{{ gt('Uploading payment proof...') }}");
 
-            fetch("{{ route('order.upload_proof') }}", {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(res => {
+        $.ajax({
+            url: "{{ route('order.upload_proof') }}",
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') || '{{ csrf_token() }}'
+            },
+            success: function(res) {
                 if (res.success) {
                     Swal.fire({
                         title: "{{ gt('Success!') }}",
@@ -311,31 +318,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         confirmButtonColor: '#1C30A3'
                     }).then(() => {
                         hideLoader();
-                        const preview = document.getElementById('proof-preview');
-                        const container = document.getElementById('proof-preview-container');
-                        if (preview && container) {
-                            preview.src = res.proof_url;
-                            container.classList.remove('d-none');
-                        }
-                        btn.disabled = false;
-                        btn.innerText = originalText;
-                        uploadForm.reset();
+                        $('#proof-preview').attr('src', res.proof_url);
+                        $('#proof-preview-container').removeClass('d-none');
+                        btn.prop('disabled', false).text(originalText);
+                        form.reset();
                     });
                 } else {
                     hideLoader();
                     Swal.fire("{{ gt('Error') }}", res.message, 'error');
-                    btn.disabled = false;
-                    btn.innerText = originalText;
+                    btn.prop('disabled', false).text(originalText);
                 }
-            })
-            .catch(error => {
+            },
+            error: function(xhr) {
                 hideLoader();
-                Swal.fire("{{ gt('Error') }}", "{{ gt('Upload failed.') }}", 'error');
-                btn.disabled = false;
-                btn.innerText = originalText;
-            });
+                const msg = xhr.responseJSON ? xhr.responseJSON.message : "{{ gt('Upload failed.') }}";
+                Swal.fire("{{ gt('Error') }}", msg, 'error');
+                btn.prop('disabled', false).text(originalText);
+            }
         });
-    }
+    });
 });
 </script>
-@endsection
+@endpush

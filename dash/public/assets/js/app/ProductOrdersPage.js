@@ -7,7 +7,6 @@ const gridNew = new gridjs.Grid({
         "Payment Method",
         // "Payment Status",
         "Delivery Status",
-        "Printing Method",
         {
             name: "Status",
             sort: false,
@@ -88,7 +87,6 @@ const gridNew = new gridjs.Grid({
                                 ? `<div class="text-success" style="font-weight:bold">Out Of Delivery</div>`
                                 : `<div class="text-success" style="font-weight:bold">Delivered</div>`
             ),
-            productOrder.printing_method || "N/A",
             gridjs.html(
                 productOrder.delivery_status == 1
                     ? `<div> 
@@ -242,7 +240,6 @@ function gridjsReRender(productOrders) {
                                         ? `<div class="text-success" style="font-weight:bold">Out Of Delivery</div>`
                                         : `<div class="text-success" style="font-weight:bold">Delivered</div>`
                     ),
-                    productOrder.printing_method || "N/A",
                     gridjs.html(
                         productOrder.delivery_status == 1
                             ? `<div> <button data-bs-toggle="modal"

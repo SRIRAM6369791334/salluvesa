@@ -43,51 +43,9 @@
         .spacer { height: 10px; }
         .min-width-label { width: 140px; display: inline-block; font-weight: bold; }
 
-        /* Print and Toolbar Styles */
-        .no-print-bar {
-            background: #1a252f;
-            color: #ffffff;
-            padding: 12px 20px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: sticky;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 99999;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-        .no-print-bar button {
-            background: #25d366;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(37,211,102,0.3);
-            transition: all 0.2s ease;
-        }
-        .no-print-bar button:hover {
-            background: #128c7e;
-            transform: translateY(-1px);
-        }
-        .no-print-bar .instructions {
-            font-size: 12px;
-            color: #e2e8f0;
-            line-height: 1.5;
-        }
         .editable-empty-row { border: 1px dashed #ccc; padding: 2px; }
         .no-print-dropdown::-ms-expand { display: none; }
         @media print {
-            .no-print-bar {
-                display: none !important;
-            }
             body {
                 margin: 0;
                 padding: 10px !important;
@@ -99,19 +57,6 @@
     </style>
 </head>
 <body>
-
-<div class="no-print-bar">
-    <div class="instructions">
-        <strong>💡 Chrome தமிழ் PDF அச்சிடும் வழிமுறை:</strong><br>
-        1. பக்கத்தில் எங்கு வேண்டுமானாலும் Right-Click செய்து <strong>"Translate to தமிழ்"</strong> (தமிழ் மொழியாக்கம்) செய்யவும்.<br>
-        2. பக்கம் தமிழில் மாறியவுடன், வலதுபுறம் உள்ள <strong>"📥 Direct Download"</strong> பொத்தானை அழுத்தவும். அது உடனடியாக தமிழ் PDF-ஐ டவுன்லோட் செய்யும்.
-    </div>
-    <div style="display: flex; gap: 10px;">
-        <div id="google_translate_element"></div>
-        <button onclick="downloadPDF()" style="background: #007bff; box-shadow: 0 2px 5px rgba(0,123,255,0.3);">📥 Direct Download</button>
-        <button onclick="window.print()" style="background: #6c757d; box-shadow: 0 2px 5px rgba(108,117,125,0.3);">🖨️ Native Print</button>
-    </div>
-</div>
 
 <table class="no-border" style="margin-bottom: 10px;">
     <tr>
@@ -223,6 +168,20 @@
     </tr>
 </table>
 
+@php
+    $headerUnitLabel = 'Grams';
+    foreach($products as $pCheck) {
+        $pIdCheck = str_starts_with((string)($order->order_id ?? ''), 'B-') || str_starts_with((string)($order->order_id ?? ''), 'ORD-SAA-BULK-') ? 'bulk' : $pCheck->id;
+        $uCheck = strtolower($invoiceData['product_weight_unit_'.$pIdCheck] ?? 'g');
+        if (in_array($uCheck, ['kg', 'kilograms', 'kilogram'])) {
+            $headerUnitLabel = 'Kilograms';
+            break;
+        } elseif (in_array($uCheck, ['t', 'tons', 'ton', 'tonnes'])) {
+            $headerUnitLabel = 'Tons';
+            break;
+        }
+    }
+@endphp
 <table>
     <tr class="bg-light text-center">
         <th style="width: 5%;">{{ $labels['no'] ?? 'No.' }}</th>
@@ -232,7 +191,7 @@
         <th style="width: 10%;">{{ $labels['qty_uom'] ?? 'Qty UOM' }}</th>
         <th style="width: 10%;">{{ $labels['unit_value'] ?? 'Unit Value' }}</th>
         <th style="width: 10%;">{{ $labels['sub_total_value'] ?? 'Sub-Total Value' }}</th>
-        <th style="width: 10%;">{{ $labels['unit_net_weight'] ?? 'UNIT NET WEIGHT IN GRAMS' }}</th>
+        <th style="width: 10%;">Unit Net Weight In {{ $headerUnitLabel }}</th>
     </tr>
     @php
         $totalVal = 0;
@@ -242,8 +201,8 @@
         $currencyService = app(\App\Services\CurrencyService::class);
         $supported = $currencyService->getSupportedCurrencies();
 
-        $targetCurrency = strtoupper($invoiceData['currency_code'] ?? 'USD');
-        $currencySymbol = $supported[$targetCurrency]['symbol'] ?? '$';
+        $targetCurrency = strtoupper($invoiceData['currency_code'] ?? 'INR');
+        $currencySymbol = $supported[$targetCurrency]['symbol'] ?? ($targetCurrency === 'INR' ? '₹' : ($targetCurrency . ' '));
         $baseCurrency = 'INR';
     @endphp
     @foreach($products as $index => $product)
@@ -262,8 +221,24 @@
             $variantDesc = !empty($product->size_value) ? ' - Size: '.$product->size_value : '';
             $variantDesc .= !empty($product->color_value) ? ' Color: '.\App\Models\ProductColor::getNamesByCodes($product->color_value) : '';
             $pId = str_starts_with((string)($order->order_id ?? ''), 'B-') || str_starts_with((string)($order->order_id ?? ''), 'ORD-SAA-BULK-') ? 'bulk' : $product->id;
-            $prodWeight = (float)($invoiceData['product_weight_'.$pId] ?? 0);
-            $totalWeightSum += ($prodWeight * $product->quantity);
+            $rawWeight = (float)($invoiceData['product_weight_'.$pId] ?? 0);
+            $weightUnit = strtolower($invoiceData['product_weight_unit_'.$pId] ?? 'g');
+
+            if ($weightUnit === 'kg' || $weightUnit === 'kilograms' || $weightUnit === 'kilogram') {
+                $weightInGrams = $rawWeight * 1000;
+                $cleanNum = rtrim(rtrim(number_format($rawWeight, 2, '.', ''), '0'), '.');
+                $formattedUnitWeight = $cleanNum . ' kg';
+            } elseif ($weightUnit === 't' || $weightUnit === 'tons' || $weightUnit === 'ton' || $weightUnit === 'tonnes') {
+                $weightInGrams = $rawWeight * 1000000;
+                $cleanNum = rtrim(rtrim(number_format($rawWeight, 4, '.', ''), '0'), '.');
+                $formattedUnitWeight = $cleanNum . ' t';
+            } else {
+                $weightInGrams = $rawWeight;
+                $cleanNum = rtrim(rtrim(number_format($rawWeight, 2, '.', ''), '0'), '.');
+                $formattedUnitWeight = $cleanNum . ' g';
+            }
+
+            $totalWeightSum += ($weightInGrams * $product->quantity);
         @endphp
         <tr>
             <td align="center">{{ $index + 1 }}</td>
@@ -273,7 +248,7 @@
             <td align="center">{{ $product->quantity }} PCS</td>
             <td align="right">{{ $currencySymbol }}{{ number_format($price, 2) }}</td>
             <td align="right">{{ $currencySymbol }}{{ number_format($itemTotal, 2) }}</td>
-            <td align="center">{{ number_format($prodWeight, 2) }}</td>
+            <td align="center">{{ $formattedUnitWeight }}</td>
         </tr>
     @endforeach
     <!-- Empty rows for filling -->
@@ -294,10 +269,52 @@
                     <td class="bg-light bold text-right" style="width: 50%;">{{ $labels['no_of_packages'] ?? 'No. of Packages' }}</td>
                     <td style="width: 50%;" class="text-right">{{ $invoiceData['number_of_packages'] ?? '1' }}</td>
                 </tr>
+                @php
+                    $taxRows = [];
+                    $totalTaxVal = 0;
+                    if (!empty($invoiceData['taxes']) && is_array($invoiceData['taxes'])) {
+                        foreach($invoiceData['taxes'] as $tax) {
+                            $tName = trim($tax['name'] ?? '');
+                            $tPct = (float)($tax['percent'] ?? 0);
+                            if ($tName !== '' && $tPct > 0) {
+                                $tAmt = ($totalVal * $tPct) / 100;
+                                $taxRows[] = [
+                                    'name' => $tName,
+                                    'percent' => $tPct,
+                                    'amount' => $tAmt
+                                ];
+                                $totalTaxVal += $tAmt;
+                            }
+                        }
+                    }
+                    $finalTotalAmount = $totalVal + $totalTaxVal;
+                @endphp
                 <tr>
                     <td class="bg-light bold text-right">{{ $labels['total_goods_value'] ?? 'Total Goods Value' }}</td>
                     <td class="text-right">{{ $currencySymbol }}{{ number_format($totalVal, 2) }}</td>
                 </tr>
+                @foreach($taxRows as $tRow)
+                <tr>
+                    <td class="bg-light bold text-right">{{ $tRow['name'] }} ({{ number_format($tRow['percent'], 2) }}%)</td>
+                    <td class="text-right">{{ $currencySymbol }}{{ number_format($tRow['amount'], 2) }}</td>
+                </tr>
+                @endforeach
+                @if(count($taxRows) > 0)
+                <tr>
+                    <td class="bg-light bold text-right">Final Total Amount</td>
+                    <td class="text-right bold">{{ $currencySymbol }}{{ number_format($finalTotalAmount, 2) }}</td>
+                </tr>
+                @endif
+                @php
+                    $selectedGrossUnit = strtoupper($invoiceData['gross_weight_unit'] ?? 'GRAMS');
+                    if ($selectedGrossUnit === 'KILOGRAMS' || $selectedGrossUnit === 'KG') {
+                        $totalGrossFormatted = rtrim(rtrim(number_format($totalWeightSum / 1000, 2, '.', ''), '0'), '.');
+                    } elseif ($selectedGrossUnit === 'TONNES' || $selectedGrossUnit === 'TONS' || $selectedGrossUnit === 'T') {
+                        $totalGrossFormatted = rtrim(rtrim(number_format($totalWeightSum / 1000000, 4, '.', ''), '0'), '.');
+                    } else {
+                        $totalGrossFormatted = rtrim(rtrim(number_format($totalWeightSum, 2, '.', ''), '0'), '.');
+                    }
+                @endphp
                 <tr>
                     <td class="bg-light bold text-right">
                         {{ $labels['total_weight'] ?? 'TOTAL GROSS WEIGHT' }}<br>
@@ -307,7 +324,7 @@
                             <option value="TONNES" {{ (isset($invoiceData['gross_weight_unit']) && $invoiceData['gross_weight_unit'] == 'TONNES') ? 'selected' : '' }}>TONNES</option>
                         </select>
                     </td>
-                    <td class="text-right">{{ number_format($totalWeightSum, 2) }}</td>
+                    <td id="total_gross_weight_cell" class="text-right" data-total-grams="{{ $totalWeightSum }}">{{ $totalGrossFormatted }}</td>
                 </tr>
             </table>
         </td>
@@ -374,7 +391,28 @@
             }
         });
     }
-</script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const unitSelect = document.getElementById('weight_unit');
+        if (unitSelect) {
+            unitSelect.addEventListener('change', function() {
+                const unit = this.value;
+                const cell = document.getElementById('total_gross_weight_cell');
+                if (!cell) return;
+                const totalGrams = parseFloat(cell.getAttribute('data-total-grams') || '0');
+                if (unit === 'KILOGRAMS') {
+                    const val = (totalGrams / 1000).toFixed(2);
+                    cell.innerText = val.replace(/\.?0+$/, '');
+                } else if (unit === 'TONNES') {
+                    const val = (totalGrams / 1000000).toFixed(4);
+                    cell.innerText = val.replace(/\.?0+$/, '');
+                } else {
+                    const val = totalGrams.toFixed(2);
+                    cell.innerText = val.replace(/\.?0+$/, '');
+                }
+            });
+        }
+    });
 </script>
 <script type="text/javascript">
 function googleTranslateElementInit() {

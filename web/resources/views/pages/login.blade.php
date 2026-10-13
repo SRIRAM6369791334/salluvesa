@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('content')
   <!-- Premium Animated Hero Section -->
   <section class="premium-hero-section position-relative overflow-hidden">
@@ -30,9 +30,10 @@
             </div>
             <div class="premium-form-group">
               <label class="premium-form-label">{{ gt('Password') }} *</label>
-              <div class="form-icon-wrapper">
-                <input type="password" name="password" class="premium-form-input" placeholder="{{ gt('Enter your password') }}" required>
+              <div class="form-icon-wrapper" style="position: relative;">
+                <input type="password" name="password" id="password" class="premium-form-input" placeholder="{{ gt('Enter your password') }}" required style="padding-right: 40px;">
                 <i class="fa-solid fa-lock"></i>
+                <i class="fa-solid fa-eye toggle-password" toggle="#password" style="cursor: pointer; position: absolute; right: 15px; left: auto; top: 50%; transform: translateY(-50%); z-index: 10; pointer-events: auto;"></i>
               </div>
               @error('password') <span class="text-danger small">{{ $message }}</span> @enderror
             </div>
@@ -50,6 +51,16 @@
           @push('scripts')
           <script>
             $(document).ready(function() {
+              $('.toggle-password').click(function() {
+                $(this).toggleClass("fa-eye fa-eye-slash");
+                var input = $($(this).attr("toggle"));
+                if (input.attr("type") == "password") {
+                  input.attr("type", "text");
+                } else {
+                  input.attr("type", "password");
+                }
+              });
+
               $('#loginForm').on('submit', function(e) {
                 e.preventDefault();
                 
