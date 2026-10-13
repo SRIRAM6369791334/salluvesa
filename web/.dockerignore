@@ -1,0 +1,17 @@
+.git
+.github
+node_modules
+vendor
+.env
+.env.backup
+.env.*
+!.env.example
+*.zip
+.zip
+*.log
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+.idea
+.vscode
+tests
