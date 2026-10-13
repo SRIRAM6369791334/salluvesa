@@ -9,6 +9,7 @@ use App\Models\ProductRefund;
 use App\Models\ProductSlot;
 use App\Models\ProductStock;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -35,6 +36,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if (config('app.env') === 'production' || request()->header('x-forwarded-proto') === 'https') {
+            URL::forceScheme('https');
+        }
+
         View::composer("layouts.sidebar", function ($view) {
             $milkOrderPendingCount  = MilkOrder::query()->where("is_delivery_assigned", "0")->count();
             $productOrderPendingCount  = ProductOrder::query()->whereIn("payment_status", [1, 2, 3])->where("delivery_status", 1)->where('is_cancelled','!=', 1)->count();
