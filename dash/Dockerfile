@@ -6,7 +6,6 @@ WORKDIR /var/www/html
 
 # Avoid interactive prompts during apt install
 ENV DEBIAN_FRONTEND=noninteractive
-ENV WKHTML_PDF_BINARY=/usr/bin/wkhtmltopdf
 ENV MYSQL_ATTR_SSL_CA=/etc/ssl/certs/ca-certificates.crt
 
 # Install system dependencies & libraries
@@ -23,9 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2-dev \
     libzip-dev \
     libicu-dev \
-    wkhtmltopdf \
-    fonts-indic \
-    fonts-lohit-taml \
+    fonts-dejavu \
     fonts-freefont-ttf \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \

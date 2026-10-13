@@ -15,7 +15,7 @@ services:
         value: stderr
       - key: APP_KEY
         generateValue: true
-      - key: WKHTML_PDF_BINARY
-        value: /usr/bin/wkhtmltopdf
+      - key: MYSQL_ATTR_SSL_CA
+        value: /etc/ssl/certs/ca-certificates.crt
       - key: RUN_MIGRATIONS
-        value: "false"
+        value: "true"
